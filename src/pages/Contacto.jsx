@@ -8,10 +8,10 @@ import { ContactFaq } from '@/components/sections/ContactFaq'
 import { Section, SectionHeader } from '@/components/ui/Section'
 import { SITE } from '@/constants/site'
 import { IMAGES } from '@/assets/images'
+import { useContactContent } from '@/hooks/useCms'
 import { cn } from '@/lib/cn'
 
 const ease = [0.25, 0.1, 0.25, 1]
-
 const phoneHref = `tel:${SITE.phoneTel}`
 
 function ContactCard({ icon: Icon, title, children }) {
@@ -30,16 +30,18 @@ function ContactCard({ icon: Icon, title, children }) {
 }
 
 export default function Contacto() {
+  const { hero, intro, details, cta, map, faq } = useContactContent()
+
   return (
     <>
       <PageMeta page="contacto" />
 
       <ServicePageHero
-        eyebrow="Utilcar"
-        title="Contacto"
-        subtitle="Conversemos sobre su proyecto, conversión o equipamiento automotriz."
+        eyebrow={hero.eyebrow}
+        title={hero.title}
+        subtitle={hero.subtitle}
         image={IMAGES.talleres.hero}
-        imageAlt="Taller Utilcar Conversiones — conversiones y equipamiento automotriz"
+        imageAlt={hero.imageAlt}
       />
 
       <Section>
@@ -66,7 +68,7 @@ export default function Contacto() {
             .
           </p>
           <p className="mt-5 text-base leading-relaxed text-ink-muted sm:text-lg">
-            Si lo prefiere, puede escribirnos mediante el formulario en línea y le responderemos a la brevedad.
+            {intro.formHint}
           </p>
         </motion.div>
       </Section>
@@ -82,21 +84,20 @@ export default function Contacto() {
           >
             <div>
               <h2 className="text-xl font-semibold tracking-tight text-ink sm:text-2xl">
-                Datos de contacto
+                {details.title}
               </h2>
               <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-                Atención personalizada para conversiones automotrices, equipamiento escolar,
-                talleres móviles y proyectos especiales.
+                {details.description}
               </p>
             </div>
 
-            <ContactCard icon={Phone} title="Teléfono">
+            <ContactCard icon={Phone} title={details.cards.phone}>
               <a href={phoneHref} className="block font-medium text-ink hover:text-ink-muted">
                 {SITE.phoneDisplay}
               </a>
             </ContactCard>
 
-            <ContactCard icon={Mail} title="Correos">
+            <ContactCard icon={Mail} title={details.cards.email}>
               {SITE.emails.map((email) => (
                 <a
                   key={email}
@@ -108,15 +109,15 @@ export default function Contacto() {
               ))}
             </ContactCard>
 
-            <ContactCard icon={MapPin} title="Dirección">
+            <ContactCard icon={MapPin} title={details.cards.address}>
               <p className="font-medium text-ink">{SITE.addressStreet}</p>
               <p>{SITE.addressCity}</p>
               <p className="text-ink-subtle">{SITE.metro}</p>
             </ContactCard>
 
-            <ContactCard icon={Clock} title="Horario">
-              <p className="font-medium text-ink">Lunes a viernes</p>
-              <p>Horario comercial</p>
+            <ContactCard icon={Clock} title={details.cards.hours.title}>
+              <p className="font-medium text-ink">{details.cards.hours.lines[0]}</p>
+              <p>{details.cards.hours.lines[1]}</p>
             </ContactCard>
           </motion.div>
 
@@ -132,16 +133,16 @@ export default function Contacto() {
       </Section>
 
       <ServiceCtaDark
-        title="¿Necesita atención directa?"
-        description="Complete el formulario o escríbanos por WhatsApp. Conversemos sobre su conversión o equipamiento."
-        primaryLabel="Ir al formulario"
-        primaryTo="#formulario"
+        title={cta.title}
+        description={cta.description}
+        primaryLabel={cta.primaryLabel}
+        primaryTo={cta.primaryTo}
       />
 
       <Section>
         <SectionHeader
-          eyebrow="Ubicación"
-          title="Visítenos en taller"
+          eyebrow={map.eyebrow}
+          title={map.title}
           align="center"
           className="mx-auto max-w-2xl"
         />
@@ -155,7 +156,7 @@ export default function Contacto() {
           <div className="overflow-hidden rounded-card border border-border bg-white shadow-card">
             <div className="aspect-[16/10] w-full sm:aspect-[21/9] lg:aspect-[2.2/1]">
               <iframe
-                title="Ubicación Utilcar Conversiones en Google Maps"
+                title={map.iframeTitle}
                 src={`https://maps.google.com/maps?q=${SITE.mapsQuery}&hl=es&z=16&output=embed`}
                 className="h-full w-full border-0"
                 loading="lazy"
@@ -176,9 +177,9 @@ export default function Contacto() {
 
       <Section className="bg-white">
         <SectionHeader
-          eyebrow="Consultas frecuentes"
-          title="Preguntas habituales"
-          description="Respuestas breves antes de solicitar su cotización."
+          eyebrow={faq.eyebrow}
+          title={faq.title}
+          description={faq.description}
           align="center"
           className="mx-auto max-w-2xl"
         />

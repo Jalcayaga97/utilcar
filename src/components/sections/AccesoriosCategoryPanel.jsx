@@ -4,7 +4,7 @@ import { Check } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { getAccesoriosCategoryGallery } from '@/assets/images'
 import { BrandImageGallery } from '@/components/ui/BrandImageGallery'
-import { ACCESORIOS_CATEGORIES } from '@/data/accesorios'
+import { useAccesoriosCategories } from '@/hooks/useCms'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
@@ -124,9 +124,10 @@ function CategoryTabMobile({ category, isActive, onSelect }) {
 }
 
 export function AccesoriosCategoryPanel() {
-  const [activeId, setActiveId] = useState(ACCESORIOS_CATEGORIES[0].id)
+  const accesoriosCategories = useAccesoriosCategories()
+  const [activeId, setActiveId] = useState(() => accesoriosCategories[0]?.id)
   const active =
-    ACCESORIOS_CATEGORIES.find((c) => c.id === activeId) ?? ACCESORIOS_CATEGORIES[0]
+    accesoriosCategories.find((c) => c.id === activeId) ?? accesoriosCategories[0]
 
   return (
     <div>
@@ -135,7 +136,7 @@ export function AccesoriosCategoryPanel() {
         role="tablist"
         aria-label="Categorías de accesorios"
       >
-        {ACCESORIOS_CATEGORIES.map((category) => (
+        {accesoriosCategories.map((category) => (
           <CategoryTabDesktop
             key={category.id}
             category={category}
@@ -150,7 +151,7 @@ export function AccesoriosCategoryPanel() {
         role="tablist"
         aria-label="Categorías de accesorios"
       >
-        {ACCESORIOS_CATEGORIES.map((category) => (
+        {accesoriosCategories.map((category) => (
           <CategoryTabMobile
             key={category.id}
             category={category}

@@ -6,15 +6,15 @@ import { ServiceCtaDark } from '@/components/sections/ServiceCtaDark'
 import { Section, SectionHeader } from '@/components/ui/Section'
 import { ImageGallery } from '@/components/ui/ImageGallery'
 import { IMAGES } from '@/assets/images'
-import { BUTACAS_INTRO, BUTACAS_SECTIONS } from '@/data/butacas'
+import { useButacasContent } from '@/hooks/useCms'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
-function SpecBlock({ title, items }) {
+function SpecBlock({ title: blockTitle, items }) {
   return (
     <div className="rounded-lg border border-border bg-white p-5 sm:p-6">
       <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-ink">
-        {title}
+        {blockTitle}
       </h3>
       <ul className="mt-4 space-y-2.5">
         {items.map((item) => (
@@ -31,21 +31,21 @@ function SpecBlock({ title, items }) {
 }
 
 export default function Butacas() {
-  const { title, paragraphs } = BUTACAS_INTRO
+  const { hero, intro, specs, gallery, cta } = useButacasContent()
+  const { title, paragraphs } = intro
 
   return (
     <>
       <PageMeta page="butacas" />
 
       <ServicePageHero
-        eyebrow="Servicios"
-        title="Butacas"
-        subtitle="Fabricación de butacas a medida para transporte de pasajeros, vehículos especiales y soluciones personalizadas."
+        eyebrow={hero.eyebrow}
+        title={hero.title}
+        subtitle={hero.subtitle}
         image={IMAGES.butacas.hero}
-        imageAlt="Butacas fabricadas a medida por Utilcar — tapizado y terminaciones premium"
+        imageAlt={hero.imageAlt}
       />
 
-      {/* Introducción */}
       <Section>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -55,7 +55,7 @@ export default function Butacas() {
           className="mx-auto max-w-3xl"
         >
           <SectionHeader
-            eyebrow="Fabricación propia"
+            eyebrow={intro.eyebrow}
             title={title}
             className="mb-8"
           />
@@ -72,12 +72,11 @@ export default function Butacas() {
         </motion.div>
       </Section>
 
-      {/* Bloques */}
       <Section className="bg-white">
         <SectionHeader
-          eyebrow="Propuesta de valor"
-          title="Calidad, personalización y servicio"
-          description="Fabricación real en taller propio: materiales seleccionados, terminaciones cuidadas y configuración según cada proyecto."
+          eyebrow={specs.eyebrow}
+          title={specs.title}
+          description={specs.description}
           align="center"
           className="mx-auto max-w-2xl"
         />
@@ -88,18 +87,17 @@ export default function Butacas() {
           transition={{ duration: 0.5, ease }}
           className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6"
         >
-          {BUTACAS_SECTIONS.map((block) => (
+          {specs.sections.map((block) => (
             <SpecBlock key={block.title} title={block.title} items={block.items} />
           ))}
         </motion.div>
       </Section>
 
-      {/* Galería */}
       <Section>
         <SectionHeader
-          eyebrow="Registro visual"
-          title="Terminaciones y detalle de fabricación"
-          description="Tapizados, costuras, estructura y acabados de butacas fabricadas en Utilcar — calidad visible en cada proyecto."
+          eyebrow={gallery.eyebrow}
+          title={gallery.title}
+          description={gallery.description}
           align="center"
           className="mx-auto max-w-2xl"
         />
@@ -114,10 +112,7 @@ export default function Butacas() {
         </motion.div>
       </Section>
 
-      <ServiceCtaDark
-        title="Solicite butacas personalizadas para su proyecto"
-        description="Relevamos su vehículo, definimos tapizados, ergonomía y opciones de equipamiento, y fabricamos con matrices propias e instalación en taller Utilcar."
-      />
+      <ServiceCtaDark title={cta.title} description={cta.description} />
     </>
   )
 }

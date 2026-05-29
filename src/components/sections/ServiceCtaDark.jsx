@@ -1,25 +1,30 @@
 import { Container } from '@/components/ui/Container'
 import { CtaButtonGroup } from '@/components/sections/CtaButtonGroup'
+import { useServiceCtaDefaults } from '@/hooks/useCms'
 
 export function ServiceCtaDark({
-  title = 'Solicite una solución personalizada para su operación',
-  description = 'Nuestro equipo técnico releva su vehículo, define el layout interior y propone materiales y terminaciones según su uso en terreno.',
-  primaryLabel = 'Solicitar cotización',
-  primaryTo = '/contacto',
+  title,
+  description,
+  primaryLabel,
+  primaryTo,
   showWhatsApp = true,
 }) {
+  const defaults = useServiceCtaDefaults()
+
   return (
     <section className="border-t border-ink/10 bg-accent py-section-sm lg:py-section">
       <Container>
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-            {title}
+            {title ?? defaults.title}
           </h2>
-          <p className="mt-4 text-base leading-relaxed text-white/80">{description}</p>
+          <p className="mt-4 text-base leading-relaxed text-white/80">
+            {description ?? defaults.description}
+          </p>
           <CtaButtonGroup
             variant="dark"
-            primaryLabel={primaryLabel}
-            primaryTo={primaryTo}
+            primaryLabel={primaryLabel ?? defaults.primaryLabel}
+            primaryTo={primaryTo ?? defaults.primaryTo}
             showWhatsApp={showWhatsApp}
             className="mt-10"
           />

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Loader2, Send, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/cn'
-import { CONTACTO_SERVICIOS } from '@/data/contacto'
+import { useContactContent } from '@/hooks/useCms'
 import { submitContact } from '@/lib/contact/submitContact'
 
 const inputClass = cn(
@@ -36,12 +36,13 @@ const initialForm = {
 }
 
 export function ContactForm() {
-  const [form, setForm] = useState(initialForm)
+  const { form, servicios } = useContactContent()
+  const [formState, setFormState] = useState(initialForm)
   const [status, setStatus] = useState('idle')
   const [errorMessage, setErrorMessage] = useState('')
 
   const update = (field) => (e) => {
-    setForm((prev) => ({ ...prev, [field]: e.target.value }))
+    setFormState((prev) => ({ ...prev, [field]: e.target.value }))
     if (status === 'error') setStatus('idle')
   }
 
@@ -51,37 +52,37 @@ export function ContactForm() {
     setErrorMessage('')
 
     try {
-      await submitContact(form)
+      await submitContact(formState)
       setStatus('success')
-      setForm(initialForm)
+      setFormState(initialForm)
     } catch {
       setStatus('error')
-      setErrorMessage(
-        'No pudimos enviar su consulta en este momento. Intente nuevamente o contáctenos por teléfono o WhatsApp.',
-      )
+      setErrorMessage(form.error)
     }
   }
 
   const resetForm = () => {
     setStatus('idle')
     setErrorMessage('')
-    setForm(initialForm)
+    setFormState(initialForm)
   }
+
+  const fields = form.fields
 
   return (
     <div className="rounded-card border border-border bg-white p-6 shadow-card sm:p-8">
       <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-ink">
-        Ingrese los datos y nos contactaremos a la brevedad
+        {form.heading}
       </h2>
 
       {status === 'success' ? (
         <div className="mt-8 py-8 text-center">
-          <p className="text-lg font-semibold text-ink">Consulta enviada</p>
+          <p className="text-lg font-semibold text-ink">{form.success.title}</p>
           <p className="mt-3 text-sm leading-relaxed text-ink-muted">
-            Gracias por contactarnos. Revisaremos su mensaje y le responderemos a la brevedad.
+            {form.success.message}
           </p>
           <Button type="button" variant="secondary" className="mt-8" onClick={resetForm}>
-            Enviar otra consulta
+            {form.success.resetLabel}
           </Button>
         </div>
       ) : (
@@ -97,85 +98,85 @@ export function ContactForm() {
           )}
 
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Nombre" htmlFor="nombre" required>
+            <Field label={fields.nombre.label} htmlFor="nombre" required={fields.nombre.required}>
               <input
                 id="nombre"
                 name="nombre"
                 type="text"
                 required
-                value={form.nombre}
+                value={formState.nombre}
                 onChange={update('nombre')}
                 className={inputClass}
-                placeholder="Su nombre"
+                placeholder={fields.nombre.placeholder}
                 disabled={status === 'loading'}
               />
             </Field>
-            <Field label="Empresa" htmlFor="empresa">
+            <Field label={fields.empresa.label} htmlFor="empresa">
               <input
                 id="empresa"
                 name="empresa"
                 type="text"
-                value={form.empresa}
+                value={formState.empresa}
                 onChange={update('empresa')}
                 className={inputClass}
-                placeholder="Opcional"
+                placeholder={fields.empresa.placeholder}
                 disabled={status === 'loading'}
               />
             </Field>
           </div>
 
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Mail" htmlFor="mail" required>
+            <Field label={fields.mail.label} htmlFor="mail" required={fields.mail.required}>
               <input
                 id="mail"
                 name="mail"
                 type="email"
                 required
-                value={form.mail}
+                value={formState.mail}
                 onChange={update('mail')}
                 className={inputClass}
-                placeholder="correo@empresa.cl"
+                placeholder={fields.mail.placeholder}
                 disabled={status === 'loading'}
               />
             </Field>
-            <Field label="Teléfono" htmlFor="telefono">
+            <Field label={fields.telefono.label} htmlFor="telefono">
               <input
                 id="telefono"
                 name="telefono"
                 type="tel"
-                value={form.telefono}
+                value={formState.telefono}
                 onChange={update('telefono')}
                 className={inputClass}
-                placeholder="+56 9 ..."
+                placeholder={fields.telefono.placeholder}
                 disabled={status === 'loading'}
               />
             </Field>
           </div>
 
-          <Field label="Fax" htmlFor="fax">
+          <Field label={fields.fax.label} htmlFor="fax">
             <input
               id="fax"
               name="fax"
               type="tel"
-              value={form.fax}
+              value={formState.fax}
               onChange={update('fax')}
               className={inputClass}
-              placeholder="Opcional"
+              placeholder={fields.fax.placeholder}
               disabled={status === 'loading'}
             />
           </Field>
 
-          <Field label="Servicio de interés" htmlFor="servicio">
+          <Field label={fields.servicio.label} htmlFor="servicio">
             <select
               id="servicio"
               name="servicio"
-              value={form.servicio}
+              value={formState.servicio}
               onChange={update('servicio')}
               className={cn(inputClass, 'cursor-pointer')}
               disabled={status === 'loading'}
             >
-              <option value="">Seleccionar servicio...</option>
-              {CONTACTO_SERVICIOS.map((servicio) => (
+              <option value="">{fields.servicio.placeholder}</option>
+              {servicios.map((servicio) => (
                 <option key={servicio} value={servicio}>
                   {servicio}
                 </option>
@@ -183,16 +184,16 @@ export function ContactForm() {
             </select>
           </Field>
 
-          <Field label="Consulta" htmlFor="consulta" required>
+          <Field label={fields.consulta.label} htmlFor="consulta" required={fields.consulta.required}>
             <textarea
               id="consulta"
               name="consulta"
               rows={5}
               required
-              value={form.consulta}
+              value={formState.consulta}
               onChange={update('consulta')}
               className={cn(inputClass, 'resize-y min-h-[8rem]')}
-              placeholder="Describa su vehículo, necesidad de conversión o equipamiento..."
+              placeholder={fields.consulta.placeholder}
               disabled={status === 'loading'}
             />
           </Field>
@@ -201,11 +202,11 @@ export function ContactForm() {
             {status === 'loading' ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Enviando...
+                {form.submit.loading}
               </>
             ) : (
               <>
-                Enviar consulta
+                {form.submit.idle}
                 <Send className="h-4 w-4" strokeWidth={1.75} />
               </>
             )}

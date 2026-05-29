@@ -1,0 +1,29 @@
+/**
+ * Contrato canónico Contacto — debe coincidir con ContactContentSchema (Zod).
+ */
+export const ContactContentContract = {
+  hero: { eyebrow: '', title: '', subtitle: '', imageAlt: '' },
+  intro: { formHint: '' },
+  details: {
+    title: '',
+    description: '',
+    cards: {
+      phone: '',
+      email: '',
+      address: '',
+      hours: { title: '', lines: [] },
+    },
+  },
+  cta: { title: '', description: '', primaryLabel: '', primaryTo: '' },
+  map: { eyebrow: '', title: '', iframeTitle: '' },
+  faq: { eyebrow: '', title: '', description: '' },
+  form: {
+    heading: '',
+    fields: {},
+    submit: { idle: '', loading: '' },
+    success: { title: '', message: '', resetLabel: '' },
+    error: '',
+  },
+  servicios: [],
+  faqItems: [],
+}

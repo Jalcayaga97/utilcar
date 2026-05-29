@@ -4,7 +4,7 @@ import { ChevronDown, Check } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { getVentanasMarcaGallery } from '@/assets/images'
 import { BrandImageGallery } from '@/components/ui/BrandImageGallery'
-import { VENTANAS_BRANDS } from '@/data/ventanasLunetas'
+import { useVentanasBrands } from '@/hooks/useCms'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
@@ -81,8 +81,9 @@ function BrandContent({ brand }) {
 }
 
 export function BrandEquipmentPanel() {
-  const [activeId, setActiveId] = useState(VENTANAS_BRANDS[0].id)
-  const active = VENTANAS_BRANDS.find((b) => b.id === activeId) ?? VENTANAS_BRANDS[0]
+  const ventanasBrands = useVentanasBrands()
+  const [activeId, setActiveId] = useState(() => ventanasBrands[0]?.id)
+  const active = ventanasBrands.find((b) => b.id === activeId) ?? ventanasBrands[0]
 
   return (
     <div>
@@ -92,7 +93,7 @@ export function BrandEquipmentPanel() {
         role="tablist"
         aria-label="Marcas de vehículos"
       >
-        {VENTANAS_BRANDS.map((brand) => {
+        {ventanasBrands.map((brand) => {
           const isActive = activeId === brand.id
           return (
             <button
@@ -122,7 +123,7 @@ export function BrandEquipmentPanel() {
 
       {/* Acordeón mobile */}
       <div className="space-y-2 lg:hidden" role="tablist" aria-label="Marcas de vehículos">
-        {VENTANAS_BRANDS.map((brand) => {
+        {ventanasBrands.map((brand) => {
           const isOpen = activeId === brand.id
           return (
             <div

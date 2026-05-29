@@ -1,16 +1,20 @@
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Wrench } from 'lucide-react'
 import { cn } from '@/lib/cn'
-import { SERVICES } from '@/data/services'
+import { mapContractItemsForMainServices } from '@/lib/cms/contracts/servicesContract'
+import { useHomeContent, useServices } from '@/hooks/useCms'
 import { getServiceImage } from '@/assets/images'
 import { Section, SectionHeader } from '@/components/ui/Section'
 
 const ease = [0.25, 0.1, 0.25, 1]
+const FALLBACK_ICON = Wrench
 
-function ServiceCard({ service, index }) {
-  const Icon = service.icon
+function ServiceCard({ service, index, cardLinkLabel }) {
+  const Icon = service.icon ?? FALLBACK_ICON
   const image = getServiceImage(service.id)
+  const linkLabel = service.cardLinkLabel ?? cardLinkLabel
 
   return (
     <motion.li
@@ -69,7 +73,7 @@ function ServiceCard({ service, index }) {
               {service.description}
             </p>
             <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-ink">
-              Ver más
+              {linkLabel}
               <ArrowRight
                 className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
                 strokeWidth={2}
@@ -82,18 +86,43 @@ function ServiceCard({ service, index }) {
   )
 }
 
-export function MainServices() {
+/**
+ * @param {{ activeSection?: object | null }} props
+ * activeSection — getActiveServicesSection(extensions) desde Home cuando resolver ON.
+ */
+export function MainServices({ activeSection = null }) {
+  const { services: legacyServicesMeta } = useHomeContent()
+  const legacyServices = useServices()
+
+  const sectionMeta = activeSection ?? legacyServicesMeta
+  const defaultCardLinkLabel = sectionMeta.cardLinkLabel || 'Ver más'
+
+  const services = useMemo(() => {
+    if (!activeSection?.items?.length) return legacyServices
+
+    return mapContractItemsForMainServices(
+      activeSection.items,
+      legacyServices,
+      defaultCardLinkLabel,
+    )
+  }, [activeSection, legacyServices, defaultCardLinkLabel])
+
   return (
     <Section className="bg-white">
       <SectionHeader
-        eyebrow="Servicios"
-        title="Servicios principales"
-        description="Áreas de especialización en conversiones y equipamiento vehicular para flotas, empresas e instituciones."
+        eyebrow={sectionMeta.eyebrow}
+        title={sectionMeta.title}
+        description={sectionMeta.description}
       />
 
       <ul className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7">
-        {SERVICES.map((service, index) => (
-          <ServiceCard key={service.id} service={service} index={index} />
+        {services.map((service, index) => (
+          <ServiceCard
+            key={service.id}
+            service={service}
+            index={index}
+            cardLinkLabel={defaultCardLinkLabel}
+          />
         ))}
       </ul>
     </Section>

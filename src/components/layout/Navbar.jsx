@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown, Menu, X } from 'lucide-react'
 import { cn } from '@/lib/cn'
-import { MAIN_NAV_LINKS, SERVICE_LINKS } from '@/data/navigation'
+import { useMainNavLinks, useServiceLinks } from '@/hooks/useCms'
 import { Logo } from '@/components/brand/Logo'
 import { NavServicesDropdown } from '@/components/layout/NavServicesDropdown'
 import { Container } from '@/components/ui/Container'
@@ -18,6 +18,8 @@ const navItemClass = (isActive) =>
   )
 
 export function Navbar() {
+  const mainNavLinks = useMainNavLinks()
+  const serviceLinks = useServiceLinks()
   const [open, setOpen] = useState(false)
   const [servicesOpen, setServicesOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -74,7 +76,7 @@ export function Navbar() {
 
               <NavServicesDropdown />
 
-              {MAIN_NAV_LINKS.filter((l) => l.path !== '/').map((link) => (
+              {mainNavLinks.filter((l) => l.path !== '/').map((link) => (
                 <li key={link.path}>
                   <NavLink
                     to={link.path}
@@ -168,7 +170,7 @@ export function Navbar() {
                         className="overflow-hidden"
                       >
                         <ul className="mt-0.5 space-y-0.5 border-l border-border py-1 pl-3 ml-3">
-                          {SERVICE_LINKS.map((link) => (
+                          {serviceLinks.map((link) => (
                             <li key={link.path}>
                               <NavLink
                                 to={link.path}
@@ -192,7 +194,7 @@ export function Navbar() {
                   </AnimatePresence>
                 </div>
 
-                {MAIN_NAV_LINKS.filter((l) => l.path !== '/').map((link) => (
+                {mainNavLinks.filter((l) => l.path !== '/').map((link) => (
                   <NavLink
                     key={link.path}
                     to={link.path}

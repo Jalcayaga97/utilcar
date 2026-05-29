@@ -6,15 +6,15 @@ import { ServiceCtaDark } from '@/components/sections/ServiceCtaDark'
 import { Section, SectionHeader } from '@/components/ui/Section'
 import { ImageGallery } from '@/components/ui/ImageGallery'
 import { IMAGES } from '@/assets/images'
-import { ESCOLAR_INTRO, ESCOLAR_SECTIONS } from '@/data/equipamientoEscolar'
+import { useEquipamientoEscolarContent } from '@/hooks/useCms'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
-function SpecBlock({ title, items }) {
+function SpecBlock({ title: blockTitle, items }) {
   return (
     <div className="rounded-lg border border-border bg-white p-5 sm:p-6">
       <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-ink">
-        {title}
+        {blockTitle}
       </h3>
       <ul className="mt-4 space-y-2.5">
         {items.map((item) => (
@@ -31,21 +31,21 @@ function SpecBlock({ title, items }) {
 }
 
 export default function EquipamientoEscolar() {
-  const { title, paragraphs } = ESCOLAR_INTRO
+  const { hero, intro, specs, gallery, cta } = useEquipamientoEscolarContent()
+  const { title, paragraphs } = intro
 
   return (
     <>
       <PageMeta page="equipamiento-escolar" />
 
       <ServicePageHero
-        eyebrow="Servicios"
-        title="Equipamiento Escolar"
-        subtitle="Transformación y equipamiento de vehículos escolares según normativas y requerimientos de transporte."
+        eyebrow={hero.eyebrow}
+        title={hero.title}
+        subtitle={hero.subtitle}
         image={IMAGES.escolar.hero}
-        imageAlt="Equipamiento escolar instalado en vehículo de transporte de pasajeros por Utilcar"
+        imageAlt={hero.imageAlt}
       />
 
-      {/* Introducción técnica */}
       <Section>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -55,7 +55,7 @@ export default function EquipamientoEscolar() {
           className="mx-auto max-w-3xl"
         >
           <SectionHeader
-            eyebrow="Especialidad"
+            eyebrow={intro.eyebrow}
             title={title}
             className="mb-8"
           />
@@ -69,12 +69,11 @@ export default function EquipamientoEscolar() {
         </motion.div>
       </Section>
 
-      {/* Bloques técnicos */}
       <Section className="bg-white">
         <SectionHeader
-          eyebrow="Especificaciones"
-          title="Alcance del equipamiento"
-          description="Soluciones integrales para transporte escolar: seguridad, interior, configuración y opcionales según normativa vigente."
+          eyebrow={specs.eyebrow}
+          title={specs.title}
+          description={specs.description}
           align="center"
           className="mx-auto max-w-2xl"
         />
@@ -85,18 +84,17 @@ export default function EquipamientoEscolar() {
           transition={{ duration: 0.5, ease }}
           className="mt-12 grid gap-4 sm:grid-cols-2 lg:gap-6"
         >
-          {ESCOLAR_SECTIONS.map((block) => (
+          {specs.sections.map((block) => (
             <SpecBlock key={block.title} title={block.title} items={block.items} />
           ))}
         </motion.div>
       </Section>
 
-      {/* Galería */}
       <Section>
         <SectionHeader
-          eyebrow="Galería"
-          title="Trabajos de equipamiento escolar"
-          description="Registro visual de conversiones reales: butacas, distribución interior, señalética y terminaciones en taller Utilcar."
+          eyebrow={gallery.eyebrow}
+          title={gallery.title}
+          description={gallery.description}
           align="center"
           className="mx-auto max-w-2xl"
         />
@@ -111,10 +109,7 @@ export default function EquipamientoEscolar() {
         </motion.div>
       </Section>
 
-      <ServiceCtaDark
-        title="Solicite equipamiento escolar a medida"
-        description="Relevamos su vehículo, definimos la distribución de plazas, materiales y señalética según normativa, y fabricamos con instalación en taller Utilcar."
-      />
+      <ServiceCtaDark title={cta.title} description={cta.description} />
     </>
   )
 }

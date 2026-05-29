@@ -4,26 +4,26 @@ import { ServicePageHero } from '@/components/sections/ServicePageHero'
 import { ServiceCtaDark } from '@/components/sections/ServiceCtaDark'
 import { TrabajosPortfolio } from '@/components/sections/TrabajosPortfolio'
 import { Section, SectionHeader } from '@/components/ui/Section'
-import {
-  TRABAJOS_PAGE_HERO,
-  TRABAJOS_PORTFOLIO_INTRO,
-} from '@/data/trabajosPortfolio'
+import { useTrabajosPageHero, useWorkContent } from '@/hooks/useCms'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
 export default function Trabajos() {
-  const { title, paragraphs } = TRABAJOS_PORTFOLIO_INTRO
+  const workContent = useWorkContent()
+  const trabajosPageHero = useTrabajosPageHero()
+  const { page } = workContent
+  const { title, paragraphs } = page.intro
 
   return (
     <>
       <PageMeta page="trabajos-realizados" />
 
       <ServicePageHero
-        eyebrow="Portfolio"
-        title="Trabajos Realizados"
-        subtitle="Proyectos y conversiones desarrolladas por Utilcar Conversiones para transporte, equipamiento y vehículos especiales."
-        image={TRABAJOS_PAGE_HERO}
-        imageAlt="Conversión de vehículo utilitario realizada por Utilcar Conversiones"
+        eyebrow={page.hero.eyebrow}
+        title={page.hero.title}
+        subtitle={page.hero.subtitle}
+        image={trabajosPageHero}
+        imageAlt={page.hero.imageAlt}
       />
 
       <Section>
@@ -34,7 +34,7 @@ export default function Trabajos() {
           transition={{ duration: 0.5, ease }}
           className="mx-auto max-w-3xl"
         >
-          <SectionHeader eyebrow="Experiencia" title={title} className="mb-8" />
+          <SectionHeader eyebrow={page.intro.eyebrow} title={title} className="mb-8" />
           <div className="space-y-5">
             {paragraphs.map((paragraph) => (
               <p
@@ -50,9 +50,9 @@ export default function Trabajos() {
 
       <Section className="bg-white">
         <SectionHeader
-          eyebrow="Proyectos"
-          title="Registro de trabajos"
-          description="Filtra por línea de servicio y amplía cada proyecto para ver el detalle de la conversión."
+          eyebrow={page.projects.eyebrow}
+          title={page.projects.title}
+          description={page.projects.description}
           align="center"
           className="mx-auto max-w-2xl"
         />
@@ -68,8 +68,8 @@ export default function Trabajos() {
       </Section>
 
       <ServiceCtaDark
-        title="¿Necesitas una conversión personalizada?"
-        description="Desarrollamos soluciones para transporte, equipamiento y trabajo en terreno según los requerimientos de cada cliente."
+        title={page.cta.title}
+        description={page.cta.description}
       />
     </>
   )

@@ -5,13 +5,9 @@ import { cn } from '@/lib/cn'
 import { Button } from '@/components/ui/Button'
 import { SmartImage } from '@/components/ui/SmartImage'
 import { GalleryLightbox } from '@/components/ui/GalleryLightbox'
-import {
-  TRABAJOS_FILTERS,
-  TRABAJOS_PORTFOLIO,
-} from '@/data/trabajosPortfolio'
+import { useWorkContent } from '@/hooks/useCms'
 
 const ease = [0.25, 0.1, 0.25, 1]
-const PAGE_SIZE = 12
 
 function FilterTabDesktop({ filter, isActive, onSelect }) {
   return (
@@ -109,14 +105,17 @@ const PortfolioCard = memo(function PortfolioCard({ item, index, onOpen }) {
 })
 
 export function TrabajosPortfolio() {
+  const { filters, portfolio, ui } = useWorkContent()
+  const pageSize = ui.pageSize
+
   const [activeFilter, setActiveFilter] = useState('all')
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
+  const [visibleCount, setVisibleCount] = useState(pageSize)
   const [lightboxIndex, setLightboxIndex] = useState(null)
 
   const filtered = useMemo(() => {
-    if (activeFilter === 'all') return TRABAJOS_PORTFOLIO
-    return TRABAJOS_PORTFOLIO.filter((p) => p.categoryId === activeFilter)
-  }, [activeFilter])
+    if (activeFilter === 'all') return portfolio
+    return portfolio.filter((p) => p.categoryId === activeFilter)
+  }, [activeFilter, portfolio])
 
   const visibleItems = useMemo(
     () => filtered.slice(0, visibleCount),
@@ -127,8 +126,8 @@ export function TrabajosPortfolio() {
 
   const handleSelectFilter = useCallback((filterId) => {
     setActiveFilter(filterId)
-    setVisibleCount(PAGE_SIZE)
-  }, [])
+    setVisibleCount(pageSize)
+  }, [pageSize])
 
   const openLightbox = useCallback(
     (id) => {
@@ -139,17 +138,17 @@ export function TrabajosPortfolio() {
   )
 
   const loadMore = useCallback(() => {
-    setVisibleCount((count) => Math.min(count + PAGE_SIZE, filtered.length))
-  }, [filtered.length])
+    setVisibleCount((count) => Math.min(count + pageSize, filtered.length))
+  }, [filtered.length, pageSize])
 
   return (
     <div>
       <div
         className="hidden border-b border-border lg:flex lg:flex-wrap lg:gap-1"
         role="tablist"
-        aria-label="Filtrar trabajos por categoría"
+        aria-label={ui.filterAriaLabel}
       >
-        {TRABAJOS_FILTERS.map((filter) => (
+        {filters.map((filter) => (
           <FilterTabDesktop
             key={filter.id}
             filter={filter}
@@ -162,9 +161,9 @@ export function TrabajosPortfolio() {
       <div
         className="flex snap-x snap-mandatory gap-2 overflow-x-auto rounded-card border border-border bg-surface p-1.5 [-ms-overflow-style:none] [scrollbar-width:none] lg:hidden [&::-webkit-scrollbar]:hidden"
         role="tablist"
-        aria-label="Filtrar trabajos por categoría"
+        aria-label={ui.filterAriaLabel}
       >
-        {TRABAJOS_FILTERS.map((filter) => (
+        {filters.map((filter) => (
           <FilterTabMobile
             key={filter.id}
             filter={filter}
@@ -177,7 +176,7 @@ export function TrabajosPortfolio() {
       <div className="mt-10" role="tabpanel">
         {filtered.length === 0 ? (
           <p className="py-12 text-center text-sm text-ink-muted">
-            No hay trabajos en esta categoría.
+            {ui.emptyMessage}
           </p>
         ) : (
           <>
@@ -195,7 +194,7 @@ export function TrabajosPortfolio() {
             {hasMore && (
               <div className="mt-10 flex justify-center">
                 <Button type="button" variant="secondary" onClick={loadMore}>
-                  Cargar más
+                  {ui.loadMoreLabel}
                 </Button>
               </div>
             )}

@@ -7,26 +7,25 @@ import { BrandEquipmentPanel } from '@/components/sections/BrandEquipmentPanel'
 import { Section, SectionHeader } from '@/components/ui/Section'
 import { ImageGallery } from '@/components/ui/ImageGallery'
 import { IMAGES } from '@/assets/images'
-import { VENTANAS_INTRO } from '@/data/ventanasLunetas'
+import { useVentanasLunetasContent } from '@/hooks/useCms'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
 export default function VentanasLunetas() {
-  const { title, paragraphs, procesoTemplado, especificaciones } = VENTANAS_INTRO
-
+  const { hero, intro, gallery, brands, cta } = useVentanasLunetasContent()
+  const { title, paragraphs, procesoTemplado, especificaciones } = intro
   return (
     <>
       <PageMeta page="ventanas-lunetas" />
 
       <ServicePageHero
-        eyebrow="Servicios"
-        title="Ventanas y Lunetas"
-        subtitle="Instalación y fabricación de ventanas para vehículos utilitarios, minibuses y transporte especializado."
+        eyebrow={hero.eyebrow}
+        title={hero.title}
+        subtitle={hero.subtitle}
         image={IMAGES.ventanas.hero}
-        imageAlt="Ventanas y lunetas instaladas en vehículo utilitario por Utilcar"
+        imageAlt={hero.imageAlt}
       />
 
-      {/* Introducción técnica */}
       <Section>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -36,7 +35,7 @@ export default function VentanasLunetas() {
           className="mx-auto max-w-3xl"
         >
           <SectionHeader
-            eyebrow="Especificaciones"
+            eyebrow={intro.eyebrow}
             title={title}
             className="mb-8"
           />
@@ -69,12 +68,11 @@ export default function VentanasLunetas() {
         </motion.div>
       </Section>
 
-      {/* Galería */}
       <Section className="bg-white">
         <SectionHeader
-          eyebrow="Galería"
-          title="Trabajos de ventanas y lunetas"
-          description="Instalaciones realizadas con marco de aluminio electropintado, vidrios templados y terminación profesional."
+          eyebrow={gallery.eyebrow}
+          title={gallery.title}
+          description={gallery.description}
           align="center"
           className="mx-auto max-w-2xl"
         />
@@ -89,12 +87,11 @@ export default function VentanasLunetas() {
         </motion.div>
       </Section>
 
-      {/* Equipamiento por marca */}
       <Section>
         <SectionHeader
-          eyebrow="Por marca"
-          title="Equipamiento por marca"
-          description="Soluciones de ventanas, asientos, seguridad, interior y opcionales organizadas según cada fabricante."
+          eyebrow={brands.eyebrow}
+          title={brands.title}
+          description={brands.description}
           align="center"
           className="mx-auto max-w-2xl"
         />
@@ -103,10 +100,7 @@ export default function VentanasLunetas() {
         </div>
       </Section>
 
-      <ServiceCtaDark
-        title="Solicite una solución personalizada para su operación"
-        description="Relevamos su vehículo, definimos el kit de ventanas o equipamiento y fabricamos con materiales certificados e instalación en taller Utilcar."
-      />
+      <ServiceCtaDark title={cta.title} description={cta.description} />
     </>
   )
 }

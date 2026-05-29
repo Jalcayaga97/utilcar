@@ -6,11 +6,7 @@ import { ServiceCtaDark } from '@/components/sections/ServiceCtaDark'
 import { Section, SectionHeader } from '@/components/ui/Section'
 import { ImageGallery } from '@/components/ui/ImageGallery'
 import { IMAGES } from '@/assets/images'
-import {
-  TALLERES_INTRO,
-  TALLERES_SOLUCIONES,
-  TALLERES_CARACTERISTICAS,
-} from '@/data/talleresMoviles'
+import { useTalleresMovilesContent } from '@/hooks/useCms'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
@@ -35,19 +31,20 @@ function BulletList({ items, title }) {
 }
 
 export default function TalleresMoviles() {
+  const { hero, intro, scope, gallery } = useTalleresMovilesContent()
+
   return (
     <>
       <PageMeta page="talleres-moviles" />
 
       <ServicePageHero
-        eyebrow="Servicios"
-        title="Talleres Móviles"
-        subtitle="Soluciones móviles para trabajo en terreno"
+        eyebrow={hero.eyebrow}
+        title={hero.title}
+        subtitle={hero.subtitle}
         image={IMAGES.talleres.hero}
-        imageAlt="Taller móvil equipado por Utilcar para trabajo en terreno"
+        imageAlt={hero.imageAlt}
       />
 
-      {/* Introducción técnica */}
       <Section>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -57,12 +54,12 @@ export default function TalleresMoviles() {
           className="mx-auto max-w-3xl"
         >
           <SectionHeader
-            eyebrow="Especialidad"
-            title="Vehículos adaptados para operación en terreno"
+            eyebrow={intro.eyebrow}
+            title={intro.title}
             className="mb-8"
           />
           <div className="space-y-5">
-            {TALLERES_INTRO.map((paragraph) => (
+            {intro.paragraphs.map((paragraph) => (
               <p key={paragraph} className="text-base leading-relaxed text-ink-muted sm:text-lg">
                 {paragraph}
               </p>
@@ -71,12 +68,11 @@ export default function TalleresMoviles() {
         </motion.div>
       </Section>
 
-      {/* Soluciones y características */}
       <Section className="bg-white">
         <SectionHeader
-          eyebrow="Alcance"
-          title="Soluciones y características"
-          description="Diseño y fabricación de unidades móviles con foco en funcionalidad, resistencia y terminaciones profesionales."
+          eyebrow={scope.eyebrow}
+          title={scope.title}
+          description={scope.description}
           align="center"
           className="mx-auto max-w-2xl"
         />
@@ -87,17 +83,22 @@ export default function TalleresMoviles() {
           transition={{ duration: 0.5, ease }}
           className="mt-12 grid gap-6 lg:grid-cols-2 lg:gap-8"
         >
-          <BulletList title="Tipos de solución" items={TALLERES_SOLUCIONES} />
-          <BulletList title="Características" items={TALLERES_CARACTERISTICAS} />
+          <BulletList
+            title={scope.lists.soluciones.title}
+            items={scope.lists.soluciones.items}
+          />
+          <BulletList
+            title={scope.lists.caracteristicas.title}
+            items={scope.lists.caracteristicas.items}
+          />
         </motion.div>
       </Section>
 
-      {/* Galería */}
       <Section>
         <SectionHeader
-          eyebrow="Galería"
-          title="Trabajos realizados"
-          description="Conversiones reales de vehículos para talleres móviles y uso técnico en terreno."
+          eyebrow={gallery.eyebrow}
+          title={gallery.title}
+          description={gallery.description}
           align="center"
           className="mx-auto max-w-2xl"
         />

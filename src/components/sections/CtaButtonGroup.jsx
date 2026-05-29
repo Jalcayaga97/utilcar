@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, MessageCircle } from 'lucide-react'
 import { SITE } from '@/constants/site'
+import { useCtaButtonLabels } from '@/hooks/useCms'
 import { cn } from '@/lib/cn'
 
 const btnBase = cn(
@@ -57,18 +58,21 @@ const variants = {
 
 export function CtaButtonGroup({
   variant = 'dark',
-  primaryLabel = 'Solicitar cotización',
-  primaryTo = '/contacto',
+  primaryLabel,
+  primaryTo,
   className,
   showWhatsApp = true,
   align = 'center',
 }) {
+  const labels = useCtaButtonLabels()
+  const resolvedPrimaryLabel = primaryLabel ?? labels.primaryLabel
+  const resolvedPrimaryTo = primaryTo ?? labels.primaryTo
   const styles = variants[variant] ?? variants.dark
-  const isHashLink = primaryTo.startsWith('#')
+  const isHashLink = resolvedPrimaryTo.startsWith('#')
   const PrimaryTag = isHashLink ? 'a' : Link
   const primaryProps = isHashLink
-    ? { href: primaryTo }
-    : { to: primaryTo }
+    ? { href: resolvedPrimaryTo }
+    : { to: resolvedPrimaryTo }
 
   return (
     <div
@@ -81,9 +85,11 @@ export function CtaButtonGroup({
       <PrimaryTag
         {...primaryProps}
         className={styles.primary}
-        aria-label={isHashLink ? primaryLabel : `${primaryLabel} — Utilcar Conversiones`}
+        aria-label={
+          isHashLink ? resolvedPrimaryLabel : `${resolvedPrimaryLabel} — Utilcar Conversiones`
+        }
       >
-        {primaryLabel}
+        {resolvedPrimaryLabel}
         <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
       </PrimaryTag>
 
@@ -96,7 +102,7 @@ export function CtaButtonGroup({
           aria-label="Contactar a Utilcar por WhatsApp"
         >
           <MessageCircle className="h-4 w-4 shrink-0" strokeWidth={1.5} aria-hidden />
-          Contactar por WhatsApp
+          {labels.whatsAppLabel}
         </a>
       )}
     </div>

@@ -2,16 +2,17 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/cn'
-import { CONTACTO_FAQ } from '@/data/contacto'
+import { useContactContent } from '@/hooks/useCms'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
 export function ContactFaq() {
+  const { faqItems: contactoFaq } = useContactContent()
   const [openId, setOpenId] = useState(null)
 
   return (
     <div className="mx-auto max-w-3xl space-y-2">
-      {CONTACTO_FAQ.map((item) => {
+      {contactoFaq.map((item) => {
         const isOpen = openId === item.id
         return (
           <div

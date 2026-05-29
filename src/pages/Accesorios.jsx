@@ -5,23 +5,23 @@ import { ServiceCtaDark } from '@/components/sections/ServiceCtaDark'
 import { AccesoriosCategoryPanel } from '@/components/sections/AccesoriosCategoryPanel'
 import { Section, SectionHeader } from '@/components/ui/Section'
 import { IMAGES } from '@/assets/images'
-import { ACCESORIOS_PAGE_INTRO } from '@/data/accesorios'
+import { useAccesoriosContent } from '@/hooks/useCms'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
 export default function Accesorios() {
-  const { title, paragraphs } = ACCESORIOS_PAGE_INTRO
-
+  const { hero, intro, catalog, cta } = useAccesoriosContent()
+  const { title, paragraphs } = intro
   return (
     <>
       <PageMeta page="accesorios" />
 
       <ServicePageHero
-        eyebrow="Servicios"
-        title="Accesorios"
-        subtitle="Accesorios diseñados para mejorar la comodidad, seguridad y funcionalidad de cada vehículo."
+        eyebrow={hero.eyebrow}
+        title={hero.title}
+        subtitle={hero.subtitle}
         image={IMAGES.accesorios.hero}
-        imageAlt="Cabeceras y accesorios Utilcar para equipamiento de vehículos"
+        imageAlt={hero.imageAlt}
       />
 
       <Section>
@@ -33,7 +33,7 @@ export default function Accesorios() {
           className="mx-auto max-w-3xl"
         >
           <SectionHeader
-            eyebrow="Complementos"
+            eyebrow={intro.eyebrow}
             title={title}
             className="mb-8"
           />
@@ -52,9 +52,9 @@ export default function Accesorios() {
 
       <Section className="bg-white">
         <SectionHeader
-          eyebrow="Catálogo técnico"
-          title="Líneas de accesorios"
-          description="Seleccione una categoría para ver especificaciones, registro visual y detalle de cada producto."
+          eyebrow={catalog.eyebrow}
+          title={catalog.title}
+          description={catalog.description}
           align="center"
           className="mx-auto max-w-2xl"
         />
@@ -69,10 +69,7 @@ export default function Accesorios() {
         </motion.div>
       </Section>
 
-      <ServiceCtaDark
-        title="Consulte accesorios para su equipamiento"
-        description="Asesoramos en cabeceras, apoya brazos, balizas y señalética escolar según su vehículo y normativa. Fabricación e instalación en taller Utilcar."
-      />
+      <ServiceCtaDark title={cta.title} description={cta.description} />
     </>
   )
 }

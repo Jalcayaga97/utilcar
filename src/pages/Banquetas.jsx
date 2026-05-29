@@ -5,27 +5,29 @@ import { ServiceCtaDark } from '@/components/sections/ServiceCtaDark'
 import { BanquetasCategoryPanel } from '@/components/sections/BanquetasCategoryPanel'
 import { Section, SectionHeader } from '@/components/ui/Section'
 import { IMAGES } from '@/assets/images'
+import { useBanquetasContent } from '@/hooks/useCms'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
 export default function Banquetas() {
+  const { hero, categories, cta } = useBanquetasContent()
   return (
     <>
       <PageMeta page="banquetas" />
 
       <ServicePageHero
-        eyebrow="Servicios"
-        title="Banquetas"
-        subtitle="Fabricación de banquetas y equipamiento para transporte de personal, minibuses y vehículos escolares."
+        eyebrow={hero.eyebrow}
+        title={hero.title}
+        subtitle={hero.subtitle}
         image={IMAGES.banquetas.hero}
-        imageAlt="Banquetas fabricadas por Utilcar para minibuses y transporte de pasajeros"
+        imageAlt={hero.imageAlt}
       />
 
       <Section>
         <SectionHeader
-          eyebrow="Líneas de producto"
-          title="Banquetas por aplicación"
-          description="Tres líneas de fabricación con especificaciones técnicas, opciones de equipamiento y registro visual de trabajos reales."
+          eyebrow={categories.eyebrow}
+          title={categories.title}
+          description={categories.description}
           align="center"
           className="mx-auto max-w-2xl"
         />
@@ -40,10 +42,7 @@ export default function Banquetas() {
         </motion.div>
       </Section>
 
-      <ServiceCtaDark
-        title="Solicite banquetas a medida para su flota"
-        description="Definimos la línea de producto, distribución de plazas, tapizados y anclajes según su vehículo y normativa. Fabricación e instalación en taller Utilcar."
-      />
+      <ServiceCtaDark title={cta.title} description={cta.description} />
     </>
   )
 }

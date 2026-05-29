@@ -1,8 +1,8 @@
 import { cn } from '@/lib/cn'
 import { getTrabajoImage } from '@/assets/images'
 
-export function WorkCardImage({ imageKey, alt, className }) {
-  const src = imageKey ? getTrabajoImage(imageKey) : null
+export function WorkCardImage({ imageKey, src: srcOverride, alt, className }) {
+  const src = srcOverride ?? (imageKey ? getTrabajoImage(imageKey) : null)
 
   if (!src) {
     return (

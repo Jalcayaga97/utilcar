@@ -4,7 +4,7 @@ import { Check } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { getBanquetasCategoryGallery } from '@/assets/images'
 import { BrandImageGallery } from '@/components/ui/BrandImageGallery'
-import { BANQUETAS_CATEGORIES } from '@/data/banquetas'
+import { useBanquetasCategories } from '@/hooks/useCms'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
@@ -141,9 +141,10 @@ function CategoryTabMobile({ category, isActive, onSelect }) {
 }
 
 export function BanquetasCategoryPanel() {
-  const [activeId, setActiveId] = useState(BANQUETAS_CATEGORIES[0].id)
+  const banquetasCategories = useBanquetasCategories()
+  const [activeId, setActiveId] = useState(() => banquetasCategories[0]?.id)
   const active =
-    BANQUETAS_CATEGORIES.find((c) => c.id === activeId) ?? BANQUETAS_CATEGORIES[0]
+    banquetasCategories.find((c) => c.id === activeId) ?? banquetasCategories[0]
 
   return (
     <div>
@@ -153,7 +154,7 @@ export function BanquetasCategoryPanel() {
         role="tablist"
         aria-label="Líneas de banquetas"
       >
-        {BANQUETAS_CATEGORIES.map((category) => (
+        {banquetasCategories.map((category) => (
           <CategoryTabDesktop
             key={category.id}
             category={category}
@@ -169,7 +170,7 @@ export function BanquetasCategoryPanel() {
         role="tablist"
         aria-label="Líneas de banquetas"
       >
-        {BANQUETAS_CATEGORIES.map((category) => (
+        {banquetasCategories.map((category) => (
           <CategoryTabMobile
             key={category.id}
             category={category}

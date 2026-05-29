@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/lib/cn'
-import { SERVICE_LINKS, SERVICE_PATHS } from '@/data/navigation'
+import { useServiceLinks, useServicePaths } from '@/hooks/useCms'
 import { useClickOutside } from '@/hooks/useClickOutside'
 
 const triggerClass = (active, open) =>
@@ -16,13 +16,15 @@ const triggerClass = (active, open) =>
   )
 
 export function NavServicesDropdown({ onNavigate }) {
+  const serviceLinks = useServiceLinks()
+  const servicePaths = useServicePaths()
   const [open, setOpen] = useState(false)
   const containerRef = useRef(null)
   const closeTimer = useRef(null)
   const menuId = useId()
   const { pathname } = useLocation()
 
-  const isActive = SERVICE_PATHS.includes(pathname)
+  const isActive = servicePaths.includes(pathname)
 
   const close = useCallback(() => setOpen(false), [])
   const openMenu = useCallback(() => {
@@ -89,7 +91,7 @@ export function NavServicesDropdown({ onNavigate }) {
             onMouseLeave={scheduleClose}
           >
             <ul className="flex flex-col">
-              {SERVICE_LINKS.map((link) => (
+              {serviceLinks.map((link) => (
                 <li key={link.path} role="none">
                   <NavLink
                     to={link.path}
