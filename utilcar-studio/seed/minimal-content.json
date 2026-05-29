@@ -1,0 +1,268 @@
+{
+  "homePage": {
+    "_id": "homePage",
+    "_type": "homePage",
+    "schemaVersion": 1,
+    "hero": {
+      "title": "Conversiones automotrices profesionales",
+      "subtitle": "Especialistas en ventanas, banquetas, equipamiento escolar y talleres móviles.",
+      "highlights": [
+        "Fabricación personalizada",
+        "Equipamiento certificado",
+        "Terminaciones profesionales"
+      ],
+      "secondaryLink": {
+        "label": "Ver trabajos realizados",
+        "to": "/trabajos-realizados",
+        "ariaLabel": "Ver trabajos realizados por Utilcar"
+      },
+      "imageAlt": "Interior de van con banquetas y piso técnico instalado por Utilcar Conversiones"
+    },
+    "services": {
+      "eyebrow": "Servicios",
+      "title": "Servicios principales",
+      "description": "Áreas de especialización en conversiones y equipamiento vehicular para flotas, empresas e instituciones.",
+      "cardLinkLabel": "Ver más"
+    },
+    "especialidades": {
+      "eyebrow": "Especialidades",
+      "title": "Especialidades Utilcar",
+      "description": "Ingeniería, fabricación e instalación con materiales certificados, procesos controlados y cumplimiento normativo.",
+      "itemEyebrowPrefix": "Especialidad",
+      "items": [
+        {
+          "id": "furgones",
+          "title": "Equipamiento para Furgones",
+          "subtitle": "Instalación de vidrios laterales",
+          "intro": "Nuestra empresa ofrece instalación de ventanas para todo tipo de furgones, utilizando materiales de alta calidad y terminaciones profesionales.",
+          "specGroups": [
+            {
+              "title": "Especificaciones",
+              "items": [
+                "2 ventanas correderas fabricadas en marco de aluminio electropintado.",
+                "Sistema con bota aguas y felpa para un deslizamiento suave de los vidrios.",
+                "Vidrios templados con seguro perforado para mayor seguridad y resistencia."
+              ]
+            }
+          ],
+          "cta": { "label": "Ver ventanas y lunetas", "path": "/ventanas-lunetas" },
+          "imageAlt": "Ventanas laterales corredizas para furgón"
+        },
+        {
+          "id": "escolar",
+          "title": "Conversión de Buses Escolares",
+          "subtitle": "Equipamiento Escolar",
+          "intro": "Nuestros equipamientos escolares cumplen con todas las normas exigidas por el Ministerio de Transporte, utilizando materiales pensados para ofrecer seguridad, resistencia y larga vida útil.",
+          "specGroups": [
+            {
+              "title": "Características del equipamiento",
+              "items": [
+                "Asiento de espuma de 6 cm de alta densidad.",
+                "Respaldo de espuma de 4 cm de alta densidad.",
+                "Cabecera regulable opcional.",
+                "Tapiz lateral en vinil liso.",
+                "Tapiz de cubiertas en vinil Bronco Benz.",
+                "Patas en perfil rectangular 50×30 electropintadas.",
+                "Cinturones de seguridad de dos puntas (uso obligatorio).",
+                "Letrero de tres caras y sistema de balizas.",
+                "Instalación ajustada a los reglamentos del Ministerio de Transporte."
+              ]
+            }
+          ],
+          "cta": { "label": "Ver equipamiento escolar", "path": "/equipamiento-escolar" },
+          "imageAlt": "Equipamiento escolar en bus de transporte de pasajeros"
+        },
+        {
+          "id": "banquetas",
+          "title": "Fabricación de Banquetas",
+          "subtitle": "Banquetas para Mini Buses",
+          "intro": "Fabricamos banquetas para minibuses utilizando estructuras reforzadas y procesos de fabricación que garantizan resistencia, seguridad y durabilidad.",
+          "specGroups": [
+            {
+              "title": "Características de fabricación",
+              "items": [
+                "Estructura de tubo de 1\" × 2 mm doblada mediante sistema con sensores electrónicos para mantener uniformidad y resistencia.",
+                "Soldadura MIG para mayor firmeza estructural.",
+                "Parrilla de suspensión con resortes de acero inoxidable entrelazados para una mejor distribución del peso y mayor durabilidad."
+              ]
+            },
+            {
+              "title": "Opciones de equipamiento",
+              "items": [
+                "Asiento de espuma de 6 cm de alta densidad.",
+                "Respaldo de espuma de 4 cm de alta densidad.",
+                "Cabecera regulable opcional.",
+                "Tapiz a elección del cliente.",
+                "Patas en perfil rectangular 50×30 electropintadas.",
+                "Cinturones de seguridad de dos puntas."
+              ]
+            }
+          ],
+          "cta": { "label": "Ver banquetas", "path": "/banquetas" },
+          "imageAlt": "Banquetas para minibuses fabricadas por Utilcar"
+        }
+      ]
+    },
+    "highlights": {
+      "eyebrow": "Por qué Utilcar",
+      "title": "Ingeniería, fabricación e instalación"
+    },
+    "portfolioPreview": {
+      "eyebrow": "Portfolio",
+      "title": "Trabajos recientes",
+      "description": "Proyectos entregados para flotas escolares, corporativas y técnicas.",
+      "ctaLabel": "Ver todos",
+      "ctaTo": "/trabajos-realizados",
+      "previewCount": 3
+    },
+    "ctaBanner": {
+      "title": "¿Listo para convertir su vehículo?",
+      "description": "Nuestro equipo técnico le asesora en cada etapa del proyecto.",
+      "primaryLabel": "Solicitar cotización",
+      "primaryTo": "/contacto"
+    }
+  },
+  "servicesPage": {
+    "_id": "servicesPage",
+    "_type": "servicesPage",
+    "schemaVersion": 1,
+    "serviceLinks": [
+      { "label": "Talleres móviles", "path": "/talleres-moviles" },
+      { "label": "Ventanas y Lunetas", "path": "/ventanas-lunetas" },
+      { "label": "Equipamiento Escolar", "path": "/equipamiento-escolar" },
+      { "label": "Banquetas", "path": "/banquetas" },
+      { "label": "Butacas", "path": "/butacas" },
+      { "label": "Accesorios", "path": "/accesorios" }
+    ],
+    "mainNavLinks": [
+      { "label": "Inicio", "path": "/" },
+      { "label": "Trabajos", "path": "/trabajos-realizados" },
+      { "label": "Contacto", "path": "/contacto" }
+    ],
+    "services": [
+      {
+        "id": "talleres",
+        "title": "Talleres móviles",
+        "description": "Unidades equipadas para servicio técnico en ruta, con mobiliario, electricidad y seguridad certificada.",
+        "path": "/talleres-moviles",
+        "imageAlt": "Taller móvil en furgón"
+      },
+      {
+        "id": "ventanas",
+        "title": "Ventanas y Lunetas",
+        "description": "Ventiletes y lunetas a medida por marca y modelo, con terminaciones industriales y sellado profesional.",
+        "path": "/ventanas-lunetas",
+        "imageAlt": "Ventanas laterales corredizas"
+      },
+      {
+        "id": "escolar",
+        "title": "Equipamiento Escolar",
+        "description": "Conversiones para transporte escolar con normativas de seguridad, asientos y accesorios homologados.",
+        "path": "/equipamiento-escolar",
+        "imageAlt": "Equipamiento escolar en bus"
+      },
+      {
+        "id": "banquetas",
+        "title": "Banquetas",
+        "description": "Banquetas modulares para vans y minibuses, tapizados técnicos y anclajes reforzados.",
+        "path": "/banquetas",
+        "imageAlt": "Banquetas para minibús"
+      },
+      {
+        "id": "butacas",
+        "title": "Butacas",
+        "description": "Butacas ergonómicas para flotas corporativas y turismo, con opciones reclinables y cinturones.",
+        "path": "/butacas",
+        "imageAlt": "Butacas ergonómicas a medida"
+      },
+      {
+        "id": "accesorios",
+        "title": "Accesorios",
+        "description": "Portaequipaje, divisores, pisos, iluminación LED y complementos para conversiones integrales.",
+        "path": "/accesorios",
+        "imageAlt": "Accesorios para conversión vehicular"
+      }
+    ],
+    "highlights": [
+      {
+        "title": "Ingeniería propia",
+        "description": "Diseño y fabricación con control de calidad en cada etapa del proceso."
+      },
+      {
+        "title": "A medida por vehículo",
+        "description": "Soluciones adaptadas a marca, modelo y uso operativo de su flota."
+      },
+      {
+        "title": "Instalación certificada",
+        "description": "Taller especializado con protocolos de montaje y terminación premium."
+      }
+    ]
+  },
+  "workPage": {
+    "_id": "workPage",
+    "_type": "workPage",
+    "schemaVersion": 1,
+    "filters": [
+      { "id": "all", "label": "Todos" },
+      { "id": "talleres-moviles", "label": "Talleres móviles" },
+      { "id": "ventanas-lunetas", "label": "Ventanas y lunetas" }
+    ],
+    "portfolio": [
+      {
+        "id": "taller-tr143",
+        "title": "Taller móvil equipado en terreno",
+        "category": "Talleres móviles",
+        "categoryId": "talleres-moviles",
+        "description": "Conversión de furgón con mobiliario técnico y equipamiento para servicio en terreno.",
+        "imageAlt": "Taller móvil Utilcar"
+      }
+    ],
+    "preview": [
+      {
+        "id": "taller-tr143",
+        "title": "Taller móvil equipado en terreno",
+        "category": "Talleres móviles",
+        "description": "Conversión de furgón con mobiliario técnico.",
+        "imageKey": 0
+      }
+    ],
+    "ui": {
+      "emptyMessage": "No hay proyectos en esta categoría.",
+      "loadMoreLabel": "Cargar más",
+      "pageSize": 6,
+      "filterAriaLabel": "Filtrar trabajos por categoría"
+    }
+  },
+  "contactPage": {
+    "_id": "contactPage",
+    "_type": "contactPage",
+    "schemaVersion": 1,
+    "hero": {
+      "eyebrow": "Utilcar",
+      "title": "Contacto",
+      "subtitle": "Conversemos sobre su proyecto, conversión o equipamiento automotriz.",
+      "imageAlt": "Taller Utilcar Conversiones"
+    },
+    "faqItems": [
+      {
+        "id": "personalizado",
+        "question": "¿Realizan proyectos personalizados?",
+        "answer": "Sí. Desarrollamos conversiones y equipamiento según el vehículo, la normativa aplicable y los requerimientos de cada cliente."
+      },
+      {
+        "id": "empresas",
+        "question": "¿Trabajan con empresas?",
+        "answer": "Atendemos empresas, flotas, talleres y fabricantes que requieren equipamiento escolar, ventanas, banquetas, butacas, accesorios o talleres móviles."
+      }
+    ],
+    "servicios": [
+      "Talleres móviles",
+      "Ventanas y lunetas",
+      "Equipamiento escolar",
+      "Banquetas",
+      "Butacas",
+      "Accesorios",
+      "Proyecto personalizado"
+    ]
+  }
+}

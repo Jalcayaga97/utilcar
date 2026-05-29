@@ -1,0 +1,26 @@
+{
+  "name": "utilcar-studio",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "sanity dev",
+    "build": "sanity build",
+    "deploy": "sanity deploy",
+    "seed": "node scripts/seed-minimal.mjs",
+    "migrate:specialties": "node scripts/migrate-specialties-to-categories.mjs",
+    "migrate:specialties:dry": "node scripts/migrate-specialties-to-categories.mjs --dry",
+    "import:specialties": "node scripts/import-specialties-from-seed.mjs",
+    "import:specialties:dry": "node scripts/import-specialties-from-seed.mjs --dry"
+  },
+  "dependencies": {
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "sanity": "^3.99.0",
+    "styled-components": "^6.1.19"
+  },
+  "devDependencies": {
+    "@sanity/client": "^7.22.1",
+    "sanity": "^3.99.0"
+  }
+}
