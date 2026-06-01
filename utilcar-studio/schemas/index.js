@@ -25,6 +25,11 @@ import {
   portfolioBlock,
   galleryBlock,
   ctaBlock,
+  faqBlock,
+  featuresBlock,
+  richTextBlock,
+  mapBlock,
+  seoBlock,
 } from './content/homePage.js'
 import { pageBlock } from './legacy/objects/pageBlock.js'
 import { especialidadItem } from './legacy/objects/especialidadItem.js'
@@ -55,6 +60,11 @@ export const schemaTypes = [
   portfolioBlock,
   galleryBlock,
   ctaBlock,
+  faqBlock,
+  featuresBlock,
+  richTextBlock,
+  mapBlock,
+  seoBlock,
   especialidadItem,
   brand,
   homePage,

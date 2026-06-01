@@ -13,6 +13,11 @@ import {
   portfolioBlock,
   galleryBlock,
   ctaBlock,
+  faqBlock,
+  featuresBlock,
+  richTextBlock,
+  mapBlock,
+  seoBlock,
 } from './blocks/index.js'
 import { HomePageBlocksArrayInput } from '../presentation/components/HomePageBlocksArrayInput.jsx'
 import { HomePageBlockItemInput } from '../presentation/components/HomePageBlockItemInput.jsx'
@@ -52,6 +57,9 @@ export const homePage = {
         { type: 'portfolioBlock' },
         { type: 'galleryBlock' },
         { type: 'ctaBlock' },
+        { type: 'faqBlock' },
+        { type: 'featuresBlock' },
+        { type: 'richTextBlock' },
       ],
       options: {
         sortable: true,
@@ -182,4 +190,9 @@ export {
   portfolioBlock,
   galleryBlock,
   ctaBlock,
+  faqBlock,
+  featuresBlock,
+  richTextBlock,
+  mapBlock,
+  seoBlock,
 }

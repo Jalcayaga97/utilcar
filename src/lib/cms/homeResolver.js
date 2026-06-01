@@ -7,6 +7,8 @@ import { deepMerge } from '@/lib/cms/merge'
 import { HomeContentContract } from '@/lib/contracts/home.contract'
 import { logHomeResolver } from '@/lib/cms/homeResolverLog'
 import { orderedBlocks } from '@/lib/cms/resolvers/blockUtils'
+import { auditBlocksList, assertResolverInvariant } from '@/lib/cms/resolvers/global/resolverGuards.js'
+import { measureRuntime } from '@/lib/cms/runtimeTiming.js'
 import * as heroResolver from '@/lib/cms/resolvers/heroResolver'
 import * as servicesResolver from '@/lib/cms/resolvers/servicesResolver'
 import * as whyUsResolver from '@/lib/cms/resolvers/whyUsResolver'
@@ -61,7 +63,9 @@ export function legacyFieldsFromBlocks(blocks) {
 }
 
 function collectWarnings(blocks) {
-  return WARNING_COLLECTORS.flatMap((collect) => collect(blocks))
+  const domainWarnings = WARNING_COLLECTORS.flatMap((collect) => collect(blocks))
+  const guardWarnings = auditBlocksList(blocks, { pageId: 'home' })
+  return [...domainWarnings, ...guardWarnings.map((w) => w.code)]
 }
 
 function buildExtensions(blocks) {
@@ -134,9 +138,19 @@ function emptyExtensions() {
  * @param {object} fallback — homeContent local validado
  */
 export function resolveHomeContentFromBlocks(blocks, fallback) {
+  return measureRuntime('home-resolver', () => resolveHomeContentFromBlocksInner(blocks, fallback))
+}
+
+function resolveHomeContentFromBlocksInner(blocks, fallback) {
   const flat = legacyFieldsFromBlocks(blocks)
   const warnings = collectWarnings(blocks)
   const extensions = buildExtensions(blocks)
+
+  assertResolverInvariant(
+    !blocks?.length || Object.keys(extensions).some((k) => extensions[k]),
+    'home-empty-extensions',
+    { blockCount: blocks?.length ?? 0 },
+  )
   const specialtiesBlock = specialtiesResolver.findSpecialtiesBlock(blocks)
 
   // portfolioPreview / highlights / hero: espejo legacy; UI usa extensions.*Section.

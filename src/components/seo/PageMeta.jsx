@@ -6,6 +6,7 @@ import {
   buildPageTitle,
   getPageSeo,
 } from '@/constants/seo'
+import { mergePageSeo } from '@/lib/cms/contracts/seoBlockContract'
 
 function upsertMetaByName(name, content) {
   if (!content) return
@@ -49,6 +50,7 @@ function upsertLink(rel, href) {
  * @param {string} [keywords] — override de keywords
  * @param {string} [image] — override de og:image (URL absoluta)
  * @param {boolean} [noindex]
+ * @param {object} [cmsSeo] — override desde seoBlock CMS (extensions.seoSection)
  */
 export function PageMeta({
   page,
@@ -58,16 +60,18 @@ export function PageMeta({
   keywords,
   image,
   noindex = false,
+  cmsSeo,
 }) {
   const location = useLocation()
-  const config = page ? getPageSeo(page) : null
+  const baseConfig = page ? getPageSeo(page) : null
+  const config = cmsSeo ? mergePageSeo(baseConfig ?? {}, cmsSeo) : baseConfig
 
   const seoTitle = title ?? config?.title ?? null
   const seoDescription = description ?? config?.description ?? SITE.description
   const seoKeywords = keywords ?? config?.keywords ?? ''
   const seoPath = path ?? config?.path ?? location.pathname
   const seoNoindex = noindex || config?.noindex === true
-  const seoImage = image ?? SITE.ogImage
+  const seoImage = image ?? config?.ogImage ?? SITE.ogImage
 
   const fullTitle = buildPageTitle(seoTitle)
   const canonical = buildCanonical(seoPath)

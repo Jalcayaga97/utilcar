@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import {
   EMPTY_HOME_EXTENSIONS,
   getHomeContent,
@@ -22,8 +22,9 @@ import {
   getBanquetasCategories,
   getAccesoriosCategories,
 } from '@/lib/cms/services.adapter'
-import { getWorkContent, getTrabajosPreview, getTrabajosPageHero } from '@/lib/cms/work.adapter'
-import { getContactContent } from '@/lib/cms/contact.adapter'
+import { getWorkContent, getTrabajosPreview, getTrabajosPageHero, getWorkBundle } from '@/lib/cms/work.adapter'
+import { getContactContent, getContactDisplay } from '@/lib/cms/contact.adapter'
+import { getServicePageDisplay } from '@/lib/cms/services.adapter'
 import {
   getValidatedLocalServicesBundle,
   getValidatedLocalHomeContent,
@@ -156,6 +157,56 @@ export function useTrabajosPageHero() {
   return useCmsData(localWork().trabajosPageHero, getTrabajosPageHero)
 }
 
+export function useWorkBundleMeta() {
+  const empty = useMemo(() => ({ _workSource: 'legacy' }), [])
+  const fetcher = useCallback(async () => {
+    const bundle = await getWorkBundle()
+    return {
+      _workSource: bundle._workSource ?? 'legacy',
+      extensions: bundle.extensions ?? {},
+    }
+  }, [])
+  return useCmsData(empty, fetcher)
+}
+
+function localServicePageDisplay(pageKey) {
+  const bundle = localServices()
+  const fieldMap = {
+    'talleres-moviles': 'talleresMoviles',
+    'ventanas-lunetas': 'ventanasLunetas',
+    'equipamiento-escolar': 'equipamientoEscolar',
+    banquetas: 'banquetas',
+    butacas: 'butacas',
+    accesorios: 'accesorios',
+  }
+  const field = fieldMap[pageKey]
+  return {
+    content: field ? bundle[field] : {},
+    heroImage: null,
+    galleryImages: null,
+    source: 'legacy',
+  }
+}
+
+export function useServicePageDisplay(pageKey) {
+  const local = useMemo(() => localServicePageDisplay(pageKey), [pageKey])
+  const fetcher = useCallback(() => getServicePageDisplay(pageKey), [pageKey])
+  return useCmsData(local, fetcher)
+}
+
 export function useContactContent() {
   return useCmsData(getValidatedLocalContactContent(), getContactContent)
+}
+
+export function useContactDisplay() {
+  const local = useMemo(
+    () => ({
+      content: getValidatedLocalContactContent(),
+      heroImage: null,
+      source: 'legacy',
+    }),
+    [],
+  )
+  const fetcher = useCallback(() => getContactDisplay(), [])
+  return useCmsData(local, fetcher)
 }

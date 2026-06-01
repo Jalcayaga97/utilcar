@@ -2,6 +2,7 @@ import { isSanityEnabled } from '@/lib/cms/config'
 import { loadCached } from '@/lib/cms/adapterCache'
 import { getValidatedLocalWorkBundle } from '@/lib/cms/localContent'
 import { deepMerge, mergePortfolioItems } from '@/lib/cms/merge'
+import { buildActiveWorkBundle } from '@/lib/cms/resolvers/workPageResolver'
 import { validateContent } from '@/lib/cms/validate'
 import { WorkBundleSchema } from '@/lib/schemas'
 import { fetchWorkPage } from '@/lib/sanity/fetch'
@@ -13,7 +14,7 @@ async function loadWorkBundleFromSanity() {
   const remote = await fetchWorkPage()
   if (!remote) return local
 
-  const merged = {
+  const legacyMerged = {
     workContent: {
       ...local.workContent,
       page: remote.page ? deepMerge(local.workContent.page, remote.page) : local.workContent.page,
@@ -29,26 +30,23 @@ async function loadWorkBundleFromSanity() {
     trabajosPageHero: local.trabajosPageHero,
   }
 
-  return validateContent(WorkBundleSchema, merged, local, 'sanity:work-bundle')
+  return buildActiveWorkBundle(legacyMerged, remote)
 }
 
 async function resolveWorkBundle() {
   const local = getValidatedLocalWorkBundle()
 
   if (!isSanityEnabled()) {
-    return local
+    return { ...local, _workSource: 'legacy' }
   }
 
   try {
     return await loadCached(CACHE_KEY, loadWorkBundleFromSanity)
   } catch {
-    return local
+    return { ...local, _workSource: 'legacy' }
   }
 }
 
-/**
- * Portfolio completo + metadatos de página.
- */
 export async function getWorkContent() {
   const bundle = await resolveWorkBundle()
   return bundle.workContent
@@ -62,4 +60,8 @@ export async function getTrabajosPreview() {
 export async function getTrabajosPageHero() {
   const bundle = await resolveWorkBundle()
   return bundle.trabajosPageHero
+}
+
+export async function getWorkBundle() {
+  return resolveWorkBundle()
 }

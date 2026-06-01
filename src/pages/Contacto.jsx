@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Clock, Mail, MapPin, Phone } from 'lucide-react'
 import { PageMeta } from '@/components/seo/PageMeta'
@@ -8,7 +9,8 @@ import { ContactFaq } from '@/components/sections/ContactFaq'
 import { Section, SectionHeader } from '@/components/ui/Section'
 import { SITE } from '@/constants/site'
 import { IMAGES } from '@/assets/images'
-import { useContactContent } from '@/hooks/useCms'
+import { useContactDisplay } from '@/hooks/useCms'
+import { logRuntime } from '@/lib/cms/runtimeLog'
 import { cn } from '@/lib/cn'
 
 const ease = [0.25, 0.1, 0.25, 1]
@@ -30,7 +32,14 @@ function ContactCard({ icon: Icon, title, children }) {
 }
 
 export default function Contacto() {
-  const { hero, intro, details, cta, map, faq } = useContactContent()
+  const { content, heroImage, source } = useContactDisplay()
+  const { hero, intro, details, cta, map, faq } = content
+
+  useEffect(() => {
+    logRuntime('contact-page', { source, faqItems: content.faqItems?.length ?? 0 })
+  }, [source, content.faqItems?.length])
+
+  const mapsQuery = map.embedQuery || SITE.mapsQuery
 
   return (
     <>
@@ -40,7 +49,7 @@ export default function Contacto() {
         eyebrow={hero.eyebrow}
         title={hero.title}
         subtitle={hero.subtitle}
-        image={IMAGES.talleres.hero}
+        image={heroImage || IMAGES.talleres.hero}
         imageAlt={hero.imageAlt}
       />
 
@@ -157,7 +166,7 @@ export default function Contacto() {
             <div className="aspect-[16/10] w-full sm:aspect-[21/9] lg:aspect-[2.2/1]">
               <iframe
                 title={map.iframeTitle}
-                src={`https://maps.google.com/maps?q=${SITE.mapsQuery}&hl=es&z=16&output=embed`}
+                src={`https://maps.google.com/maps?q=${mapsQuery}&hl=es&z=16&output=embed`}
                 className="h-full w-full border-0"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"

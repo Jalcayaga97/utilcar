@@ -2,6 +2,10 @@ import { isSanityEnabled } from '@/lib/cms/config'
 import { loadCached } from '@/lib/cms/adapterCache'
 import { getValidatedLocalServicesBundle } from '@/lib/cms/localContent'
 import { deepMerge, mergeHighlightsWithIcons, mergeServicesWithIcons } from '@/lib/cms/merge'
+import {
+  buildActiveServicesBundle,
+  mapServicePageRuntime,
+} from '@/lib/cms/resolvers/servicesPageResolver'
 import { validateContent } from '@/lib/cms/validate'
 import { ServicesBundleSchema } from '@/lib/schemas'
 import { fetchServicesPage } from '@/lib/sanity/fetch'
@@ -56,7 +60,10 @@ async function loadServicesBundleFromSanity() {
       : local.accesoriosCategories,
   }
 
-  return validateContent(ServicesBundleSchema, merged, local, 'sanity:services-bundle')
+  return buildActiveServicesBundle(
+    validateContent(ServicesBundleSchema, merged, local, 'sanity:services-bundle'),
+    remote,
+  )
 }
 
 async function resolveServicesBundle() {
@@ -140,4 +147,22 @@ export async function getBanquetasCategories() {
 
 export async function getAccesoriosCategories() {
   return fromBundle((b) => b.accesoriosCategories)
+}
+
+const SERVICE_PAGE_KEYS = {
+  'talleres-moviles': 'talleresMoviles',
+  'ventanas-lunetas': 'ventanasLunetas',
+  'equipamiento-escolar': 'equipamientoEscolar',
+  banquetas: 'banquetas',
+  butacas: 'butacas',
+  accesorios: 'accesorios',
+}
+
+export async function getServicePageDisplay(pageKey) {
+  const field = SERVICE_PAGE_KEYS[pageKey]
+  if (!field) {
+    return { content: {}, heroImage: null, galleryImages: null, source: 'legacy' }
+  }
+  const bundle = await resolveServicesBundle()
+  return mapServicePageRuntime(pageKey, bundle[field], bundle.extensions ?? {})
 }

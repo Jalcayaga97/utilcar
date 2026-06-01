@@ -35,6 +35,16 @@ export const USE_BLOCK_RESOLVER = readEnv('VITE_USE_BLOCK_RESOLVER', 'false') ==
  */
 export const USE_SPECIALTIES_V2 = readEnv('VITE_USE_SPECIALTIES_V2', 'false') === 'true'
 
+/**
+ * Page Builder universal: resuelve blocks[] en páginas no-Home.
+ * Requiere flag por dominio (SERVICES_V2, WORK_V2, CONTACT_V2).
+ */
+export const USE_PAGE_RESOLVER = readEnv('VITE_USE_PAGE_RESOLVER', 'false') === 'true'
+
+export const USE_SERVICES_V2 = readEnv('VITE_USE_SERVICES_V2', 'false') === 'true'
+export const USE_WORK_V2 = readEnv('VITE_USE_WORK_V2', 'false') === 'true'
+export const USE_CONTACT_V2 = readEnv('VITE_USE_CONTACT_V2', 'false') === 'true'
+
 export function isSanityConfigured() {
   const { projectId } = SANITY_CONFIG
   return Boolean(projectId?.trim())

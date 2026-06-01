@@ -1,4 +1,5 @@
 import { schemaVersionField } from '../../content/fields/schemaVersion.js'
+import { pageBlocksField } from '../../content/blocks/pageBlocks.js'
 
 const formFieldType = {
   type: 'object',
@@ -15,6 +16,7 @@ export const contactPage = {
   type: 'document',
   fields: [
     schemaVersionField,
+    pageBlocksField(),
     {
       name: 'hero',
       type: 'object',

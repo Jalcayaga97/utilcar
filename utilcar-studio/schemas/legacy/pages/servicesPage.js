@@ -1,4 +1,5 @@
 import { schemaVersionField } from '../../content/fields/schemaVersion.js'
+import { pageBlocksField } from '../../content/blocks/pageBlocks.js'
 
 export const servicesPage = {
   name: 'servicesPage',
@@ -6,6 +7,7 @@ export const servicesPage = {
   type: 'document',
   fields: [
     schemaVersionField,
+    pageBlocksField(),
     {
       name: 'serviceLinks',
       title: 'Enlaces servicios',

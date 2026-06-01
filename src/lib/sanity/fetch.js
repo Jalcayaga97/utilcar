@@ -1,16 +1,22 @@
 import { getSanityClient } from '@/lib/sanity/client'
 import { loadCached } from '@/lib/cms/adapterCache'
-import { USE_BLOCK_RESOLVER } from '@/lib/cms/config'
+import { USE_BLOCK_RESOLVER, USE_CONTACT_V2, USE_PAGE_RESOLVER, USE_SERVICES_V2, USE_WORK_V2 } from '@/lib/cms/config'
 import { legacyFieldsFromBlocks } from '@/lib/cms/homeResolver'
+import { resolveContactPageDocument } from '@/lib/cms/resolvers/contactPageResolver'
+import { resolveServicesPageDocument } from '@/lib/cms/resolvers/servicesPageResolver'
+import { resolveWorkPageDocument } from '@/lib/cms/resolvers/workPageResolver'
 import { getActiveSpecialties } from '@/lib/cms/specialties'
 import { parseSanityPayload } from '@/lib/cms/validate'
 import {
   CONTACT_QUERY,
+  CONTACT_QUERY_WITH_BLOCKS,
   ESPECIALIDADES_QUERY,
   HOME_QUERY,
   HOME_QUERY_WITH_BLOCKS,
   SERVICES_QUERY,
+  SERVICES_QUERY_WITH_BLOCKS,
   WORK_QUERY,
+  WORK_QUERY_WITH_BLOCKS,
 } from '@/lib/sanity/queries'
 
 async function fetchQuery(query) {
@@ -67,13 +73,39 @@ export function fetchHomeSpecialtiesModules() {
 }
 
 export function fetchServicesPage() {
-  return loadCached('sanity:services-page', () => fetchQuery(SERVICES_QUERY))
+  const query =
+    USE_PAGE_RESOLVER && USE_SERVICES_V2 ? SERVICES_QUERY_WITH_BLOCKS : SERVICES_QUERY
+  const cacheKey =
+    USE_PAGE_RESOLVER && USE_SERVICES_V2 ? 'sanity:services-page-blocks' : 'sanity:services-page'
+  return loadCached(cacheKey, async () => {
+    const doc = await fetchQuery(query)
+    if (!doc) return null
+    const resolved = resolveServicesPageDocument(doc)
+    return { ...doc, extensions: resolved.extensions, _pageSource: resolved.source }
+  })
 }
 
 export function fetchWorkPage() {
-  return loadCached('sanity:work-page', () => fetchQuery(WORK_QUERY))
+  const query = USE_PAGE_RESOLVER && USE_WORK_V2 ? WORK_QUERY_WITH_BLOCKS : WORK_QUERY
+  const cacheKey =
+    USE_PAGE_RESOLVER && USE_WORK_V2 ? 'sanity:work-page-blocks' : 'sanity:work-page'
+  return loadCached(cacheKey, async () => {
+    const doc = await fetchQuery(query)
+    if (!doc) return null
+    const resolved = resolveWorkPageDocument(doc)
+    return { ...doc, extensions: resolved.extensions, _pageSource: resolved.source }
+  })
 }
 
 export function fetchContactPage() {
-  return loadCached('sanity:contact-page', () => fetchQuery(CONTACT_QUERY))
+  const query =
+    USE_PAGE_RESOLVER && USE_CONTACT_V2 ? CONTACT_QUERY_WITH_BLOCKS : CONTACT_QUERY
+  const cacheKey =
+    USE_PAGE_RESOLVER && USE_CONTACT_V2 ? 'sanity:contact-page-blocks' : 'sanity:contact-page'
+  return loadCached(cacheKey, async () => {
+    const doc = await fetchQuery(query)
+    if (!doc) return null
+    const resolved = resolveContactPageDocument(doc)
+    return { ...doc, extensions: resolved.extensions, _pageSource: resolved.source }
+  })
 }

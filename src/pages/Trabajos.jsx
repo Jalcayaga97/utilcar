@@ -1,22 +1,32 @@
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { PageMeta } from '@/components/seo/PageMeta'
+import { getActiveSeoSection } from '@/lib/cms/resolvers/seoBlockResolver'
 import { ServicePageHero } from '@/components/sections/ServicePageHero'
 import { ServiceCtaDark } from '@/components/sections/ServiceCtaDark'
 import { TrabajosPortfolio } from '@/components/sections/TrabajosPortfolio'
 import { Section, SectionHeader } from '@/components/ui/Section'
-import { useTrabajosPageHero, useWorkContent } from '@/hooks/useCms'
+import { useTrabajosPageHero, useWorkContent, useWorkBundleMeta } from '@/hooks/useCms'
+import { logRuntime } from '@/lib/cms/runtimeLog'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
 export default function Trabajos() {
   const workContent = useWorkContent()
   const trabajosPageHero = useTrabajosPageHero()
+  const { _workSource, extensions } = useWorkBundleMeta()
   const { page } = workContent
   const { title, paragraphs } = page.intro
 
+  const cmsSeo = getActiveSeoSection(extensions)
+
+  useEffect(() => {
+    logRuntime('work-page', { source: _workSource, portfolio: workContent.portfolio?.length ?? 0 })
+  }, [_workSource, workContent.portfolio?.length])
+
   return (
     <>
-      <PageMeta page="trabajos-realizados" />
+      <PageMeta page="trabajos-realizados" cmsSeo={cmsSeo ?? undefined} />
 
       <ServicePageHero
         eyebrow={page.hero.eyebrow}

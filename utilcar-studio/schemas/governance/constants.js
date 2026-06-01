@@ -10,6 +10,8 @@ export const LIMITS = {
   SPECIALTY_BRANDS_MAX: 12,
   HERO_TITLE_MAX: 80,
   PORTFOLIO_DESCRIPTION_MAX: 220,
+  PAGE_BLOCKS_MAX: 12,
+  PAGE_BLOCKS_WARN: 10,
 }
 
 export const GOVERNANCE_MESSAGES = {
@@ -31,4 +33,8 @@ export const GOVERNANCE_MESSAGES = {
   brandWithoutGallery: 'Marca sin galería: se recomienda al menos una imagen.',
   emptyFeatures: 'Sin características: agrega al menos un grupo de specs o beneficios.',
   specialtyEmptyGallery: 'Categoría sin galería ni marcas: se recomienda media visual.',
+  pageBlocksTooMany: `Máximo ${LIMITS.PAGE_BLOCKS_MAX} bloques por página.`,
+  pageBlocksWarn: `Muchos bloques (${LIMITS.PAGE_BLOCKS_WARN}+) — revisar rendimiento y jerarquía.`,
+  invalidCta: 'CTA incompleto: requiere texto del botón y ruta válida.',
+  duplicateSlug: 'Slug duplicado — cada página debe tener identificador único.',
 }

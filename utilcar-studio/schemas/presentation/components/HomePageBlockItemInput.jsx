@@ -1,6 +1,6 @@
-import { Badge, Box, Card, Flex, Switch, Text } from '@sanity/ui'
+import { Badge, Box, Button, Card, Flex, Switch, Text } from '@sanity/ui'
 import { PAGE_BUILDER_COPY } from '../pageBuilderCopy.js'
-import { PatchEvent, set } from 'sanity'
+import { PatchEvent, set, insert } from 'sanity'
 import { BLOCK_TYPE_LABELS } from '../../content/blocks/blockBase.js'
 
 /** Tarjeta de bloque en el builder: tipo, visibilidad y editor en modal. */
@@ -12,6 +12,12 @@ export function HomePageBlockItemInput(props) {
   const toggleEnabled = (next) => {
     const path = props.path ?? []
     props.onChange(PatchEvent.from([set(next, [...path, 'enabled'])]))
+  }
+
+  const duplicateBlock = () => {
+    if (!props.value) return
+    const { _key, ...rest } = props.value
+    props.onChange(PatchEvent.from([insert([rest], 'after', props.path)]))
   }
 
   return (
@@ -30,6 +36,12 @@ export function HomePageBlockItemInput(props) {
               {PAGE_BUILDER_COPY.syncedFromBlocks}
             </Badge>
           </Flex>
+          <Button
+            fontSize={1}
+            mode="ghost"
+            text={PAGE_BUILDER_COPY.duplicateBlock}
+            onClick={duplicateBlock}
+          />
         </Flex>
         {props.renderDefault(props)}
       </Box>

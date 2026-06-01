@@ -32,4 +32,9 @@ export const BLOCK_TYPE_LABELS = {
   portfolioBlock: 'Portfolio',
   galleryBlock: 'Portfolio (legacy)',
   ctaBlock: 'Banner CTA',
+  faqBlock: 'Preguntas frecuentes',
+  featuresBlock: 'Características',
+  richTextBlock: 'Texto enriquecido',
+  mapBlock: 'Mapa',
+  seoBlock: 'SEO y metadatos',
 }

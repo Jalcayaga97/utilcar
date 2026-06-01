@@ -43,13 +43,27 @@ export const HOME_BLOCKS_PROJECTION = `blocks[]{
   image{ asset->{ _id, url }, alt },
   mobileImage{ asset->{ _id, url }, alt },
   itemEyebrowPrefix,
+  embedQuery,
+  iframeTitle,
+  keywords,
+  canonicalPath,
+  noindex,
+  ogImage{ asset->{ _id, url }, alt },
   categories[]${SPECIALTIES_CATEGORY_PROJECTION},
+  groups[]{
+    _key,
+    title,
+    items[]
+  },
   items[]{
     _key,
     _type,
+    id,
     title,
     subtitle,
     description,
+    question,
+    answer,
     features,
     buttonText,
     buttonLink,
@@ -177,8 +191,10 @@ export const ESPECIALIDADES_QUERY = `*[_type == "homePage"][0]{
   "specialtiesNew": specialtiesNew[]${SPECIALTY_NEW_PROJECTION}
 }`
 
-export const SERVICES_QUERY = `*[_type == "servicesPage"][0]{
-  "_schemaVersion": schemaVersion,
+/** Proyección blocks para páginas con Page Builder (services, work, contact). */
+export const PAGE_BLOCKS_PROJECTION = HOME_BLOCKS_PROJECTION
+
+const SERVICES_FIELDS = `
   serviceLinks[]{ label, path },
   mainNavLinks[]{ label, path },
   services[]{
@@ -202,11 +218,18 @@ export const SERVICES_QUERY = `*[_type == "servicesPage"][0]{
   accesorios,
   ventanasBrands,
   banquetasCategories,
-  accesoriosCategories
+  accesoriosCategories`
+
+export const SERVICES_QUERY = `*[_type == "servicesPage"][0]{
+  "_schemaVersion": schemaVersion,${SERVICES_FIELDS}
 }`
 
-export const WORK_QUERY = `*[_type == "workPage"][0]{
+export const SERVICES_QUERY_WITH_BLOCKS = `*[_type == "servicesPage"][0]{
   "_schemaVersion": schemaVersion,
+  ${PAGE_BLOCKS_PROJECTION},${SERVICES_FIELDS}
+}`
+
+const WORK_FIELDS = `
   page{
     hero,
     intro,
@@ -235,11 +258,18 @@ export const WORK_QUERY = `*[_type == "workPage"][0]{
     loadMoreLabel,
     pageSize,
     filterAriaLabel
-  }
+  }`
+
+export const WORK_QUERY = `*[_type == "workPage"][0]{
+  "_schemaVersion": schemaVersion,${WORK_FIELDS}
 }`
 
-export const CONTACT_QUERY = `*[_type == "contactPage"][0]{
+export const WORK_QUERY_WITH_BLOCKS = `*[_type == "workPage"][0]{
   "_schemaVersion": schemaVersion,
+  ${PAGE_BLOCKS_PROJECTION},${WORK_FIELDS}
+}`
+
+const CONTACT_FIELDS = `
   hero,
   intro,
   details,
@@ -248,5 +278,13 @@ export const CONTACT_QUERY = `*[_type == "contactPage"][0]{
   faq,
   form,
   servicios,
-  faqItems
+  faqItems`
+
+export const CONTACT_QUERY = `*[_type == "contactPage"][0]{
+  "_schemaVersion": schemaVersion,${CONTACT_FIELDS}
+}`
+
+export const CONTACT_QUERY_WITH_BLOCKS = `*[_type == "contactPage"][0]{
+  "_schemaVersion": schemaVersion,
+  ${PAGE_BLOCKS_PROJECTION},${CONTACT_FIELDS}
 }`

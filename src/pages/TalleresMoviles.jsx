@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
 import { PageMeta } from '@/components/seo/PageMeta'
@@ -6,7 +7,8 @@ import { ServiceCtaDark } from '@/components/sections/ServiceCtaDark'
 import { Section, SectionHeader } from '@/components/ui/Section'
 import { ImageGallery } from '@/components/ui/ImageGallery'
 import { IMAGES } from '@/assets/images'
-import { useTalleresMovilesContent } from '@/hooks/useCms'
+import { useServicePageDisplay } from '@/hooks/useCms'
+import { logRuntime } from '@/lib/cms/runtimeLog'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
@@ -31,7 +33,12 @@ function BulletList({ items, title }) {
 }
 
 export default function TalleresMoviles() {
-  const { hero, intro, scope, gallery } = useTalleresMovilesContent()
+  const { content, heroImage, galleryImages, source } = useServicePageDisplay('talleres-moviles')
+  const { hero, intro, scope, gallery } = content
+
+  useEffect(() => {
+    logRuntime('service-page', { pageKey: 'talleres-moviles', source, galleryCount: galleryImages?.length ?? 0 })
+  }, [source, galleryImages?.length])
 
   return (
     <>
@@ -41,7 +48,7 @@ export default function TalleresMoviles() {
         eyebrow={hero.eyebrow}
         title={hero.title}
         subtitle={hero.subtitle}
-        image={IMAGES.talleres.hero}
+        image={heroImage || IMAGES.talleres.hero}
         imageAlt={hero.imageAlt}
       />
 
@@ -109,7 +116,7 @@ export default function TalleresMoviles() {
           transition={{ duration: 0.5, delay: 0.05, ease }}
           className="mt-12"
         >
-          <ImageGallery images={IMAGES.talleres.gallery} />
+          <ImageGallery images={galleryImages ?? IMAGES.talleres.gallery} />
         </motion.div>
       </Section>
 

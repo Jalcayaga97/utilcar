@@ -22,6 +22,14 @@ export const PAGE_BUILDER_COPY = {
     'Edite specialtiesBlock.categories. El espejo specialtiesNew sincroniza automáticamente (coalesce categories → items legacy).',
   migrationRoadmap:
     'Roadmap: blocks[] → fuente única | campos planos → deprecated (solo espejo GROQ hasta migración frontend).',
+  emptyBlocksTitle: 'Sin secciones aún',
+  emptyBlocksDescription:
+    'Use «Agregar sección» para componer la página. Cada bloque tiene preview y puede ocultarse sin eliminarlo.',
+  addSection: 'Agregar sección',
+  addItem: 'Agregar ítem',
+  duplicateBlock: 'Duplicar sección',
+  hideSection: 'Ocultar sección',
+  showSection: 'Mostrar sección',
 }
 
 /** Campos planos espejo GROQ — deprecated; visibles solo en Advanced Mode. */
