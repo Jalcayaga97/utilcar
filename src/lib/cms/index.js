@@ -29,5 +29,6 @@ export {
   getBanquetasCategories,
   getAccesoriosCategories,
 } from './services.adapter'
-export { getWorkContent, getTrabajosPreview, getTrabajosPageHero } from './work.adapter'
-export { getContactContent, getLocalContactContent } from './contact.adapter'
+export { getWorkContent, getTrabajosPreview, getTrabajosPageHero, getWorkPageDisplay } from './work.adapter'
+export { getContactContent, getContactPageDisplay, getLocalContactContent } from './contact.adapter'
+export { getCompanyInfo, getLocalCompanyInfo } from './company.adapter'

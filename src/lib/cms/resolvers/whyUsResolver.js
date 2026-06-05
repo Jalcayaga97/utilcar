@@ -1,48 +1,71 @@
 import { USE_BLOCK_RESOLVER } from '@/lib/cms/config'
+import { resolveCmsIcon } from '@/lib/cms/icons/resolveCmsIcon'
 import { findBlock, isEmptyField, missingBlockWarning, missingFieldWarning } from './blockUtils'
 import { logResolverDomain } from './resolverLog'
 
+export const BLOCK_TYPES = ['whyUsBlock', 'whyUtilcarBlock']
 export const BLOCK_TYPE = 'whyUsBlock'
 export const REQUIRED_FIELDS = ['title']
 
+/** Normaliza whyUtilcarBlock → shape whyUsBlock. */
+export function normalizeWhyUsBlockShape(block) {
+  if (!block) return block
+  if (block._type !== 'whyUtilcarBlock') return block
+  return {
+    ...block,
+    _type: 'whyUsBlock',
+    eyebrow: block.sectionEyebrow ?? block.eyebrow ?? '',
+    title: block.sectionTitle ?? block.title ?? '',
+    description: block.sectionDescription ?? block.description ?? '',
+  }
+}
+
 export function findWhyUsBlock(blocks) {
-  return findBlock(blocks, BLOCK_TYPE)
+  for (const type of BLOCK_TYPES) {
+    const hit = findBlock(blocks, type)
+    if (hit) return normalizeWhyUsBlockShape(hit)
+  }
+  return undefined
 }
 
 /** Metadatos de sección (shape highlights legacy en homeContent). */
 export function resolveWhyUsMirror(block) {
   if (!block) return undefined
+  const normalized = normalizeWhyUsBlockShape(block)
   const mirror = {
-    eyebrow: block.eyebrow,
-    title: block.title,
+    eyebrow: normalized.eyebrow,
+    title: normalized.title,
+    description: normalized.description ?? '',
   }
   logResolverDomain('whyUs', {
-    resolved: Boolean(block.title),
-    itemCount: block.items?.length ?? 0,
+    resolved: Boolean(mirror.title),
+    itemCount: normalized.items?.length ?? 0,
   })
   return mirror
 }
 
 function pickWhyUsSectionMeta(block) {
   if (!block) return undefined
+  const normalized = normalizeWhyUsBlockShape(block)
   return {
-    eyebrow: block.eyebrow,
-    title: block.title,
-    description: block.description ?? '',
+    eyebrow: normalized.eyebrow,
+    title: normalized.title,
+    description: normalized.description ?? '',
   }
 }
 
 function mapWhyUsItems(block) {
-  if (!block?.items?.length) return []
-  return block.items.map((item, index) => ({
+  const normalized = normalizeWhyUsBlockShape(block)
+  if (!normalized?.items?.length) return []
+  return normalized.items.map((item, index) => ({
     title: item?.title ?? '',
     description: item?.description ?? '',
-    icon: item?.icon ?? null,
+    icon: resolveCmsIcon(item?.icon),
     _key: item?._key ?? `why-us-${index}`,
   }))
 }
 
-/** Fuente editorial completa: metadata + items desde whyUsBlock. */
+/** Fuente editorial completa: metadata + items desde whyUs/whyUtilcar. */
 export function buildWhyUsSection(block) {
   if (!block) return null
   const meta = pickWhyUsSectionMeta(block)

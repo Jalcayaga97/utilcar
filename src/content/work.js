@@ -76,7 +76,7 @@ const item = (id, title, category, categoryId, image, description, imageAlt) => 
 /** Portfolio ordenado por línea de servicio, sin duplicar archivos visualmente redundantes. */
 const TRABAJOS_PORTFOLIO = [
   item(
-    'taller-tr143',
+    'TM-001',
     'Taller móvil equipado en terreno',
     'Talleres móviles',
     'talleres-moviles',
@@ -84,7 +84,7 @@ const TRABAJOS_PORTFOLIO = [
     'Conversión de utilitario con mobiliario técnico, revestimiento interior y organización modular.',
   ),
   item(
-    'taller-tr247',
+    'TM-002',
     'Interior de unidad móvil técnica',
     'Talleres móviles',
     'talleres-moviles',
@@ -92,7 +92,7 @@ const TRABAJOS_PORTFOLIO = [
     'Habitáculo adaptado para operación y almacenamiento de herramientas.',
   ),
   item(
-    'taller-hiace',
+    'TM-003',
     'Taller móvil Toyota Hiace',
     'Talleres móviles',
     'talleres-moviles',
@@ -100,7 +100,7 @@ const TRABAJOS_PORTFOLIO = [
     'Equipamiento interior con electricidad y terminaciones para servicio en ruta.',
   ),
   item(
-    'taller-tr11',
+    'TM-004',
     'Furgón adaptado a taller móvil',
     'Talleres móviles',
     'talleres-moviles',
@@ -108,7 +108,7 @@ const TRABAJOS_PORTFOLIO = [
     'Distribución interior y revestimientos para trabajo técnico.',
   ),
   item(
-    'taller-tr12',
+    'TM-005',
     'Compartimientos interiores modulares',
     'Talleres móviles',
     'talleres-moviles',
@@ -116,7 +116,7 @@ const TRABAJOS_PORTFOLIO = [
     'Optimización de espacios para operación en terreno.',
   ),
   item(
-    'taller-tr9',
+    'TM-006',
     'Revestimiento interior utilitario',
     'Talleres móviles',
     'talleres-moviles',
@@ -124,7 +124,7 @@ const TRABAJOS_PORTFOLIO = [
     'Terminaciones resistentes para uso intensivo.',
   ),
   item(
-    'vent-master',
+    'VL-001',
     'Kit ventanas Renault Master',
     'Ventanas y lunetas',
     'ventanas-lunetas',
@@ -132,7 +132,7 @@ const TRABAJOS_PORTFOLIO = [
     'Ventiletes y luneta con terminación sellada profesional.',
   ),
   item(
-    'vent-1',
+    'VL-002',
     'Ventanas laterales en utilitario',
     'Ventanas y lunetas',
     'ventanas-lunetas',
@@ -140,7 +140,7 @@ const TRABAJOS_PORTFOLIO = [
     'Instalación con marco de aluminio electropintado.',
   ),
   item(
-    'vent-2',
+    'VL-003',
     'Ventanas corredizas de aluminio',
     'Ventanas y lunetas',
     'ventanas-lunetas',
@@ -148,7 +148,7 @@ const TRABAJOS_PORTFOLIO = [
     'Vidrios templados y terminación industrial.',
   ),
   item(
-    'vent-3',
+    'VL-004',
     'Luneta y ventiletes traseros',
     'Ventanas y lunetas',
     'ventanas-lunetas',
@@ -156,7 +156,7 @@ const TRABAJOS_PORTFOLIO = [
     'Cierre perimetral y acabado en taller Utilcar.',
   ),
   item(
-    'vent-toyota',
+    'VL-005',
     'Equipamiento ventanas Toyota',
     'Ventanas y lunetas',
     'ventanas-lunetas',
@@ -164,7 +164,7 @@ const TRABAJOS_PORTFOLIO = [
     'Conversión según carrocería y modelo.',
   ),
   item(
-    'vent-peugeot',
+    'VL-006',
     'Ventanas Peugeot Boxer',
     'Ventanas y lunetas',
     'ventanas-lunetas',
@@ -172,7 +172,7 @@ const TRABAJOS_PORTFOLIO = [
     'Ventiletes y luneta para chasis utilitario.',
   ),
   item(
-    'vent-renault',
+    'VL-007',
     'Kit ventanas Renault',
     'Ventanas y lunetas',
     'ventanas-lunetas',
@@ -180,7 +180,7 @@ const TRABAJOS_PORTFOLIO = [
     'Instalación con sellado profesional.',
   ),
   item(
-    'vent-fiat',
+    'VL-008',
     'Ventanas Fiat Ducato',
     'Ventanas y lunetas',
     'ventanas-lunetas',
@@ -188,7 +188,7 @@ const TRABAJOS_PORTFOLIO = [
     'Compatibilidad con batalla y configuración del vehículo.',
   ),
   item(
-    'vent-citroen',
+    'VL-009',
     'Ventanas Citroën Jumper',
     'Ventanas y lunetas',
     'ventanas-lunetas',
@@ -196,7 +196,7 @@ const TRABAJOS_PORTFOLIO = [
     'Terminaciones en aluminio electropintado.',
   ),
   item(
-    'vent-chevrolet',
+    'VL-010',
     'Equipamiento Chevrolet',
     'Ventanas y lunetas',
     'ventanas-lunetas',
@@ -204,7 +204,7 @@ const TRABAJOS_PORTFOLIO = [
     'Ventanas y equipamiento integral en habitáculo.',
   ),
   item(
-    'esc-350',
+    'EE-001',
     'Equipamiento escolar en bus',
     'Equipamiento escolar',
     'equipamiento-escolar',
@@ -212,7 +212,7 @@ const TRABAJOS_PORTFOLIO = [
     'Butacas homologadas y distribución para transporte escolar.',
   ),
   item(
-    'esc-351',
+    'EE-002',
     'Interior escolar terminado',
     'Equipamiento escolar',
     'equipamiento-escolar',
@@ -220,7 +220,7 @@ const TRABAJOS_PORTFOLIO = [
     'Señalética, asientos y terminaciones interiores.',
   ),
   item(
-    'esc-352',
+    'EE-003',
     'Conversión transporte escolar',
     'Equipamiento escolar',
     'equipamiento-escolar',
@@ -228,7 +228,7 @@ const TRABAJOS_PORTFOLIO = [
     'Instalación conforme a requerimientos de operación.',
   ),
   item(
-    'banq-traslado',
+    'BQ-001',
     'Banquetas traslado de personal',
     'Banquetas',
     'banquetas',
@@ -236,7 +236,7 @@ const TRABAJOS_PORTFOLIO = [
     'Fabricación en tubo reforzado con tapizado técnico.',
   ),
   item(
-    'banq-traslado-2',
+    'BQ-002',
     'Minibús con banquetas corporativas',
     'Banquetas',
     'banquetas',
@@ -244,7 +244,7 @@ const TRABAJOS_PORTFOLIO = [
     'Distribución interior y pasillo homologado.',
   ),
   item(
-    'banq-boxer',
+    'BQ-003',
     'Peugeot Boxer con banquetas',
     'Banquetas',
     'banquetas',
@@ -252,7 +252,7 @@ const TRABAJOS_PORTFOLIO = [
     'Configuración 2+1 con terminaciones profesionales.',
   ),
   item(
-    'banq-adulto',
+    'BQ-004',
     'Banquetas adultos',
     'Banquetas',
     'banquetas',
@@ -260,7 +260,7 @@ const TRABAJOS_PORTFOLIO = [
     'Estructura MIG y suspensión con resortes inox.',
   ),
   item(
-    'banq-esc-1',
+    'BQ-005',
     'Banquetas línea escolar',
     'Banquetas',
     'banquetas',
@@ -268,7 +268,7 @@ const TRABAJOS_PORTFOLIO = [
     'Espuma alta densidad y cinturones de dos puntas.',
   ),
   item(
-    'banq-esc-2',
+    'BQ-006',
     'Equipamiento escolar en banqueta',
     'Banquetas',
     'banquetas',
@@ -276,7 +276,7 @@ const TRABAJOS_PORTFOLIO = [
     'Tapiz vinil técnico y patas electropintadas.',
   ),
   item(
-    'but-1',
+    'BT-001',
     'Butacas a medida — tapizado',
     'Butacas',
     'butacas',
@@ -284,7 +284,7 @@ const TRABAJOS_PORTFOLIO = [
     'Fabricación con matrices propias y terminación premium.',
   ),
   item(
-    'but-2',
+    'BT-002',
     'Detalle de costuras y acabado',
     'Butacas',
     'butacas',
@@ -292,7 +292,7 @@ const TRABAJOS_PORTFOLIO = [
     'Tapizados técnicos y control de calidad en taller.',
   ),
   item(
-    'but-3',
+    'BT-003',
     'Butacas personalizadas',
     'Butacas',
     'butacas',
@@ -300,7 +300,7 @@ const TRABAJOS_PORTFOLIO = [
     'Configuración según ergonomía y uso del vehículo.',
   ),
   item(
-    'acc-cab',
+    'AC-001',
     'Cabeceras de seguridad',
     'Accesorios',
     'accesorios',
@@ -308,7 +308,7 @@ const TRABAJOS_PORTFOLIO = [
     'Poliuretano inyectado y tapiz a elección.',
   ),
   item(
-    'acc-brazos',
+    'AC-002',
     'Apoya brazos articulado',
     'Accesorios',
     'accesorios',
@@ -316,7 +316,7 @@ const TRABAJOS_PORTFOLIO = [
     'Confort en viajes prolongados con sistema abatible.',
   ),
   item(
-    'acc-baliza',
+    'AC-003',
     'Baliza escolar 12 V',
     'Accesorios',
     'accesorios',
@@ -324,7 +324,7 @@ const TRABAJOS_PORTFOLIO = [
     'Señalización preventiva imantada color amarillo.',
   ),
   item(
-    'acc-distintivo',
+    'AC-004',
     'Distintivo escolar reglamentario',
     'Accesorios',
     'accesorios',
@@ -423,7 +423,8 @@ export const workContent = {
   ui: {
     emptyMessage: 'No hay trabajos en esta categoría.',
     loadMoreLabel: 'Cargar más',
-    pageSize: 12,
+    pageSize: 9,
+    homePreviewMax: 4,
     filterAriaLabel: 'Filtrar trabajos por categoría',
   },
 }

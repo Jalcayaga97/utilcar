@@ -209,7 +209,7 @@
     ],
     "portfolio": [
       {
-        "id": "taller-tr143",
+        "id": "TM-001",
         "title": "Taller móvil equipado en terreno",
         "category": "Talleres móviles",
         "categoryId": "talleres-moviles",
@@ -219,7 +219,7 @@
     ],
     "preview": [
       {
-        "id": "taller-tr143",
+        "id": "TM-001",
         "title": "Taller móvil equipado en terreno",
         "category": "Talleres móviles",
         "description": "Conversión de furgón con mobiliario técnico.",

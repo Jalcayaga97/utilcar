@@ -3,7 +3,6 @@ import { loadCached } from '@/lib/cms/adapterCache'
 import { USE_BLOCK_RESOLVER, USE_CONTACT_V2, USE_PAGE_RESOLVER, USE_SERVICES_V2, USE_WORK_V2 } from '@/lib/cms/config'
 import { legacyFieldsFromBlocks } from '@/lib/cms/homeResolver'
 import { resolveContactPageDocument } from '@/lib/cms/resolvers/contactPageResolver'
-import { resolveServicesPageDocument } from '@/lib/cms/resolvers/servicesPageResolver'
 import { resolveWorkPageDocument } from '@/lib/cms/resolvers/workPageResolver'
 import { getActiveSpecialties } from '@/lib/cms/specialties'
 import { parseSanityPayload } from '@/lib/cms/validate'
@@ -17,7 +16,11 @@ import {
   SERVICES_QUERY_WITH_BLOCKS,
   WORK_QUERY,
   WORK_QUERY_WITH_BLOCKS,
+  serviceSubPageQuery,
+  SITE_SETTINGS_QUERY,
+  WORK_PROJECTS_QUERY,
 } from '@/lib/sanity/queries'
+import { resolveServiceSubPageDocument } from '@/lib/cms/resolvers/servicesPageResolver'
 
 async function fetchQuery(query) {
   const client = getSanityClient()
@@ -73,16 +76,34 @@ export function fetchHomeSpecialtiesModules() {
 }
 
 export function fetchServicesPage() {
-  const query =
-    USE_PAGE_RESOLVER && USE_SERVICES_V2 ? SERVICES_QUERY_WITH_BLOCKS : SERVICES_QUERY
-  const cacheKey =
-    USE_PAGE_RESOLVER && USE_SERVICES_V2 ? 'sanity:services-page-blocks' : 'sanity:services-page'
+  const query = SERVICES_QUERY
+  return loadCached('sanity:services-hub', async () => fetchQuery(query))
+}
+
+export function fetchSiteSettings() {
+  return loadCached('sanity:site-settings', () => fetchQuery(SITE_SETTINGS_QUERY))
+}
+
+export function fetchServiceSubPage(pageKey) {
+  const query = serviceSubPageQuery(pageKey)
+  const cacheKey = `sanity:service-sub-${pageKey}`
   return loadCached(cacheKey, async () => {
     const doc = await fetchQuery(query)
     if (!doc) return null
-    const resolved = resolveServicesPageDocument(doc)
-    return { ...doc, extensions: resolved.extensions, _pageSource: resolved.source }
+    const resolved = resolveServiceSubPageDocument(doc, pageKey)
+    return {
+      ...doc,
+      extensions: resolved.extensions,
+      tabs: resolved.tabs,
+      tabsSection: resolved.tabsSection,
+      introExtras: resolved.introExtras,
+      _pageSource: resolved.source,
+    }
   })
+}
+
+export function fetchWorkProjects() {
+  return loadCached('sanity:work-projects', () => fetchQuery(WORK_PROJECTS_QUERY))
 }
 
 export function fetchWorkPage() {

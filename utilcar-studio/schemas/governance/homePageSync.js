@@ -58,8 +58,22 @@ export function readSpecialtiesFromBlock(block) {
 
 function pickHero(block) {
   if (!block) return undefined
-  const { title, subtitle, highlights, secondaryLink, imageAlt } = block
-  return { title, subtitle, highlights, secondaryLink, imageAlt }
+  const label = block.textLinkLabel ?? block.secondaryLink?.label
+  const to = block.textLinkUrl ?? block.secondaryLink?.to
+  return {
+    title: block.title,
+    subtitle: block.subtitle,
+    highlights: block.highlights,
+    secondaryLink:
+      label || to
+        ? {
+            label: label ?? '',
+            to: to ?? '/trabajos-realizados',
+            ariaLabel: label ?? '',
+          }
+        : block.secondaryLink,
+    imageAlt: block.imageAlt,
+  }
 }
 
 function pickServices(block) {
@@ -89,18 +103,18 @@ function pickPortfolio(block) {
 
 function pickCta(block) {
   if (!block) return undefined
-  const { title, description, buttonLabel, buttonLink, buttonText, primaryLabel, primaryTo } =
-    block
   return {
-    title,
-    description,
-    primaryLabel: buttonLabel || buttonText || primaryLabel || '',
-    primaryTo: buttonLink || primaryTo || '',
+    title: block.title,
+    description: block.description,
   }
 }
 
 function findBlock(blocks, type) {
   return (blocks ?? []).find((block) => block?._type === type)
+}
+
+function findWhyUsBlock(blocks) {
+  return findBlock(blocks, 'whyUsBlock') || findBlock(blocks, 'whyUtilcarBlock')
 }
 
 function findPortfolioBlock(blocks) {
@@ -135,7 +149,7 @@ export function legacyFieldsFromBlocks(blocks) {
   const heroBlock = findBlock(ordered, 'heroBlock')
   const specialtiesBlock = findBlock(ordered, 'specialtiesBlock')
   const servicesBlock = findBlock(ordered, 'servicesBlock')
-  const whyUsBlock = findBlock(ordered, 'whyUsBlock')
+  const whyUsBlock = findWhyUsBlock(ordered)
   const portfolioBlock = findPortfolioBlock(ordered)
   const ctaBlock = findBlock(ordered, 'ctaBlock')
 
@@ -231,10 +245,47 @@ function flatFieldsChanged(before, after) {
   return LEGACY_FLAT_FIELDS.some((field) => !isEqualJson(before?.[field], after?.[field]))
 }
 
+/** Evita que el espejo legacy sobrescriba arrays editoriales ya poblados. */
+function preserveBlockNestedArrays(beforeBlocks, nextBlocks) {
+  const before = withOrder(beforeBlocks ?? [])
+  const next = withOrder(nextBlocks ?? [])
+  return next.map((block) => {
+    const prev =
+      before.find((b) => b._key && b._key === block._key && b._type === block._type) ??
+      before.find((b) => b._type === block._type)
+    if (!prev) return block
+
+    const merged = { ...block }
+    if (block._type === 'servicesBlock' && !(block.items?.length > 0) && prev.items?.length) {
+      merged.items = prev.items
+    }
+    if (
+      block._type === 'specialtiesBlock' &&
+      !(block.categories?.length > 0) &&
+      prev.categories?.length
+    ) {
+      merged.categories = prev.categories
+    }
+    const whyTypes = new Set(['whyUtilcarBlock', 'whyUsBlock'])
+    if (whyTypes.has(block._type) && !(block.items?.length > 0) && prev.items?.length) {
+      merged.items = prev.items
+    }
+    if (
+      (block._type === 'portfolioBlock' || block._type === 'galleryBlock') &&
+      !(block.featuredProjects?.length > 0) &&
+      prev.featuredProjects?.length
+    ) {
+      merged.featuredProjects = prev.featuredProjects
+    }
+    return merged
+  })
+}
+
 function patchesFromLegacyMirror(blocks, after) {
   const patches = []
   const fieldsSynced = []
   const legacyFromBlocks = legacyFieldsFromBlocks(blocks)
+  legacyFromBlocks.blocks = preserveBlockNestedArrays(after?.blocks, legacyFromBlocks.blocks)
 
   for (const field of LEGACY_FLAT_FIELDS) {
     const value = legacyFromBlocks[field]

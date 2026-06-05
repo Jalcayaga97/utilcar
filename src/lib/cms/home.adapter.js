@@ -6,10 +6,12 @@ import {
   getValidatedLocalEspecialidades,
   getValidatedLocalHomeBundle,
   getValidatedLocalHomeContent,
+  getValidatedLocalWorkBundle,
 } from '@/lib/cms/localContent'
+import { mergeWorkProjectCatalog, resolveHomePortfolioDisplay } from '@/lib/cms/resolvers/workProjectsResolver'
 import { validateContent } from '@/lib/cms/validate'
 import { HomeBundleSchema } from '@/lib/schemas'
-import { fetchEspecialidades, fetchHomePage } from '@/lib/sanity/fetch'
+import { fetchEspecialidades, fetchHomePage, fetchWorkProjects } from '@/lib/sanity/fetch'
 
 const CACHE_KEY = 'cms:home-bundle'
 
@@ -113,4 +115,43 @@ export async function getHomeContent() {
 export async function getEspecialidades() {
   const bundle = await resolveHomeBundle()
   return bundle.especialidades
+}
+
+/** Valor síncrono para primer render / sin Sanity — misma lógica que getHomePortfolioCards(). */
+export function getLocalHomePortfolioCards() {
+  const homeBundle = getValidatedLocalHomeBundle()
+  const workBundle = getValidatedLocalWorkBundle()
+  const portfolioSection = homeBundle.extensions?.portfolioSection ?? null
+  const limit = portfolioSection?.previewCount ?? homeBundle.homeContent?.portfolioPreview?.previewCount ?? 3
+  const catalog = mergeWorkProjectCatalog(workBundle.workProjects ?? workBundle.workContent?.portfolio ?? [])
+  const { projects } = resolveHomePortfolioDisplay(portfolioSection, catalog, {
+    limit,
+    legacyPreview: workBundle.workContent?.preview ?? [],
+  })
+  return projects
+}
+
+/**
+ * Tarjetas Trabajos recientes del Home — respeta selectedProjects y previewCount del portfolioBlock.
+ */
+export async function getHomePortfolioCards() {
+  if (!isSanityEnabled()) {
+    return getLocalHomePortfolioCards()
+  }
+
+  try {
+    const bundle = await resolveHomeBundle()
+    const portfolioSection = bundle.extensions?.portfolioSection ?? null
+    const limit = portfolioSection?.previewCount ?? bundle.homeContent?.portfolioPreview?.previewCount ?? 3
+    const workProjectsRaw = await fetchWorkProjects().catch(() => [])
+    const catalog = mergeWorkProjectCatalog(workProjectsRaw ?? [])
+    const workBundle = getValidatedLocalWorkBundle()
+    const { projects } = resolveHomePortfolioDisplay(portfolioSection, catalog, {
+      limit,
+      legacyPreview: workBundle.workContent?.preview ?? [],
+    })
+    return projects
+  } catch {
+    return getLocalHomePortfolioCards()
+  }
 }

@@ -59,13 +59,9 @@ export function getActiveHeroSection(extensions) {
   return {
     title: section.title ?? '',
     subtitle: section.subtitle ?? '',
+    eyebrow: section.eyebrow ?? '',
     highlights: section.highlights ?? [],
-    primaryCta: section.primaryCta ?? { label: '', to: '/contacto', ariaLabel: '' },
-    secondaryCta: section.secondaryCta ?? {
-      label: '',
-      to: '/trabajos-realizados',
-      ariaLabel: '',
-    },
+    textLink: section.textLink ?? { label: '', to: '/trabajos-realizados', ariaLabel: '' },
     image: section.image ?? { url: null, alt: '' },
   }
 }

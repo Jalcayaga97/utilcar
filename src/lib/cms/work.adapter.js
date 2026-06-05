@@ -1,36 +1,35 @@
 import { isSanityEnabled } from '@/lib/cms/config'
 import { loadCached } from '@/lib/cms/adapterCache'
 import { getValidatedLocalWorkBundle } from '@/lib/cms/localContent'
-import { deepMerge, mergePortfolioItems } from '@/lib/cms/merge'
-import { buildActiveWorkBundle } from '@/lib/cms/resolvers/workPageResolver'
+import { normalizeWorkProjectList } from '@/lib/cms/contracts/workProjectContract'
+import { buildActiveWorkBundle, mapWorkPageRuntime } from '@/lib/cms/resolvers/workPageResolver'
+import { buildGlobalServiceCta } from '@/lib/cms/resolvers/globalServiceCtaResolver'
+import {
+  mergeWorkProjectCatalog,
+  resolveHomeFeaturedProjects,
+} from '@/lib/cms/resolvers/workProjectsResolver'
 import { validateContent } from '@/lib/cms/validate'
 import { WorkBundleSchema } from '@/lib/schemas'
-import { fetchWorkPage } from '@/lib/sanity/fetch'
+import { fetchWorkPage, fetchWorkProjects, fetchSiteSettings } from '@/lib/sanity/fetch'
 
 const CACHE_KEY = 'cms:work-bundle'
 
 async function loadWorkBundleFromSanity() {
   const local = getValidatedLocalWorkBundle()
-  const remote = await fetchWorkPage()
-  if (!remote) return local
+  const [remote, workProjectsRaw] = await Promise.all([
+    fetchWorkPage(),
+    fetchWorkProjects().catch(() => []),
+  ])
 
-  const legacyMerged = {
-    workContent: {
-      ...local.workContent,
-      page: remote.page ? deepMerge(local.workContent.page, remote.page) : local.workContent.page,
-      filters: remote.filters?.length ? remote.filters : local.workContent.filters,
-      portfolio: remote.portfolio?.length
-        ? mergePortfolioItems(local.workContent.portfolio, remote.portfolio)
-        : local.workContent.portfolio,
-      preview: remote.preview?.length
-        ? mergePortfolioItems(local.workContent.preview, remote.preview)
-        : local.workContent.preview,
-      ui: remote.ui ? deepMerge(local.workContent.ui, remote.ui) : local.workContent.ui,
-    },
-    trabajosPageHero: local.trabajosPageHero,
+  const workProjects = isSanityEnabled()
+    ? normalizeWorkProjectList(workProjectsRaw ?? [])
+    : mergeWorkProjectCatalog(workProjectsRaw ?? [])
+
+  if (!remote) {
+    return buildActiveWorkBundle(local, { workProjects })
   }
 
-  return buildActiveWorkBundle(legacyMerged, remote)
+  return buildActiveWorkBundle(local, { ...remote, workProjects })
 }
 
 async function resolveWorkBundle() {
@@ -41,7 +40,8 @@ async function resolveWorkBundle() {
   }
 
   try {
-    return await loadCached(CACHE_KEY, loadWorkBundleFromSanity)
+    const bundle = await loadCached(CACHE_KEY, loadWorkBundleFromSanity)
+    return validateContent(WorkBundleSchema, bundle, local, 'sanity:work-bundle')
   } catch {
     return { ...local, _workSource: 'legacy' }
   }
@@ -54,7 +54,10 @@ export async function getWorkContent() {
 
 export async function getTrabajosPreview() {
   const bundle = await resolveWorkBundle()
-  return bundle.workContent.preview
+  const limit = bundle.workContent?.ui?.homePreviewMax ?? 4
+  const catalog = bundle.workProjects ?? bundle.workContent?.portfolio ?? []
+  const legacyPreview = isSanityEnabled() ? [] : bundle.workContent?.preview ?? []
+  return resolveHomeFeaturedProjects(catalog, { limit, legacyPreview })
 }
 
 export async function getTrabajosPageHero() {
@@ -64,4 +67,57 @@ export async function getTrabajosPageHero() {
 
 export async function getWorkBundle() {
   return resolveWorkBundle()
+}
+
+function localWorkPageDisplay() {
+  const bundle = getValidatedLocalWorkBundle()
+  return {
+    content: bundle.workContent.page,
+    heroImage: bundle.trabajosPageHero,
+    seo: null,
+    source: 'legacy',
+  }
+}
+
+export async function getWorkPageDisplay() {
+  const local = getValidatedLocalWorkBundle()
+
+  if (!isSanityEnabled()) {
+    return localWorkPageDisplay()
+  }
+
+  try {
+    const [remote, globalCtaRaw, workProjectsRaw] = await Promise.all([
+      fetchWorkPage(),
+      fetchSiteSettings().catch(() => null),
+      fetchWorkProjects().catch(() => []),
+    ])
+
+    const workProjects = normalizeWorkProjectList(workProjectsRaw ?? [])
+    const globalCta = buildGlobalServiceCta(globalCtaRaw)
+    const legacyBundle = local
+
+    const resolved = remote
+      ? {
+          extensions: remote.extensions ?? {},
+          ui: remote.ui,
+          _pageSource: remote._pageSource,
+        }
+      : { extensions: {} }
+
+    const mapped = mapWorkPageRuntime(legacyBundle, resolved, { workProjects, globalCta })
+
+    if (mapped._workSource !== 'cms') {
+      return localWorkPageDisplay()
+    }
+
+    return {
+      content: mapped.workContent.page,
+      heroImage: mapped.trabajosPageHero,
+      seo: mapped.seo ?? null,
+      source: 'cms',
+    }
+  } catch {
+    return localWorkPageDisplay()
+  }
 }

@@ -1,9 +1,10 @@
 /**
  * Contrato de dominio heroBlock → frontend.
+ * Botones principales: siteSettings.serviceCta (useGlobalServiceCta).
  */
 
-const DEFAULT_CTA = Object.freeze({ label: '', to: '/contacto', ariaLabel: '' })
 const DEFAULT_IMAGE = Object.freeze({ url: null, alt: '' })
+const DEFAULT_TEXT_LINK = Object.freeze({ label: '', to: '/trabajos-realizados', ariaLabel: '' })
 
 export function sanitizeString(value) {
   if (value == null) return ''
@@ -12,25 +13,42 @@ export function sanitizeString(value) {
 
 export function createEmptyHero(overrides = {}) {
   return {
+    eyebrow: '',
     title: '',
     subtitle: '',
     highlights: [],
-    primaryCta: { ...DEFAULT_CTA },
-    secondaryCta: { ...DEFAULT_CTA },
+    textLink: { ...DEFAULT_TEXT_LINK },
     image: { ...DEFAULT_IMAGE },
     ...overrides,
   }
 }
 
-function normalizeCta(raw, fallbackTo = '/contacto') {
-  if (!raw || typeof raw !== 'object') {
-    return createEmptyHero().primaryCta
+function normalizeTextLink(raw, fallbackTo = '/trabajos-realizados') {
+  if (raw == null || raw === false) {
+    return { ...DEFAULT_TEXT_LINK, to: fallbackTo }
   }
-  const label = sanitizeString(raw.label)
-  let to = sanitizeString(raw.to ?? raw.path ?? raw.href)
+  if (typeof raw === 'string') {
+    const to = sanitizeString(raw) || fallbackTo
+    return { label: '', to, ariaLabel: '' }
+  }
+  if (typeof raw !== 'object') {
+    return { ...DEFAULT_TEXT_LINK, to: fallbackTo }
+  }
+  const label = sanitizeString(raw.label ?? raw.textLinkLabel)
+  let to = sanitizeString(raw.to ?? raw.textLinkUrl ?? raw.path ?? raw.href)
   if (!to) to = fallbackTo
   const ariaLabel = sanitizeString(raw.ariaLabel) || label
   return { label, to, ariaLabel }
+}
+
+function pickTextLinkRaw(block) {
+  if (block?.textLinkLabel || block?.textLinkUrl) {
+    return { label: block.textLinkLabel, to: block.textLinkUrl }
+  }
+  if (block?.textLink) return block.textLink
+  if (block?.secondaryLink) return block.secondaryLink
+  if (block?.secondaryCta) return block.secondaryCta
+  return null
 }
 
 function normalizeHighlights(raw) {
@@ -39,18 +57,13 @@ function normalizeHighlights(raw) {
 }
 
 function normalizeHeroImage(imageField, imageAltFallback) {
-  const url = imageField?.asset?.url ?? imageField?.url ?? null
+  const url =
+    imageField?.asset?.url ??
+    imageField?.url ??
+    (typeof imageField === 'string' ? imageField : null) ??
+    null
   const alt = sanitizeString(imageField?.alt ?? imageAltFallback)
   return { url: url || null, alt }
-}
-
-function pickPrimaryCtaRaw(block) {
-  if (block?.primaryCta) return block.primaryCta
-  if (block?.primaryLink) return block.primaryLink
-  if (block?.buttonLabel || block?.buttonLink) {
-    return { label: block.buttonLabel, to: block.buttonLink }
-  }
-  return null
 }
 
 /**
@@ -61,14 +74,11 @@ export function normalizeHero(block) {
   if (!block) return createEmptyHero()
 
   return createEmptyHero({
+    eyebrow: sanitizeString(block.eyebrow),
     title: sanitizeString(block.title),
     subtitle: sanitizeString(block.subtitle),
     highlights: normalizeHighlights(block.highlights),
-    primaryCta: normalizeCta(pickPrimaryCtaRaw(block), '/contacto'),
-    secondaryCta: normalizeCta(
-      block.secondaryCta ?? block.secondaryLink,
-      '/trabajos-realizados',
-    ),
+    textLink: normalizeTextLink(pickTextLinkRaw(block), '/trabajos-realizados'),
     image: normalizeHeroImage(block.image, block.imageAlt),
   })
 }
@@ -108,20 +118,15 @@ export function validateHero(hero) {
     })
   }
 
-  for (const [field, cta] of [
-    ['primaryCta', hero?.primaryCta],
-    ['secondaryCta', hero?.secondaryCta],
-  ]) {
-    const path = cta?.to
-    if (path && !isValidCtaPath(path)) {
-      warnings.push({
-        type: 'invalid-cta',
-        block: 'heroBlock',
-        field,
-        path,
-        message: 'invalid cta',
-      })
-    }
+  const textPath = hero?.textLink?.to
+  if (textPath && !isValidCtaPath(textPath)) {
+    warnings.push({
+      type: 'invalid-cta',
+      block: 'heroBlock',
+      field: 'textLink',
+      path: textPath,
+      message: 'invalid text link',
+    })
   }
 
   const valid = warnings.every((w) => w.type !== 'missing-title')
@@ -157,9 +162,9 @@ export function heroContractToLegacyMirror(hero) {
     subtitle: hero.subtitle,
     highlights: hero.highlights,
     secondaryLink: {
-      label: hero.secondaryCta.label,
-      to: hero.secondaryCta.to,
-      ariaLabel: hero.secondaryCta.ariaLabel,
+      label: hero.textLink.label,
+      to: hero.textLink.to,
+      ariaLabel: hero.textLink.ariaLabel,
     },
     imageAlt: hero.image.alt,
   }

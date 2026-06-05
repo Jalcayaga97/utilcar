@@ -228,7 +228,7 @@ export function EspecialidadesUtilcar({ activeSection: activeSectionProp }) {
 
   const displayList = useMemo(() => {
     if (activeSection) {
-      return mapSpecialtiesSectionToDisplayList(activeSection, legacyList)
+      return mapSpecialtiesSectionToDisplayList(activeSection)
     }
     return legacyList
   }, [activeSection, legacyList])

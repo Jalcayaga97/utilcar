@@ -118,17 +118,17 @@ export function indexLegacySpecialties(legacyList) {
 }
 
 /**
- * Categoría contractual → shape display EspecialidadesUtilcar (legacy-compatible).
+ * Categoría contractual → shape display EspecialidadesUtilcar.
  * @param {object} category
- * @param {Map<string, object>} legacyById
+ * @param {Map<string, object> | null} [legacyById] — solo fallback emergencia
  */
-export function mapCategoryToDisplayItem(category, legacyById) {
+export function mapCategoryToDisplayItem(category, legacyById = null) {
   if (!category) return null
 
-  const legacyItem = legacyById.get(category.id)
-  const hero = resolveCategoryHeroImage(category, legacyItem)
+  const legacyItem = legacyById?.get(category.id)
+  const hero = resolveCategoryHeroImage(category, legacyById ? legacyItem : null)
   const gallery = resolveCategoryGalleryImages(category.gallery)
-  const cta = resolveSpecialtyCta(category.cta, legacyItem?.cta)
+  const cta = resolveSpecialtyCta(category.cta, legacyById ? legacyItem?.cta : null)
 
   const specGroups = (category.features ?? []).map((feature) => ({
     title: feature.groupTitle || 'Especificaciones',
@@ -140,10 +140,15 @@ export function mapCategoryToDisplayItem(category, legacyById) {
     title: category.title,
     subtitle: category.subtitle,
     intro: category.description,
-    specGroups: specGroups.length ? specGroups : (legacyItem?.specGroups ?? []),
+    specGroups:
+      specGroups.length > 0
+        ? specGroups
+        : legacyById && legacyItem?.specGroups
+          ? legacyItem.specGroups
+          : [],
     cta,
     image: hero.url,
-    imageAlt: hero.alt || legacyItem?.imageAlt || category.title,
+    imageAlt: hero.alt || category.title,
     imageSource: hero.source,
     gallery,
     brands: category.brands ?? [],
@@ -155,14 +160,15 @@ export function mapCategoryToDisplayItem(category, legacyById) {
 }
 
 /**
- * Lista display para EspecialidadesUtilcar desde sección CMS.
+ * Lista display desde sección CMS (sin legacy cuando categories[] existe).
  * @param {object} section specialtiesSection
- * @param {object[]} legacyList fallback imágenes locales
+ * @param {object[] | null} [legacyList] — fallback emergencia
  */
-export function mapSpecialtiesSectionToDisplayList(section, legacyList = []) {
+export function mapSpecialtiesSectionToDisplayList(section, legacyList = null) {
   if (!section?.categories?.length) return []
 
-  const legacyById = indexLegacySpecialties(legacyList)
+  const legacyById =
+    legacyList?.length > 0 ? indexLegacySpecialties(legacyList) : null
   return section.categories
     .filter((cat) => cat.enabled !== false)
     .map((category) => mapCategoryToDisplayItem(category, legacyById))

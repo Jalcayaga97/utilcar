@@ -19,6 +19,7 @@ import * as ctaResolver from '@/lib/cms/resolvers/ctaResolver'
 export {
   getValidPortfolioItems,
   getActivePortfolioSection,
+  resolveHomePortfolioCards,
 } from '@/lib/cms/resolvers/portfolioResolver'
 export {
   getValidWhyUsItems,

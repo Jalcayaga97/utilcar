@@ -3,7 +3,7 @@
  */
 export const ContactContentContract = {
   hero: { eyebrow: '', title: '', subtitle: '', imageAlt: '' },
-  intro: { formHint: '' },
+  intro: { formHint: '', paragraphs: [] },
   details: {
     title: '',
     description: '',
@@ -11,7 +11,7 @@ export const ContactContentContract = {
       phone: '',
       email: '',
       address: '',
-      hours: { title: '', lines: [] },
+      hours: { title: '' },
     },
   },
   cta: { title: '', description: '', primaryLabel: '', primaryTo: '' },

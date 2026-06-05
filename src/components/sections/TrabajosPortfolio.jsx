@@ -1,4 +1,5 @@
-import { memo, useCallback, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ZoomIn } from 'lucide-react'
 import { cn } from '@/lib/cn'
@@ -106,11 +107,23 @@ const PortfolioCard = memo(function PortfolioCard({ item, index, onOpen }) {
 
 export function TrabajosPortfolio() {
   const { filters, portfolio, ui } = useWorkContent()
-  const pageSize = ui.pageSize
+  const pageSize = ui.pageSize ?? 9
+  const [searchParams] = useSearchParams()
 
-  const [activeFilter, setActiveFilter] = useState('all')
+  const initialFilter = useMemo(() => {
+    const category = String(searchParams.get('categoria') ?? '').trim()
+    if (category && filters.some((filter) => filter.id === category)) return category
+    return 'all'
+  }, [filters, searchParams])
+
+  const [activeFilter, setActiveFilter] = useState(initialFilter)
   const [visibleCount, setVisibleCount] = useState(pageSize)
   const [lightboxIndex, setLightboxIndex] = useState(null)
+
+  useEffect(() => {
+    setActiveFilter(initialFilter)
+    setVisibleCount(pageSize)
+  }, [initialFilter, pageSize])
 
   const filtered = useMemo(() => {
     if (activeFilter === 'all') return portfolio

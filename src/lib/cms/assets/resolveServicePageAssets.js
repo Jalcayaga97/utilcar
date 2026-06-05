@@ -1,62 +1,88 @@
-import { normalizeImageAsset, normalizeGalleryImages } from '@/lib/cms/assets/resolveImage'
-import { logAssetsDomain } from '@/lib/cms/assets/assetsLog'
+import { normalizeImageAsset, pickImageUrl, pickImageAlt } from '@/lib/cms/assets/resolveImage'
+import { logServiceHeroAudit } from '@/lib/cms/servicePageAuditLog'
 
-const SERVICE_LEGACY_HERO = {
-  'talleres-moviles': (images) => images?.talleres?.hero,
-  'ventanas-lunetas': (images) => images?.ventanas?.hero,
-  'equipamiento-escolar': (images) => images?.escolar?.hero,
-  banquetas: (images) => images?.banquetas?.hero,
-  butacas: (images) => images?.butacas?.hero,
-  accesorios: (images) => images?.accesorios?.hero,
-}
+/**
+ * Hero de sub-página de servicio — solo CMS cuando legacy es null.
+ */
+export function resolveServicePageHero(heroSection, legacyHero, _legacyImages, pageKey) {
+  const cmsImage = heroSection?.image
+  const cmsUrl =
+    pickImageUrl(cmsImage) ||
+    (typeof cmsImage?.asset?.url === 'string' ? cmsImage.asset.url : null) ||
+    (typeof heroSection?.image?.url === 'string' ? heroSection.image.url : null) ||
+    heroSection?.imageUrl ||
+    null
 
-const SERVICE_LEGACY_GALLERY = {
-  'talleres-moviles': (images) => images?.talleres?.gallery ?? [],
-  'ventanas-lunetas': (images) => images?.ventanas?.gallery ?? [],
-  'equipamiento-escolar': (images) => images?.escolar?.gallery ?? [],
-  banquetas: (images) => images?.banquetas?.gallery ?? [],
-  butacas: (images) => images?.butacas?.gallery ?? [],
-  accesorios: (images) => images?.accesorios?.gallery ?? [],
-}
-
-export function resolveServicePageHero(heroSection, legacyHero, legacyImages, pageKey) {
-  const legacyUrlFn = SERVICE_LEGACY_HERO[pageKey]
-  const legacyUrl = legacyUrlFn?.(legacyImages) ?? null
+  const hasHeroImage = Boolean(
+    cmsUrl ||
+      cmsImage?.asset?._ref ||
+      cmsImage?.asset?._id ||
+      legacyHero?.imageUrl,
+  )
 
   const resolved = normalizeImageAsset(
     {
-      cmsImage: heroSection?.image,
-      legacyUrl,
+      cmsImage: cmsUrl ? { url: cmsUrl, alt: pickImageAlt(cmsImage, heroSection?.imageAlt) } : cmsImage,
+      legacyUrl: legacyHero?.imageUrl ?? legacyHero?.image ?? null,
       legacyAlt: legacyHero?.imageAlt || '',
-      fallbackAlt: legacyHero?.title || '',
+      fallbackAlt: heroSection?.title || legacyHero?.title || pageKey,
     },
     { domain: 'service-hero', id: pageKey },
   )
+
+  const highlightList = Array.isArray(heroSection?.highlights)
+    ? heroSection.highlights.map((item) => String(item ?? '').trim()).filter(Boolean)
+    : []
+
+  if (import.meta.env.DEV) {
+    const assetUrl =
+      cmsImage?.asset?.url ??
+      heroSection?.image?.asset?.url ??
+      heroSection?.image?.url ??
+      cmsUrl ??
+      null
+    console.info('[service-hero]', {
+      pageKey,
+      hasHeroImage,
+      highlightsCount: highlightList.length,
+      highlights: highlightList,
+      hasCmsBlock: Boolean(heroSection),
+      imageSource: resolved.source,
+      resolvedUrl: resolved.url?.startsWith('data:') ? '(placeholder)' : resolved.url,
+      assetUrl: assetUrl?.startsWith('data:') ? '(placeholder)' : assetUrl,
+      cmsUrlFound: Boolean(cmsUrl),
+    })
+    if (resolved.source === 'placeholder') {
+      console.warn(
+        `[service-hero] ${pageKey}: sin imagen CMS — verifique heroBlock.image en Sanity y flags VITE_USE_PAGE_RESOLVER + VITE_USE_SERVICES_V2`,
+      )
+    }
+  }
+
+  const highlightsResolver = heroSection?.highlights ?? legacyHero?.highlights ?? []
+
+  logServiceHeroAudit({
+    pageKey,
+    highlightsCms: highlightList,
+    highlightsResolver,
+    highlightsComponent: highlightsResolver,
+    imageCms: Boolean(cmsUrl || cmsImage?.asset?.url || heroSection?.image?.url),
+    imageResolver: resolved.url?.startsWith('data:') ? null : resolved.url,
+    imageComponent: resolved.url?.startsWith('data:') ? null : resolved.url,
+    hasCmsBlock: Boolean(heroSection),
+    imageSource: resolved.source,
+  })
 
   return {
     src: resolved.url,
     alt: resolved.alt,
     source: resolved.source,
-    eyebrow: heroSection?.eyebrow ?? legacyHero?.eyebrow,
+    eyebrow: heroSection?.eyebrow ?? legacyHero?.eyebrow ?? 'Servicios',
     title: heroSection?.title || legacyHero?.title,
     subtitle: heroSection?.subtitle || legacyHero?.subtitle,
+    highlights: highlightsResolver,
     imageAlt: resolved.alt || legacyHero?.imageAlt,
   }
-}
-
-export function resolveServicePageGallery(portfolioSection, legacyImages, pageKey) {
-  const legacyFn = SERVICE_LEGACY_GALLERY[pageKey]
-  const legacyGallery = legacyFn?.(legacyImages) ?? []
-
-  const cmsItems = (portfolioSection?.items ?? []).map((item) => ({
-    image: { url: item.imageUrl, alt: item.imageAlt },
-    caption: item.title,
-    id: item.id,
-  }))
-
-  const gallery = normalizeGalleryImages(cmsItems, legacyGallery)
-  logAssetsDomain('service-gallery', { pageKey, count: gallery.length })
-  return gallery
 }
 
 export function resolveServicePageFeatures(featuresSection, legacyScope) {

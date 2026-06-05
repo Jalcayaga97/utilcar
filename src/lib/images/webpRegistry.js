@@ -16,6 +16,9 @@ export function getWebpSrc(fallbackSrc) {
   const pathOnly = fallbackSrc.split('?')[0]
   if (pathOnly.endsWith('.webp')) return undefined
 
+  // URLs remotas (Sanity CDN, etc.) no tienen variante WebP local en build.
+  if (/^https?:\/\//i.test(pathOnly)) return undefined
+
   if (!/\.(jpe?g|png|jfif)$/i.test(pathOnly)) return undefined
 
   if (pathOnly.startsWith('/') && !pathOnly.startsWith('/assets/') && !pathOnly.startsWith('/src/')) {

@@ -3,6 +3,27 @@
  * En Studio usar campo `schemaVersion` (sin `_`). GROQ lo expone como _schemaVersion al frontend.
  */
 import { SPECIALTIES_CATEGORY_PROJECTION } from './specialtiesProjection.js'
+import { WORK_PROJECT_PROJECTION } from './workProjectsProjection.js'
+
+/** Portable Text — richTextBlock.body (Sanity block content). */
+export const PORTABLE_TEXT_BODY_PROJECTION = `body[]{
+  _type,
+  _key,
+  style,
+  listItem,
+  level,
+  children[]{
+    _type,
+    _key,
+    text,
+    marks
+  },
+  markDefs[]{
+    _type,
+    _key,
+    href
+  }
+}`
 
 /** Proyección blocks para Block Resolver (solo cuando VITE_USE_BLOCK_RESOLVER=true). */
 export const HOME_BLOCKS_PROJECTION = `blocks[]{
@@ -13,6 +34,9 @@ export const HOME_BLOCKS_PROJECTION = `blocks[]{
   title,
   subtitle,
   description,
+  sectionEyebrow,
+  sectionTitle,
+  sectionDescription,
   eyebrow,
   cardLinkLabel,
   ctaLabel,
@@ -21,25 +45,11 @@ export const HOME_BLOCKS_PROJECTION = `blocks[]{
   buttonLabel,
   buttonLink,
   buttonText,
-  primaryLabel,
-  primaryTo,
   highlights,
-  primaryCta{
-    label,
-    to,
-    ariaLabel
-  },
-  primaryLink{
-    label,
-    to,
-    ariaLabel
-  },
-  secondaryLink{
-    label,
-    to,
-    ariaLabel
-  },
+  textLinkLabel,
+  textLinkUrl,
   imageAlt,
+  eyebrow,
   image{ asset->{ _id, url }, alt },
   mobileImage{ asset->{ _id, url }, alt },
   itemEyebrowPrefix,
@@ -62,6 +72,8 @@ export const HOME_BLOCKS_PROJECTION = `blocks[]{
     title,
     subtitle,
     description,
+    client,
+    vehicle,
     question,
     answer,
     features,
@@ -73,8 +85,16 @@ export const HOME_BLOCKS_PROJECTION = `blocks[]{
     specGroups,
     cta,
     blockMeta
-  }
+  },
+  featuredProjects[]{
+    projectId,
+    project->${WORK_PROJECT_PROJECTION}
+  },
+  selectedProjects[]->${WORK_PROJECT_PROJECTION},
+  ${PORTABLE_TEXT_BODY_PROJECTION}
 }`
+
+export const WORK_PROJECTS_QUERY = `*[_type == "workProject" && visible != false] | order(order asc, _createdAt desc) ${WORK_PROJECT_PROJECTION}`
 
 export const HOME_QUERY = `*[_type == "homePage"][0]{
   "_schemaVersion": schemaVersion,
@@ -111,9 +131,7 @@ export const HOME_QUERY = `*[_type == "homePage"][0]{
   },
   ctaBanner{
     title,
-    description,
-    primaryLabel,
-    primaryTo
+    description
   }
 }`
 
@@ -177,9 +195,7 @@ export const HOME_QUERY_WITH_BLOCKS = `*[_type == "homePage"][0]{
   },
   ctaBanner{
     title,
-    description,
-    primaryLabel,
-    primaryTo
+    description
   },
   "specialtiesNew": specialtiesNew[]${SPECIALTY_NEW_PROJECTION}
 }`
@@ -194,7 +210,7 @@ export const ESPECIALIDADES_QUERY = `*[_type == "homePage"][0]{
 /** Proyección blocks para páginas con Page Builder (services, work, contact). */
 export const PAGE_BLOCKS_PROJECTION = HOME_BLOCKS_PROJECTION
 
-const SERVICES_FIELDS = `
+const SERVICES_HUB_FIELDS = `
   serviceLinks[]{ label, path },
   mainNavLinks[]{ label, path },
   services[]{
@@ -209,25 +225,75 @@ const SERVICES_FIELDS = `
     description
   },
   serviceCtaDefaults,
-  ctaButtonLabels,
-  talleresMoviles,
-  ventanasLunetas,
-  equipamientoEscolar,
-  banquetas,
-  butacas,
-  accesorios,
-  ventanasBrands,
-  banquetasCategories,
-  accesoriosCategories`
+  ctaButtonLabels`
+
+const SERVICE_SUBPAGE_FIELDS = `
+  pageKey,
+  title,
+  tabsSection,
+  introExtras,
+  tabs[]{
+    _key,
+    id,
+    name,
+    description,
+    models,
+    subtitle,
+    intro,
+    sections[]{
+      title,
+      items
+    },
+    gallery[]{
+      image{ asset->{ _id, url }, alt },
+      alt,
+      caption
+    },
+    extra
+  }`
 
 export const SERVICES_QUERY = `*[_type == "servicesPage"][0]{
-  "_schemaVersion": schemaVersion,${SERVICES_FIELDS}
+  "_schemaVersion": schemaVersion,${SERVICES_HUB_FIELDS}
 }`
 
 export const SERVICES_QUERY_WITH_BLOCKS = `*[_type == "servicesPage"][0]{
   "_schemaVersion": schemaVersion,
-  ${PAGE_BLOCKS_PROJECTION},${SERVICES_FIELDS}
+  ${PAGE_BLOCKS_PROJECTION},${SERVICES_HUB_FIELDS}
 }`
+
+export const SITE_SETTINGS_QUERY = `*[_type == "siteSettings" && _id == "siteSettings"][0]{
+  "_schemaVersion": schemaVersion,
+  company{
+    legalName,
+    phone,
+    secondaryPhone,
+    whatsappNumber,
+    primaryEmail,
+    secondaryEmail,
+    addressStreet,
+    addressCity,
+    openingHours,
+    mapsEmbedQuery,
+    socialLinks[]{ platform, url }
+  },
+  serviceCta{
+    eyebrow,
+    title,
+    description,
+    primaryButtonLabel,
+    primaryButtonUrl,
+    secondaryButtonLabel,
+    secondaryButtonUrl
+  }
+}`
+
+export function serviceSubPageQuery(pageKey) {
+  return `*[_type == "serviceSubPage" && pageKey == "${pageKey}"][0]{
+    "_schemaVersion": schemaVersion,
+    ${SERVICE_SUBPAGE_FIELDS},
+    ${PAGE_BLOCKS_PROJECTION}
+  }`
+}
 
 const WORK_FIELDS = `
   page{
@@ -269,22 +335,15 @@ export const WORK_QUERY_WITH_BLOCKS = `*[_type == "workPage"][0]{
   ${PAGE_BLOCKS_PROJECTION},${WORK_FIELDS}
 }`
 
-const CONTACT_FIELDS = `
-  hero,
-  intro,
-  details,
-  cta,
-  map,
-  faq,
+const CONTACT_DOCUMENT_FIELDS = `
   form,
-  servicios,
-  faqItems`
+  servicios`
 
 export const CONTACT_QUERY = `*[_type == "contactPage"][0]{
-  "_schemaVersion": schemaVersion,${CONTACT_FIELDS}
+  "_schemaVersion": schemaVersion,${CONTACT_DOCUMENT_FIELDS}
 }`
 
 export const CONTACT_QUERY_WITH_BLOCKS = `*[_type == "contactPage"][0]{
   "_schemaVersion": schemaVersion,
-  ${PAGE_BLOCKS_PROJECTION},${CONTACT_FIELDS}
+  ${PAGE_BLOCKS_PROJECTION},${CONTACT_DOCUMENT_FIELDS}
 }`

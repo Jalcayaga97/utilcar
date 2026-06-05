@@ -2,16 +2,14 @@ import { SPECIALTY_CATEGORY_FIELDSETS, EDITORIAL_COPY } from '../../presentation
 import {
   specialtyCategoryHeroWarning,
   specialtyCategoryTitleRules,
-  specialtyCategoryGalleryWarning,
-  specialtyBrandsArrayRules,
 } from '../../governance/specialtiesValidators.js'
 import { SpecialtyCategoryEditorialInput } from '../../presentation/components/SpecialtyCategoryEditorialInput.jsx'
 import { advancedSectionHidden } from '../../governance/studioAdmin.js'
 
-/** Categoría principal del bloque Especialidades (tab / sección Home). */
+/** Sección editorial del Home — no es una página de servicio independiente. */
 export const specialtyCategory = {
   name: 'specialtyCategory',
-  title: 'Categoría',
+  title: 'Especialidad',
   type: 'object',
   fieldsets: SPECIALTY_CATEGORY_FIELDSETS,
   components: {
@@ -32,23 +30,24 @@ export const specialtyCategory = {
       fieldset: 'hero',
     },
     {
+      name: 'description',
+      title: 'Descripción',
+      type: 'text',
+      fieldset: 'hero',
+      rows: 5,
+    },
+    {
       name: 'slug',
       title: 'Identificador URL',
       type: 'slug',
       fieldset: 'hero',
       options: { source: 'title', maxLength: 96 },
       hidden: advancedSectionHidden,
-    },
-    {
-      name: 'description',
-      title: 'Descripción',
-      type: 'text',
-      fieldset: 'content',
-      rows: 5,
+      description: '[DEPRECATED] Solo administración. No afecta el render del Home.',
     },
     {
       name: 'heroImage',
-      title: 'Imagen principal',
+      title: 'Imagen',
       type: 'image',
       fieldset: 'media',
       options: { hotspot: true },
@@ -61,18 +60,8 @@ export const specialtyCategory = {
       fieldset: 'media',
     },
     {
-      name: 'gallery',
-      title: 'Galería',
-      type: 'array',
-      fieldset: 'gallery',
-      of: [{ type: 'specialtyGalleryItem' }],
-      options: { layout: 'grid', sortable: true },
-      validation: specialtyCategoryGalleryWarning,
-      description: EDITORIAL_COPY.specialties.categoryGalleryHint,
-    },
-    {
       name: 'features',
-      title: 'Características',
+      title: 'Especificaciones',
       type: 'array',
       fieldset: 'features',
       of: [{ type: 'specialtyFeature' }],
@@ -81,25 +70,9 @@ export const specialtyCategory = {
     },
     {
       name: 'cta',
-      title: 'CTA principal',
+      title: 'CTA',
       type: 'specialtyCta',
       fieldset: 'cta',
-    },
-    {
-      name: 'brands',
-      title: 'Marcas',
-      type: 'array',
-      fieldset: 'brands',
-      of: [{ type: 'specialtyBrand' }],
-      options: { sortable: true },
-      validation: specialtyBrandsArrayRules,
-      description: EDITORIAL_COPY.specialties.brandsHint,
-    },
-    {
-      name: 'layoutConfig',
-      title: 'Configuración de layout',
-      type: 'specialtyLayoutConfig',
-      fieldset: 'advanced',
     },
     {
       name: 'featured',
@@ -115,23 +88,47 @@ export const specialtyCategory = {
       fieldset: 'options',
       initialValue: true,
     },
+    {
+      name: 'gallery',
+      title: '[DEPRECATED] Galería',
+      type: 'array',
+      fieldset: 'gallery',
+      of: [{ type: 'specialtyGalleryItem' }],
+      hidden: true,
+      description: 'Dato legacy conservado. No se edita desde Studio.',
+    },
+    {
+      name: 'brands',
+      title: '[DEPRECATED] Marcas',
+      type: 'array',
+      fieldset: 'brands',
+      of: [{ type: 'specialtyBrand' }],
+      hidden: true,
+      description: 'Dato legacy de páginas de servicio. Conservado en dataset.',
+    },
+    {
+      name: 'layoutConfig',
+      title: '[DEPRECATED] Configuración de layout',
+      type: 'specialtyLayoutConfig',
+      fieldset: 'advanced',
+      hidden: true,
+      description: 'Dato legacy. No afecta el Home.',
+    },
   ],
   preview: {
     select: {
       title: 'title',
       subtitle: 'subtitle',
       media: 'heroImage',
-      brandCount: 'brands',
       enabled: 'enabled',
       featured: 'featured',
     },
-    prepare({ title, subtitle, media, brandCount, enabled, featured }) {
-      const brands = Array.isArray(brandCount) ? brandCount.length : 0
-      const parts = [subtitle || (brands ? `${brands} marca${brands === 1 ? '' : 's'}` : 'Sin marcas')]
+    prepare({ title, subtitle, media, enabled, featured }) {
+      const parts = [subtitle || 'Especialidad Home']
       if (enabled === false) parts.push('Oculta')
       if (featured) parts.push('Destacada')
       return {
-        title: title || 'Nueva categoría',
+        title: title || 'Nueva especialidad',
         subtitle: parts.join(' · '),
         media,
       }

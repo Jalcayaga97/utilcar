@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom'
 import { Mail, MapPin, Phone } from 'lucide-react'
 import { SITE } from '@/constants/site'
-import { useMainNavLinks, useServiceLinks } from '@/hooks/useCms'
+import { useCompanyInfo, useMainNavLinks, useServiceLinks } from '@/hooks/useCms'
 import { Container } from '@/components/ui/Container'
 
 export function Footer() {
   const mainNavLinks = useMainNavLinks()
   const serviceLinks = useServiceLinks()
+  const company = useCompanyInfo()
   const year = new Date().getFullYear()
 
   return (
@@ -65,25 +66,25 @@ export function Footer() {
             <ul className="mt-4 space-y-3">
               <li>
                 <a
-                  href={`tel:${SITE.phoneTel}`}
+                  href={company.phoneTel}
                   className="flex items-start gap-2.5 text-sm text-ink-muted transition-colors hover:text-ink"
                 >
                   <Phone className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.5} />
-                  {SITE.phoneDisplay}
+                  {company.phoneDisplay}
                 </a>
               </li>
               <li>
                 <a
-                  href={`mailto:${SITE.email}`}
+                  href={`mailto:${company.primaryEmail}`}
                   className="flex items-start gap-2.5 text-sm text-ink-muted transition-colors hover:text-ink"
                 >
                   <Mail className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.5} />
-                  {SITE.email}
+                  {company.primaryEmail}
                 </a>
               </li>
               <li className="flex items-start gap-2.5 text-sm text-ink-muted">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.5} />
-                {SITE.address}
+                {company.addressFull}
               </li>
             </ul>
           </div>
@@ -94,7 +95,7 @@ export function Footer() {
             © {year} {SITE.name}. Todos los derechos reservados.
           </p>
           <a
-            href={SITE.whatsappUrl}
+            href={company.whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Contactar a Utilcar por WhatsApp"

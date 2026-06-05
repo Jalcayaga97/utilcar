@@ -1,13 +1,17 @@
 import { Container } from '@/components/ui/Container'
 import { CtaButtonGroup } from '@/components/sections/CtaButtonGroup'
-import { useHomeContent } from '@/hooks/useCms'
+import { useGlobalServiceCta, useHomeContent } from '@/hooks/useCms'
 
-export function CtaBanner({ title, description, primaryLabel, primaryTo }) {
+/**
+ * Banner CTA Home — título/descripción editables; botones desde siteSettings.serviceCta.
+ */
+export function CtaBanner({ title, description }) {
   const defaults = useHomeContent().ctaBanner
+  const globalCta = useGlobalServiceCta()
+
   const resolvedTitle = title ?? defaults.title
   const resolvedDescription = description ?? defaults.description
-  const resolvedPrimaryLabel = primaryLabel ?? defaults.primaryLabel
-  const resolvedPrimaryTo = primaryTo ?? defaults.primaryTo
+
   return (
     <section className="border-y border-border bg-white py-section-sm lg:py-section">
       <Container>
@@ -21,8 +25,8 @@ export function CtaBanner({ title, description, primaryLabel, primaryTo }) {
             </div>
             <CtaButtonGroup
               variant="light"
-              primaryLabel={resolvedPrimaryLabel}
-              primaryTo={resolvedPrimaryTo}
+              primaryLabel={globalCta.primaryLabel}
+              primaryTo={globalCta.primaryTo}
               className="shrink-0 lg:flex-col lg:items-stretch xl:flex-row"
             />
           </div>

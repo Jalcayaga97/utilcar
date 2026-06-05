@@ -10,6 +10,7 @@ import {
   specialtiesBlock,
   servicesBlock,
   whyUsBlock,
+  whyUtilcarBlock,
   portfolioBlock,
   galleryBlock,
   ctaBlock,
@@ -54,6 +55,7 @@ export const homePage = {
         { type: 'specialtiesBlock' },
         { type: 'servicesBlock' },
         { type: 'whyUsBlock' },
+        { type: 'whyUtilcarBlock' },
         { type: 'portfolioBlock' },
         { type: 'galleryBlock' },
         { type: 'ctaBlock' },
@@ -136,8 +138,6 @@ export const homePage = {
       fields: [
         { name: 'title', type: 'string' },
         { name: 'description', type: 'text' },
-        { name: 'primaryLabel', type: 'string' },
-        { name: 'primaryTo', type: 'string' },
       ],
     },
     {
@@ -187,6 +187,7 @@ export {
   specialtiesBlock,
   servicesBlock,
   whyUsBlock,
+  whyUtilcarBlock,
   portfolioBlock,
   galleryBlock,
   ctaBlock,

@@ -11,6 +11,7 @@ import * as faqBlockResolver from '@/lib/cms/resolvers/faqBlockResolver'
 import * as featuresBlockResolver from '@/lib/cms/resolvers/featuresBlockResolver'
 import * as mapBlockResolver from '@/lib/cms/resolvers/mapBlockResolver'
 import * as seoBlockResolver from '@/lib/cms/resolvers/seoBlockResolver'
+import * as richTextBlockResolver from '@/lib/cms/resolvers/richTextBlockResolver'
 
 /** @typedef {{ type: string, find: (blocks: object[]) => object | undefined, build: (block: object) => object | null, collectWarnings?: (blocks: object[]) => string[] }} BlockHandler */
 
@@ -34,6 +35,12 @@ export const BLOCK_HANDLERS = {
     build: whyUsResolver.buildWhyUsSection,
     collectWarnings: whyUsResolver.collectWhyUsWarnings,
   },
+  whyUtilcarBlock: {
+    type: 'whyUtilcarBlock',
+    find: whyUsResolver.findWhyUsBlock,
+    build: whyUsResolver.buildWhyUsSection,
+    collectWarnings: whyUsResolver.collectWhyUsWarnings,
+  },
   portfolioBlock: {
     type: 'portfolioBlock',
     find: portfolioResolver.findPortfolioBlockInList,
@@ -48,7 +55,7 @@ export const BLOCK_HANDLERS = {
   ctaBlock: {
     type: 'ctaBlock',
     find: ctaResolver.findCtaBlock,
-    build: (block) => ctaResolver.resolveCtaMirror(block) ?? null,
+    build: (block) => ctaResolver.buildCtaSection(block) ?? null,
     collectWarnings: ctaResolver.collectCtaWarnings,
   },
   faqBlock: {
@@ -74,6 +81,12 @@ export const BLOCK_HANDLERS = {
     find: seoBlockResolver.findSeoBlock,
     build: seoBlockResolver.buildSeoSection,
     collectWarnings: seoBlockResolver.collectSeoWarnings,
+  },
+  richTextBlock: {
+    type: 'richTextBlock',
+    find: richTextBlockResolver.findRichTextBlock,
+    build: richTextBlockResolver.buildRichTextSection,
+    collectWarnings: richTextBlockResolver.collectRichTextWarnings,
   },
 }
 

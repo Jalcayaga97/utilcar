@@ -2,34 +2,16 @@
  * Smoke tests de la capa CMS (sin UI).
  * npm run cms:smoke
  */
-import { readFileSync, existsSync } from 'node:fs'
-import { join, dirname } from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { createClient } from '@sanity/client'
+import { loadSanityEnv } from '../src/lib/sanity/runtime/loadSanityEnv.js'
 
-const __dirname = dirname(fileURLToPath(import.meta.url))
-const root = join(__dirname, '..')
-
-function loadEnvFile(filename) {
-  const path = join(root, filename)
-  if (!existsSync(path)) return {}
-  const env = {}
-  for (const line of readFileSync(path, 'utf8').split('\n')) {
-    const trimmed = line.trim()
-    if (!trimmed || trimmed.startsWith('#')) continue
-    const eq = trimmed.indexOf('=')
-    if (eq === -1) continue
-    const key = trimmed.slice(0, eq).trim()
-    let val = trimmed.slice(eq + 1).trim()
-    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
-      val = val.slice(1, -1)
-    }
-    env[key] = val
-  }
-  return env
+const sanityEnv = loadSanityEnv({ requireToken: false })
+sanityEnv.applyToProcessEnv()
+const env = {
+  VITE_SANITY_PROJECT_ID: sanityEnv.projectId,
+  VITE_SANITY_DATASET: sanityEnv.dataset,
+  SANITY_API_TOKEN: sanityEnv.token,
 }
-
-const env = { ...loadEnvFile('.env'), ...loadEnvFile('.env.local') }
 
 function ok(msg) {
   console.log(`  ✓ ${msg}`)

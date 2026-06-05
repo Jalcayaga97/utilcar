@@ -29,6 +29,7 @@ export const BLOCK_TYPE_LABELS = {
   specialtiesBlock: 'Especialidades',
   servicesBlock: 'Servicios',
   whyUsBlock: 'Por qué Utilcar',
+  whyUtilcarBlock: 'Por qué Utilcar',
   portfolioBlock: 'Portfolio',
   galleryBlock: 'Portfolio (legacy)',
   ctaBlock: 'Banner CTA',

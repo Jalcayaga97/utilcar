@@ -194,31 +194,39 @@ export function contractItemToLegacyAdapter(item) {
 }
 
 /**
- * Puente contractual → tarjetas MainServices (fase 1: title, description, link).
- * Icono e imagen se resuelven desde legacy por path cuando exista match.
+ * Puente contractual → tarjetas MainServices.
+ * CMS-first: icono/imagen desde el ítem contractual.
  * @param {object[]} contractItems — ítems ya validados
- * @param {object[]} legacyServices — useServices() / SERVICES
  * @param {string} defaultCardLinkLabel
+ * @param {object[] | null} [legacyServices] — solo fallback de emergencia (resolver OFF)
  */
-export function mapContractItemsForMainServices(contractItems, legacyServices, defaultCardLinkLabel) {
+export function mapContractItemsForMainServices(
+  contractItems,
+  defaultCardLinkLabel,
+  legacyServices = null,
+) {
   if (!contractItems?.length) return []
 
-  const legacyByPath = new Map(
-    (legacyServices ?? []).map((service) => [service.path, service]),
-  )
+  const legacyByPath =
+    legacyServices?.length > 0
+      ? new Map(legacyServices.map((service) => [service.path, service]))
+      : null
 
   return contractItems.map((item) => {
-    const legacy = legacyByPath.get(item.link?.path)
+    const legacy = legacyByPath?.get(item.link?.path)
     const cardLinkLabel = sanitizeString(item.link?.label) || defaultCardLinkLabel
+    const cmsImageUrl = item.image?.url || null
 
     return {
-      id: legacy?.id ?? item.id,
+      id: item.id,
       title: item.title,
       description: item.description,
       path: item.link?.path ?? DEFAULT_LINK.path,
-      imageAlt: item.image?.alt || legacy?.imageAlt || item.title,
-      icon: legacy?.icon ?? null,
+      imageAlt: item.image?.alt || item.title,
+      icon: item.icon,
+      imageUrl: cmsImageUrl ?? legacy?.imageUrl ?? null,
       cardLinkLabel,
+      _source: cmsImageUrl ? 'cms' : legacy?.imageUrl ? 'legacy-emergency' : 'none',
     }
   })
 }

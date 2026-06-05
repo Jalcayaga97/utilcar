@@ -5,6 +5,8 @@ import { cn } from '@/lib/cn'
 import { getVentanasMarcaGallery } from '@/assets/images'
 import { BrandImageGallery } from '@/components/ui/BrandImageGallery'
 import { useVentanasBrands } from '@/hooks/useCms'
+import { USE_SERVICES_V2 } from '@/lib/cms/config'
+import { tabGalleryToDisplayImages } from '@/lib/cms/contracts/serviceTabContract'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
@@ -28,8 +30,24 @@ function SpecBlock({ title, items }) {
   )
 }
 
-function BrandContent({ brand }) {
-  const gallery = getVentanasMarcaGallery(brand.id)
+function resolveTabGallery(brand, useCmsGallery, cmsFirst) {
+  const fromCms = tabGalleryToDisplayImages(brand)
+
+  if (import.meta.env.DEV && useCmsGallery && brand?.id === 'toyota') {
+    console.log('TAB GALLERY SAMPLE', {
+      brandId: brand.id,
+      rawGallery: brand.gallery,
+      resolved: fromCms,
+    })
+  }
+
+  if (fromCms.length) return fromCms
+  if (cmsFirst) return fromCms
+  return getVentanasMarcaGallery(brand.id)
+}
+
+function BrandContent({ brand, useCmsGallery, cmsFirst }) {
+  const gallery = resolveTabGallery(brand, useCmsGallery, cmsFirst)
 
   return (
     <motion.div
@@ -65,6 +83,18 @@ function BrandContent({ brand }) {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
+        {(brand.description || brand.intro?.[0]) && (
+          <div className="sm:col-span-2">
+            {brand.description ? (
+              <p className="text-sm leading-relaxed text-ink-muted">{brand.description}</p>
+            ) : null}
+            {(brand.intro ?? []).map((paragraph) => (
+              <p key={paragraph.slice(0, 40)} className="mt-3 text-sm leading-relaxed text-ink-muted">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        )}
         {brand.subtitle && (
           <div className="sm:col-span-2">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-subtle">
@@ -80,8 +110,14 @@ function BrandContent({ brand }) {
   )
 }
 
-export function BrandEquipmentPanel() {
-  const ventanasBrands = useVentanasBrands()
+export function BrandEquipmentPanel({ tabs: tabsProp, cmsFirst = false }) {
+  const legacyBrands = useVentanasBrands()
+  const useCmsGallery = cmsFirst || USE_SERVICES_V2
+  const ventanasBrands = useCmsGallery
+    ? (tabsProp ?? [])
+    : tabsProp?.length
+      ? tabsProp
+      : legacyBrands
   const [activeId, setActiveId] = useState(() => ventanasBrands[0]?.id)
   const active = ventanasBrands.find((b) => b.id === activeId) ?? ventanasBrands[0]
 
@@ -156,7 +192,7 @@ export function BrandEquipmentPanel() {
                     className="overflow-hidden border-t border-border"
                   >
                     <div className="p-4">
-                      <BrandContent brand={brand} />
+                      <BrandContent brand={brand} useCmsGallery={useCmsGallery} cmsFirst={cmsFirst} />
                     </div>
                   </motion.div>
                 )}
@@ -169,7 +205,7 @@ export function BrandEquipmentPanel() {
       {/* Panel desktop */}
       <div className="mt-10 hidden lg:block" role="tabpanel">
         <AnimatePresence mode="wait">
-          <BrandContent brand={active} />
+          <BrandContent brand={active} useCmsGallery={useCmsGallery} cmsFirst={cmsFirst} />
         </AnimatePresence>
       </div>
     </div>

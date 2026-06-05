@@ -2,13 +2,20 @@ import { isSanityEnabled } from '@/lib/cms/config'
 import { loadCached } from '@/lib/cms/adapterCache'
 import { getValidatedLocalServicesBundle } from '@/lib/cms/localContent'
 import { deepMerge, mergeHighlightsWithIcons, mergeServicesWithIcons } from '@/lib/cms/merge'
-import {
-  buildActiveServicesBundle,
-  mapServicePageRuntime,
-} from '@/lib/cms/resolvers/servicesPageResolver'
+import { logServiceHeroTrace } from '@/lib/cms/servicePageAuditLog'
+import { mapServicePageRuntime } from '@/lib/cms/resolvers/servicesPageResolver'
 import { validateContent } from '@/lib/cms/validate'
 import { ServicesBundleSchema } from '@/lib/schemas'
-import { fetchServicesPage } from '@/lib/sanity/fetch'
+import { normalizeWorkProjectList } from '@/lib/cms/contracts/workProjectContract'
+import { mergeWorkProjectCatalog } from '@/lib/cms/resolvers/workProjectsResolver'
+import {
+  fetchServiceSubPage,
+  fetchServicesPage,
+  fetchSiteSettings,
+  fetchWorkProjects,
+} from '@/lib/sanity/fetch'
+import { resolveServiceSubPageDocument } from '@/lib/cms/resolvers/servicesPageResolver'
+import { buildGlobalServiceCta } from '@/lib/cms/resolvers/globalServiceCtaResolver'
 
 const CACHE_KEY = 'cms:services-bundle'
 
@@ -35,35 +42,18 @@ async function loadServicesBundleFromSanity() {
     ctaButtonLabels: remote.ctaButtonLabels
       ? deepMerge(local.ctaButtonLabels, remote.ctaButtonLabels)
       : local.ctaButtonLabels,
-    talleresMoviles: remote.talleresMoviles
-      ? deepMerge(local.talleresMoviles, remote.talleresMoviles)
-      : local.talleresMoviles,
-    ventanasLunetas: remote.ventanasLunetas
-      ? deepMerge(local.ventanasLunetas, remote.ventanasLunetas)
-      : local.ventanasLunetas,
-    equipamientoEscolar: remote.equipamientoEscolar
-      ? deepMerge(local.equipamientoEscolar, remote.equipamientoEscolar)
-      : local.equipamientoEscolar,
-    banquetas: remote.banquetas ? deepMerge(local.banquetas, remote.banquetas) : local.banquetas,
-    butacas: remote.butacas ? deepMerge(local.butacas, remote.butacas) : local.butacas,
-    accesorios: remote.accesorios
-      ? deepMerge(local.accesorios, remote.accesorios)
-      : local.accesorios,
-    ventanasBrands: remote.ventanasBrands?.length
-      ? remote.ventanasBrands
-      : local.ventanasBrands,
-    banquetasCategories: remote.banquetasCategories?.length
-      ? remote.banquetasCategories
-      : local.banquetasCategories,
-    accesoriosCategories: remote.accesoriosCategories?.length
-      ? remote.accesoriosCategories
-      : local.accesoriosCategories,
+    talleresMoviles: local.talleresMoviles,
+    ventanasLunetas: local.ventanasLunetas,
+    equipamientoEscolar: local.equipamientoEscolar,
+    banquetas: local.banquetas,
+    butacas: local.butacas,
+    accesorios: local.accesorios,
+    ventanasBrands: local.ventanasBrands,
+    banquetasCategories: local.banquetasCategories,
+    accesoriosCategories: local.accesoriosCategories,
   }
 
-  return buildActiveServicesBundle(
-    validateContent(ServicesBundleSchema, merged, local, 'sanity:services-bundle'),
-    remote,
-  )
+  return validateContent(ServicesBundleSchema, merged, local, 'sanity:services-bundle')
 }
 
 async function resolveServicesBundle() {
@@ -158,11 +148,102 @@ const SERVICE_PAGE_KEYS = {
   accesorios: 'accesorios',
 }
 
+function legacyTabsForPage(pageKey, bundle) {
+  if (pageKey === 'ventanas-lunetas') return bundle.ventanasBrands ?? []
+  if (pageKey === 'banquetas') return bundle.banquetasCategories ?? []
+  if (pageKey === 'accesorios') return bundle.accesoriosCategories ?? []
+  return []
+}
+
+export async function getGlobalServiceCta() {
+  if (!isSanityEnabled()) {
+    return buildGlobalServiceCta()
+  }
+  try {
+    const settings = await fetchSiteSettings()
+    return buildGlobalServiceCta(settings)
+  } catch {
+    return buildGlobalServiceCta()
+  }
+}
+
 export async function getServicePageDisplay(pageKey) {
   const field = SERVICE_PAGE_KEYS[pageKey]
   if (!field) {
-    return { content: {}, heroImage: null, galleryImages: null, source: 'legacy' }
+    return {
+      content: {},
+      heroImage: null,
+      portfolioProjects: [],
+      portfolioSource: 'none',
+      tabs: [],
+      seo: null,
+      source: 'legacy',
+    }
   }
-  const bundle = await resolveServicesBundle()
-  return mapServicePageRuntime(pageKey, bundle[field], bundle.extensions ?? {})
+
+  const bundle = getValidatedLocalServicesBundle()
+  const legacyContent = {
+    ...bundle[field],
+    tabs: legacyTabsForPage(pageKey, bundle),
+  }
+
+  if (!isSanityEnabled()) {
+    return mapServicePageRuntime(pageKey, legacyContent, {
+      source: 'legacy-fallback',
+      extensions: {},
+      tabs: [],
+    })
+  }
+
+  try {
+    const [remote, globalCta, workProjectsRaw] = await Promise.all([
+      fetchServiceSubPage(pageKey),
+      getGlobalServiceCta(),
+      fetchWorkProjects().catch(() => []),
+    ])
+    const workProjects = isSanityEnabled()
+      ? normalizeWorkProjectList(workProjectsRaw ?? [])
+      : mergeWorkProjectCatalog(workProjectsRaw ?? [])
+    const resolved = remote
+      ? {
+          extensions: remote.extensions ?? {},
+          source: remote._pageSource ?? 'legacy-fallback',
+          _pageSource: remote._pageSource,
+          tabs: remote.tabs ?? [],
+          tabsSection: remote.tabsSection,
+          introExtras: remote.introExtras,
+        }
+      : resolveServiceSubPageDocument(null, pageKey)
+
+    return mapServicePageRuntime(pageKey, legacyContent, resolved, { globalCta, workProjects })
+  } catch (err) {
+    if (import.meta.env.DEV) {
+      logServiceHeroTrace({
+        pageKey,
+        runtimeSource: 'legacy-fallback',
+        hasCmsHero: false,
+        heroImage: null,
+        heroImageResolved: null,
+        highlightsRaw: [],
+        highlightsResolved: [],
+        highlightsCount: 0,
+        extensionKeys: [],
+        fetchError: err?.message ?? String(err),
+      })
+    }
+    const workProjectsRaw = (await fetchWorkProjects().catch(() => [])) ?? []
+    const workProjects = isSanityEnabled()
+      ? normalizeWorkProjectList(workProjectsRaw)
+      : mergeWorkProjectCatalog(workProjectsRaw)
+    return mapServicePageRuntime(
+      pageKey,
+      legacyContent,
+      {
+        source: 'legacy-fallback',
+        extensions: {},
+        tabs: [],
+      },
+      { workProjects },
+    )
+  }
 }

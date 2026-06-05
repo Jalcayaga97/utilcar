@@ -2,6 +2,7 @@
  * Utilidades compartidas — Asset Resolution Layer.
  * Prioridad: CMS → legacy → placeholder
  */
+import { SANITY_CONFIG } from '@/lib/cms/config'
 import { logAssetsDomain } from '@/lib/cms/assets/assetsLog'
 import { warnRuntime } from '@/lib/cms/runtimeLog'
 
@@ -20,11 +21,48 @@ export function isValidImageUrl(url) {
   }
 }
 
+/**
+ * Construye URL CDN a partir de asset._ref / asset._id de Sanity (sin urlFor).
+ * Formato ref: image-{hash}-{width}x{height}-{format}
+ */
+export function buildSanityImageUrlFromRef(ref) {
+  if (!ref || typeof ref !== 'string') return null
+
+  const normalized = ref.startsWith('image-') ? ref.slice('image-'.length) : ref
+  const match = normalized.match(/^([a-f0-9]+)-(\d+x\d+)-(\w+)$/i)
+  if (!match) return null
+
+  const { projectId, dataset } = SANITY_CONFIG
+  if (!projectId?.trim() || !dataset?.trim()) return null
+
+  const [, hash, dimensions, format] = match
+  return `https://cdn.sanity.io/images/${projectId.trim()}/${dataset.trim()}/${hash}-${dimensions}.${format}`
+}
+
 export function pickImageUrl(imageField) {
   if (!imageField) return null
   if (typeof imageField === 'string') return isValidImageUrl(imageField) ? imageField : null
-  const url = imageField?.url ?? imageField?.asset?.url ?? null
-  return isValidImageUrl(url) ? url : null
+
+  const directUrl = imageField?.url ?? imageField?.asset?.url ?? null
+  if (isValidImageUrl(directUrl)) return directUrl
+
+  const ref =
+    imageField?.asset?._ref ??
+    imageField?.asset?._id ??
+    imageField?._ref ??
+    null
+  const builtUrl = buildSanityImageUrlFromRef(ref)
+  return isValidImageUrl(builtUrl) ? builtUrl : null
+}
+
+function resolveGalleryItemUrl(item) {
+  if (!item) return null
+  return (
+    (typeof item?.src === 'string' && isValidImageUrl(item.src) ? item.src : null) ||
+    (typeof item?.url === 'string' && isValidImageUrl(item.url) ? item.url : null) ||
+    pickImageUrl(item?.image) ||
+    pickImageUrl(item)
+  )
 }
 
 export function pickImageAlt(imageField, fallback = '') {
@@ -145,13 +183,16 @@ export function auditGalleryIntegrity(gallery = [], context = {}) {
 export function normalizeGalleryImages(cmsGallery = [], legacyGallery = []) {
   const fromCms = cmsGallery
     .map((item, index) => {
-      const url = pickImageUrl(item?.image ?? item)
+      const url = resolveGalleryItemUrl(item)
       if (!url) return null
+      const imageField = item?.image ?? item
       return {
         src: url,
-        alt: pickImageAlt(item?.image ?? item, item?.caption || item?.alt || ''),
+        url,
+        alt: pickImageAlt(imageField, item?.caption || item?.alt || ''),
         id: item?.id || item?._key || `cms-gallery-${index}`,
         featured: Boolean(item?.featured),
+        image: imageField?.asset || imageField?.url ? imageField : undefined,
       }
     })
     .filter(Boolean)

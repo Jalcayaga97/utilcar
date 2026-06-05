@@ -8,10 +8,20 @@
     "build": "sanity build",
     "deploy": "sanity deploy",
     "seed": "node scripts/seed-minimal.mjs",
+    "sanity:doctor": "node ../scripts/sanity-doctor.mjs",
+    "test:sanity-runtime": "node --test ../src/lib/sanity/runtime/sanityRuntime.test.js",
+    "seed:services": "node scripts/seed-service-subpages.mjs",
+    "seed:site-settings": "node ../scripts/seed-site-settings.mjs",
     "migrate:specialties": "node scripts/migrate-specialties-to-categories.mjs",
     "migrate:specialties:dry": "node scripts/migrate-specialties-to-categories.mjs --dry",
     "import:specialties": "node scripts/import-specialties-from-seed.mjs",
-    "import:specialties:dry": "node scripts/import-specialties-from-seed.mjs --dry"
+    "import:specialties:dry": "node scripts/import-specialties-from-seed.mjs --dry",
+    "migrate:services": "node scripts/migrate-services-content.mjs",
+    "migrate:services:verify": "node scripts/migrate-services-content.mjs --verify",
+    "migrate:services:dry": "node scripts/migrate-services-content.mjs --verify",
+    "migrate:services:snapshot": "node scripts/migrate-services-content.mjs --snapshot",
+    "migrate:home": "node ../scripts/migrate-home-content.mjs",
+    "migrate:home:verify": "node ../scripts/migrate-home-content.mjs --verify"
   },
   "dependencies": {
     "react": "^19.2.6",

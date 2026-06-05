@@ -7,9 +7,9 @@ El Studio ya edita `blocks[]` como fuente única; el frontend sigue consumiendo 
 
 Documentación relacionada:
 
-- Studio: [`utilcar-studio/docs/CMS_CONVERGENCE.md`](../../utilcar-studio/docs/CMS_CONVERGENCE.md)
-- Studio mapping técnico: [`utilcar-studio/docs/FRONTEND_MIGRATION.md`](../../utilcar-studio/docs/FRONTEND_MIGRATION.md)
-- Código mapping: [`utilcar-studio/schemas/governance/homePageMigration.js`](../../utilcar-studio/schemas/governance/homePageMigration.js)
+- Studio: [`utilcar-studio/docs/CMS_CONVERGENCE.md`](../utilcar-studio/docs/CMS_CONVERGENCE.md)
+- Studio mapping técnico: [`utilcar-studio/docs/FRONTEND_MIGRATION.md`](../utilcar-studio/docs/FRONTEND_MIGRATION.md)
+- Código mapping: [`utilcar-studio/schemas/governance/homePageMigration.js`](../utilcar-studio/schemas/governance/homePageMigration.js)
 
 ---
 

@@ -8,15 +8,32 @@ export function findCtaBlock(blocks) {
   return findBlock(blocks, BLOCK_TYPE)
 }
 
+/** Metadatos CTA — título, descripción y botones opcionales (Página Trabajos). */
+export function buildCtaSection(block) {
+  if (!block) return null
+  const section = {
+    title: block.title ?? '',
+    description: block.description ?? '',
+    primaryLabel: block.primaryLabel ?? block.buttonLabel ?? block.buttonText ?? '',
+    primaryTo: block.primaryTo ?? block.buttonLink ?? '',
+  }
+  const hasContent =
+    Boolean(String(section.title).trim()) ||
+    Boolean(String(section.description).trim()) ||
+    Boolean(String(section.primaryLabel).trim())
+  if (!hasContent) return null
+  logResolverDomain('cta', { resolved: Boolean(section.title) })
+  return section
+}
+
+/** Metadatos CTA Home — solo título y descripción (botones: siteSettings.serviceCta). */
 export function resolveCtaMirror(block) {
   if (!block) return undefined
   const mirror = {
     title: block.title,
     description: block.description,
-    primaryLabel: block.buttonLabel || block.buttonText || block.primaryLabel || '',
-    primaryTo: block.buttonLink || block.primaryTo || '',
   }
-  logResolverDomain('cta', { resolved: Boolean(block.title), hasLink: Boolean(mirror.primaryTo) })
+  logResolverDomain('cta', { resolved: Boolean(block.title) })
   return mirror
 }
 

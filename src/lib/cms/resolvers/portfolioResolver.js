@@ -1,4 +1,5 @@
 import { USE_BLOCK_RESOLVER } from '@/lib/cms/config'
+import { resolveHomePortfolioDisplay } from '@/lib/cms/resolvers/workProjectsResolver'
 import {
   findPortfolioBlock,
   isEmptyField,
@@ -49,18 +50,38 @@ function mapPortfolioItems(block) {
   }))
 }
 
-/** Fuente editorial completa: metadata + items desde portfolioBlock. */
+function mapFeaturedProjectIds(block) {
+  return (block?.featuredProjects ?? [])
+    .map((ref) => {
+      const fromRef = ref?.project?.id ?? ref?.project?.projectId?.current
+      return String(fromRef ?? ref?.projectId ?? '').trim()
+    })
+    .filter(Boolean)
+}
+
+function mapSelectedProjectsRaw(block) {
+  return Array.isArray(block?.selectedProjects) ? block.selectedProjects : []
+}
+
+/** Fuente editorial completa: metadata + items o referencias a workPage. */
 export function resolvePortfolioSection(block) {
   if (!block) return null
   const meta = resolvePortfolioMirror(block)
   if (!meta) return null
+  const featuredProjectIds = mapFeaturedProjectIds(block)
+  const selectedProjects = mapSelectedProjectsRaw(block)
   const section = {
     ...meta,
     items: mapPortfolioItems(block),
+    featuredProjectIds,
+    featuredProjects: block?.featuredProjects ?? [],
+    selectedProjects,
   }
   logResolverDomain('portfolio', {
     extension: 'portfolioSection',
     itemCount: section.items.length,
+    featuredCount: featuredProjectIds.length,
+    selectedCount: selectedProjects.length,
     validItemCount: getValidPortfolioItems(section.items).length,
   })
   return section
@@ -73,16 +94,31 @@ export function getValidPortfolioItems(items) {
 }
 
 /**
- * Sección portfolio activa (metadata + cards) cuando el resolver está ON y hay ítems válidos.
+ * Vista previa Home — selectedProjects → featuredProjects (legacy) → featured/homeVisible.
+ */
+export function resolveHomePortfolioCards(
+  portfolioSection,
+  projectCatalog,
+  previewCount = 3,
+) {
+  const { projects } = resolveHomePortfolioDisplay(portfolioSection, projectCatalog, {
+    limit: previewCount,
+  })
+  return projects
+}
+
+/**
+ * Sección portfolio activa cuando el resolver está ON y el bloque tiene título.
  * @returns {object | null}
  */
 export function getActivePortfolioSection(extensions) {
   if (!USE_BLOCK_RESOLVER) return null
   const section = extensions?.portfolioSection
   if (!section) return null
+  if (!String(section.title ?? '').trim()) return null
 
-  const items = getValidPortfolioItems(section.items)
-  if (!items.length) return null
+  const featuredProjectIds = section.featuredProjectIds ?? []
+  const items = getValidPortfolioItems(section.items ?? [])
 
   return {
     eyebrow: section.eyebrow ?? '',
@@ -92,6 +128,10 @@ export function getActivePortfolioSection(extensions) {
     ctaTo: section.ctaTo ?? '',
     previewCount: section.previewCount ?? 3,
     items,
+    featuredProjectIds,
+    featuredProjects: section.featuredProjects ?? [],
+    selectedProjects: section.selectedProjects ?? [],
+    autoRecent: false,
   }
 }
 

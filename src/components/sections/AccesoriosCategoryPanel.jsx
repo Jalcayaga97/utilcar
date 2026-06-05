@@ -5,6 +5,7 @@ import { cn } from '@/lib/cn'
 import { getAccesoriosCategoryGallery } from '@/assets/images'
 import { BrandImageGallery } from '@/components/ui/BrandImageGallery'
 import { useAccesoriosCategories } from '@/hooks/useCms'
+import { USE_SERVICES_V2 } from '@/lib/cms/config'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
@@ -28,8 +29,19 @@ function SpecBlock({ title, items }) {
   )
 }
 
-function CategoryContent({ category }) {
-  const gallery = getAccesoriosCategoryGallery(category.id)
+function resolveTabGallery(category, useCmsGallery) {
+  if (useCmsGallery) {
+    return (category.gallery ?? []).map((item, index) => ({
+      src: item.src,
+      alt: item.alt || category.name,
+      id: item.id || `${category.id}-${index}`,
+    }))
+  }
+  return getAccesoriosCategoryGallery(category.id)
+}
+
+function CategoryContent({ category, useCmsGallery }) {
+  const gallery = resolveTabGallery(category, useCmsGallery)
 
   return (
     <motion.div
@@ -123,8 +135,14 @@ function CategoryTabMobile({ category, isActive, onSelect }) {
   )
 }
 
-export function AccesoriosCategoryPanel() {
-  const accesoriosCategories = useAccesoriosCategories()
+export function AccesoriosCategoryPanel({ tabs: tabsProp, cmsFirst = false }) {
+  const legacyCategories = useAccesoriosCategories()
+  const useCmsGallery = cmsFirst || USE_SERVICES_V2
+  const accesoriosCategories = useCmsGallery
+    ? (tabsProp ?? [])
+    : tabsProp?.length
+      ? tabsProp
+      : legacyCategories
   const [activeId, setActiveId] = useState(() => accesoriosCategories[0]?.id)
   const active =
     accesoriosCategories.find((c) => c.id === activeId) ?? accesoriosCategories[0]
@@ -163,7 +181,7 @@ export function AccesoriosCategoryPanel() {
 
       <div className="mt-10" role="tabpanel">
         <AnimatePresence mode="wait">
-          <CategoryContent category={active} />
+          <CategoryContent category={active} useCmsGallery={useCmsGallery} />
         </AnimatePresence>
       </div>
     </div>

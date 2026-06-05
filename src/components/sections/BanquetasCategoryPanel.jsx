@@ -5,6 +5,7 @@ import { cn } from '@/lib/cn'
 import { getBanquetasCategoryGallery } from '@/assets/images'
 import { BrandImageGallery } from '@/components/ui/BrandImageGallery'
 import { useBanquetasCategories } from '@/hooks/useCms'
+import { USE_SERVICES_V2 } from '@/lib/cms/config'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
@@ -41,8 +42,19 @@ function ExtraBlock({ extra }) {
   )
 }
 
-function CategoryContent({ category }) {
-  const gallery = getBanquetasCategoryGallery(category.id)
+function resolveTabGallery(category, useCmsGallery) {
+  if (useCmsGallery) {
+    return (category.gallery ?? []).map((item, index) => ({
+      src: item.src,
+      alt: item.alt || category.name,
+      id: item.id || `${category.id}-${index}`,
+    }))
+  }
+  return getBanquetasCategoryGallery(category.id)
+}
+
+function CategoryContent({ category, useCmsGallery }) {
+  const gallery = resolveTabGallery(category, useCmsGallery)
 
   return (
     <motion.div
@@ -140,8 +152,14 @@ function CategoryTabMobile({ category, isActive, onSelect }) {
   )
 }
 
-export function BanquetasCategoryPanel() {
-  const banquetasCategories = useBanquetasCategories()
+export function BanquetasCategoryPanel({ tabs: tabsProp, cmsFirst = false }) {
+  const legacyCategories = useBanquetasCategories()
+  const useCmsGallery = cmsFirst || USE_SERVICES_V2
+  const banquetasCategories = useCmsGallery
+    ? (tabsProp ?? [])
+    : tabsProp?.length
+      ? tabsProp
+      : legacyCategories
   const [activeId, setActiveId] = useState(() => banquetasCategories[0]?.id)
   const active =
     banquetasCategories.find((c) => c.id === activeId) ?? banquetasCategories[0]
@@ -182,7 +200,7 @@ export function BanquetasCategoryPanel() {
 
       <div className="mt-10" role="tabpanel">
         <AnimatePresence mode="wait">
-          <CategoryContent category={active} />
+          <CategoryContent category={active} useCmsGallery={useCmsGallery} />
         </AnimatePresence>
       </div>
     </div>

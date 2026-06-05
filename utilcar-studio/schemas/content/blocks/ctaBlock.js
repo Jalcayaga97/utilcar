@@ -10,30 +10,47 @@ export const ctaBlock = {
     { name: 'title', title: 'Título', type: 'string' },
     { name: 'description', title: 'Descripción', type: 'text', rows: 3 },
     {
-      name: 'buttonLabel',
-      title: 'Texto del botón',
-      description: 'Etiqueta principal del CTA (publicada en el sitio).',
+      name: 'primaryLabel',
+      title: 'Texto botón principal',
       type: 'string',
+      hidden: ({ document }) => document?._type !== 'workPage',
+      description: 'Solo Página Trabajos. En Home y servicios los botones vienen de siteSettings.',
+    },
+    {
+      name: 'primaryTo',
+      title: 'Ruta botón principal',
+      type: 'string',
+      hidden: ({ document }) => document?._type !== 'workPage',
+      description: 'Ej. /contacto',
+    },
+    {
+      name: 'buttonLabel',
+      title: '[Legacy] Texto del botón',
+      type: 'string',
+      hidden: true,
+      readOnly: true,
     },
     {
       name: 'buttonLink',
-      title: 'Enlace del botón',
-      description: 'Ruta interna, ej. /contacto',
+      title: '[Legacy] Enlace del botón',
       type: 'string',
+      hidden: true,
+      readOnly: true,
     },
     {
       name: 'buttonText',
-      title: 'Texto alternativo del botón',
-      description: 'Opcional. Respaldo si no hay etiqueta principal.',
+      title: '[Legacy] Texto alternativo del botón',
       type: 'string',
+      hidden: true,
+      readOnly: true,
     },
   ],
   preview: {
-    select: { title: 'title', label: 'buttonLabel', enabled: 'enabled' },
-    prepare({ title, label, enabled }) {
+    select: { title: 'title', enabled: 'enabled' },
+    prepare({ title, enabled }) {
       return {
         title: title || 'Banner CTA',
-        subtitle: `${label || 'Sin botón'} · ${enabled === false ? 'Oculto' : 'Visible'}`,
+        subtitle: `Botones: siteSettings.serviceCta · ${enabled === false ? 'Oculto' : 'Visible'}`,
       }
     },
   },

@@ -11,6 +11,7 @@ export const ContactContentSchema = z.object({
   hero: pageHeroSchema,
   intro: z.object({
     formHint: z.string(),
+    paragraphs: z.array(z.string()).optional().default([]),
   }),
   details: z.object({
     title: z.string(),
@@ -21,7 +22,6 @@ export const ContactContentSchema = z.object({
       address: z.string(),
       hours: z.object({
         title: z.string(),
-        lines: z.array(z.string()),
       }),
     }),
   }),

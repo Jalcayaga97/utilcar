@@ -76,6 +76,7 @@ function extensionKeyForBlock(blockType) {
     featuresBlock: 'featuresSection',
     mapBlock: 'mapSection',
     seoBlock: 'seoSection',
+    richTextBlock: 'richTextSection',
   }
   return map[blockType] ?? null
 }

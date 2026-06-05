@@ -7,14 +7,12 @@ import { ServiceCtaDark } from '@/components/sections/ServiceCtaDark'
 import { ContactForm } from '@/components/sections/ContactForm'
 import { ContactFaq } from '@/components/sections/ContactFaq'
 import { Section, SectionHeader } from '@/components/ui/Section'
-import { SITE } from '@/constants/site'
 import { IMAGES } from '@/assets/images'
-import { useContactDisplay } from '@/hooks/useCms'
+import { useCompanyInfo, useContactPageDisplay } from '@/hooks/useCms'
 import { logRuntime } from '@/lib/cms/runtimeLog'
 import { cn } from '@/lib/cn'
 
 const ease = [0.25, 0.1, 0.25, 1]
-const phoneHref = `tel:${SITE.phoneTel}`
 
 function ContactCard({ icon: Icon, title, children }) {
   return (
@@ -32,18 +30,23 @@ function ContactCard({ icon: Icon, title, children }) {
 }
 
 export default function Contacto() {
-  const { content, heroImage, source } = useContactDisplay()
+  const { content, heroImage, seo, source } = useContactPageDisplay()
+  const company = useCompanyInfo()
   const { hero, intro, details, cta, map, faq } = content
 
   useEffect(() => {
-    logRuntime('contact-page', { source, faqItems: content.faqItems?.length ?? 0 })
-  }, [source, content.faqItems?.length])
+    logRuntime('contact-page', {
+      source,
+      companySource: company.source,
+      faqItems: content.faqItems?.length ?? 0,
+    })
+  }, [source, company.source, content.faqItems?.length])
 
-  const mapsQuery = map.embedQuery || SITE.mapsQuery
+  const mapsQuery = company.mapsEmbedQuery
 
   return (
     <>
-      <PageMeta page="contacto" />
+      <PageMeta page="contacto" cmsSeo={seo ?? undefined} />
 
       <ServicePageHero
         eyebrow={hero.eyebrow}
@@ -61,28 +64,53 @@ export default function Contacto() {
           transition={{ duration: 0.5, ease }}
           className="mx-auto max-w-3xl"
         >
-          <p className="text-base leading-relaxed text-ink-muted sm:text-lg">
-            Para mayor información puede contactarnos al correo{' '}
-            <a href={`mailto:${SITE.emails[0]}`} className="font-medium text-ink underline-offset-2 hover:underline">
-              {SITE.emails[0]}
-            </a>{' '}
-            o{' '}
-            <a href={`mailto:${SITE.emails[1]}`} className="font-medium text-ink underline-offset-2 hover:underline">
-              {SITE.emails[1]}
-            </a>{' '}
-            al teléfono{' '}
-            <a href={phoneHref} className="font-medium text-ink underline-offset-2 hover:underline">
-              {SITE.phoneDisplay}
-            </a>
-            .
-          </p>
+          {intro.paragraphs?.length ? (
+            intro.paragraphs.map((paragraph) => (
+              <p
+                key={paragraph.slice(0, 48)}
+                className="text-base leading-relaxed text-ink-muted sm:text-lg"
+              >
+                {paragraph}
+              </p>
+            ))
+          ) : (
+            <p className="text-base leading-relaxed text-ink-muted sm:text-lg">
+              Para mayor información puede contactarnos al correo{' '}
+              <a
+                href={`mailto:${company.primaryEmail}`}
+                className="font-medium text-ink underline-offset-2 hover:underline"
+              >
+                {company.primaryEmail}
+              </a>
+              {company.secondaryEmail ? (
+                <>
+                  {' '}
+                  o{' '}
+                  <a
+                    href={`mailto:${company.secondaryEmail}`}
+                    className="font-medium text-ink underline-offset-2 hover:underline"
+                  >
+                    {company.secondaryEmail}
+                  </a>
+                </>
+              ) : null}{' '}
+              al teléfono{' '}
+              <a
+                href={company.phoneTel}
+                className="font-medium text-ink underline-offset-2 hover:underline"
+              >
+                {company.phoneDisplay}
+              </a>
+              .
+            </p>
+          )}
           <p className="mt-5 text-base leading-relaxed text-ink-muted sm:text-lg">
             {intro.formHint}
           </p>
         </motion.div>
       </Section>
 
-      <Section id="formulario" className="bg-white scroll-mt-24">
+      <Section id="formulario" className="scroll-mt-24 bg-white">
         <div className="grid gap-10 lg:grid-cols-2 lg:items-start lg:gap-14 xl:gap-16">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -101,13 +129,24 @@ export default function Contacto() {
             </div>
 
             <ContactCard icon={Phone} title={details.cards.phone}>
-              <a href={phoneHref} className="block font-medium text-ink hover:text-ink-muted">
-                {SITE.phoneDisplay}
+              <a
+                href={company.phoneTel}
+                className="block font-medium text-ink hover:text-ink-muted"
+              >
+                {company.phoneDisplay}
               </a>
+              {company.secondaryPhone ? (
+                <a
+                  href={company.secondaryPhoneTel}
+                  className="block font-medium text-ink hover:text-ink-muted"
+                >
+                  {company.secondaryPhone}
+                </a>
+              ) : null}
             </ContactCard>
 
             <ContactCard icon={Mail} title={details.cards.email}>
-              {SITE.emails.map((email) => (
+              {company.emails.map((email) => (
                 <a
                   key={email}
                   href={`mailto:${email}`}
@@ -119,14 +158,17 @@ export default function Contacto() {
             </ContactCard>
 
             <ContactCard icon={MapPin} title={details.cards.address}>
-              <p className="font-medium text-ink">{SITE.addressStreet}</p>
-              <p>{SITE.addressCity}</p>
-              <p className="text-ink-subtle">{SITE.metro}</p>
+              <p className="font-medium text-ink">{company.addressStreet}</p>
+              <p>{company.addressCity}</p>
+              <p className="text-ink-subtle">{company.metro}</p>
             </ContactCard>
 
             <ContactCard icon={Clock} title={details.cards.hours.title}>
-              <p className="font-medium text-ink">{details.cards.hours.lines[0]}</p>
-              <p>{details.cards.hours.lines[1]}</p>
+              {company.openingHoursLines.map((line) => (
+                <p key={line} className={line === company.openingHoursLines[0] ? 'font-medium text-ink' : ''}>
+                  {line}
+                </p>
+              ))}
             </ContactCard>
           </motion.div>
 
@@ -174,11 +216,11 @@ export default function Contacto() {
               />
             </div>
             <div className="border-t border-border px-5 py-4 sm:px-6 sm:py-5">
-              <p className="text-sm font-semibold text-ink">{SITE.legalName}</p>
+              <p className="text-sm font-semibold text-ink">{company.legalName}</p>
               <p className="mt-1 text-sm text-ink-muted">
-                {SITE.addressStreet}, {SITE.addressCity}.
+                {company.addressStreet}, {company.addressCity}.
               </p>
-              <p className="mt-1 text-sm text-ink-subtle">{SITE.metro}</p>
+              <p className="mt-1 text-sm text-ink-subtle">{company.metro}</p>
             </div>
           </div>
         </motion.div>

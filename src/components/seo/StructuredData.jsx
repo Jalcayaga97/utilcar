@@ -1,34 +1,42 @@
 import { SITE } from '@/constants/site'
+import { useCompanyInfo } from '@/hooks/useCms'
 
-function buildLocalBusinessSchema() {
-  const openingHoursSpecification = SITE.openingHours.map((slot) => ({
-    '@type': 'OpeningHoursSpecification',
-    dayOfWeek: slot.days,
-    opens: slot.opens,
-    closes: slot.closes,
-  }))
+function buildLocalBusinessSchema(company) {
+  const openingHoursSpecification = (company.openingHoursSpecification ?? SITE.openingHours).map(
+    (slot) => ({
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: slot.days,
+      opens: slot.opens,
+      closes: slot.closes,
+    }),
+  )
+
+  const sameAs = [
+    company.whatsappUrl,
+    ...company.socialLinks.map((link) => link.url),
+  ].filter(Boolean)
 
   return {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: SITE.name,
-    legalName: SITE.legalName,
+    legalName: company.legalName,
     description: SITE.description,
     url: SITE.url,
     image: SITE.ogImage,
-    telephone: SITE.phoneTel,
-    email: SITE.email,
+    telephone: company.phoneTel.replace(/^tel:/, ''),
+    email: company.primaryEmail,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: SITE.addressStreet,
-      addressLocality: SITE.addressLocality,
-      addressRegion: SITE.addressRegion,
-      addressCountry: SITE.addressCountry,
+      streetAddress: company.addressStreet,
+      addressLocality: company.addressLocality,
+      addressRegion: company.addressRegion,
+      addressCountry: company.addressCountry,
     },
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: SITE.geo.latitude,
-      longitude: SITE.geo.longitude,
+      latitude: company.geo.latitude,
+      longitude: company.geo.longitude,
     },
     openingHoursSpecification,
     areaServed: {
@@ -39,11 +47,11 @@ function buildLocalBusinessSchema() {
         name: 'Chile',
       },
     },
-    sameAs: [SITE.whatsappUrl],
+    sameAs,
     contactPoint: [
       {
         '@type': 'ContactPoint',
-        telephone: SITE.phoneTel,
+        telephone: company.phoneTel.replace(/^tel:/, ''),
         contactType: 'customer service',
         areaServed: 'CL',
         availableLanguage: ['Spanish'],
@@ -51,7 +59,7 @@ function buildLocalBusinessSchema() {
       {
         '@type': 'ContactPoint',
         contactType: 'sales',
-        url: SITE.whatsappUrl,
+        url: company.whatsappUrl,
         areaServed: 'CL',
       },
     ],
@@ -59,7 +67,8 @@ function buildLocalBusinessSchema() {
 }
 
 export function StructuredData() {
-  const schema = buildLocalBusinessSchema()
+  const company = useCompanyInfo()
+  const schema = buildLocalBusinessSchema(company)
 
   return (
     <script

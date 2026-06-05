@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { Check } from 'lucide-react'
 import { Container } from '@/components/ui/Container'
 import { cn } from '@/lib/cn'
 
@@ -8,9 +9,14 @@ export function ServicePageHero({
   eyebrow = 'Servicios',
   title,
   subtitle,
+  highlights = [],
   image,
   imageAlt,
 }) {
+  const highlightList = Array.isArray(highlights)
+    ? highlights.map((item) => String(item ?? '').trim()).filter(Boolean)
+    : []
+
   return (
     <section className="relative overflow-hidden border-b border-border bg-surface">
       <Container className="relative py-12 sm:py-14 lg:py-16">
@@ -29,6 +35,19 @@ export function ServicePageHero({
             <p className="mt-4 max-w-lg text-base leading-relaxed text-ink-muted sm:text-lg">
               {subtitle}
             </p>
+
+            {highlightList.length > 0 ? (
+              <ul className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-3">
+                {highlightList.map((item) => (
+                  <li key={item} className="flex items-center gap-2.5 text-sm text-ink-muted">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-white">
+                      <Check className="h-3 w-3 text-ink" strokeWidth={2} />
+                    </span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            ) : null}
           </motion.div>
 
           <motion.div
@@ -39,13 +58,19 @@ export function ServicePageHero({
           >
             <div className="relative overflow-hidden rounded-card border border-border bg-white shadow-card">
               <div className="aspect-[16/10] sm:aspect-video">
-                <img
-                  src={image}
-                  alt={imageAlt || ''}
-                  className="h-full w-full object-cover object-center"
-                  loading="lazy"
-                  decoding="async"
-                />
+                {image ? (
+                  <img
+                    src={image}
+                    alt={imageAlt || ''}
+                    className="h-full w-full object-cover object-center"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-surface text-sm text-ink-muted">
+                    Sin imagen
+                  </div>
+                )}
               </div>
               <div
                 className={cn(

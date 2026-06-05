@@ -1,62 +1,59 @@
 import { Stack } from '@sanity/ui'
 import { EditorialSectionHeader } from './EditorialSectionHeader.jsx'
 import { EditorialWarning } from './EditorialWarning.jsx'
-import { EditorialGalleryGrid, EditorialFeatureList, EditorialCtaEditor } from './editorial/index.js'
+import { EditorialFeatureList, EditorialCtaEditor } from './editorial/index.js'
 import { EDITORIAL_COPY } from '../editorial.js'
 import { hasImageAsset } from '../../governance/specialtiesValidators.js'
+
+/**
+ * Sanity v3: renderField recibe FieldProps sin renderDefault; el input ya viene en children.
+ */
+function renderFieldContent(fieldProps) {
+  return fieldProps.children ?? null
+}
 
 export function SpecialtyCategoryEditorialInput(props) {
   const value = props.value ?? {}
   const missingHero = !hasImageAsset(value.heroImage)
   const emptyCta =
     !String(value.cta?.label ?? '').trim() && !String(value.cta?.to ?? '').trim()
-  const brandCount = Array.isArray(value.brands) ? value.brands.length : 0
 
   return (
     <Stack space={3}>
       <EditorialSectionHeader
         eyebrow="Especialidad"
-        title={value.title || 'Nueva categoría'}
-        description={EDITORIAL_COPY.specialties.sectionDescription}
+        title={value.title || 'Nueva especialidad'}
+        description={EDITORIAL_COPY.specialties.categoryDescription}
       />
       {missingHero ? (
-        <EditorialWarning title="Imagen principal">
-          Recomendado: sube heroImage para la vista alternada en Home.
+        <EditorialWarning title="Imagen">
+          Subí la imagen principal: es lo que muestra el Home en esta sección.
         </EditorialWarning>
       ) : null}
       {emptyCta ? (
-        <EditorialWarning title="CTA">Sin CTA: la categoría no tendrá botón de acción.</EditorialWarning>
-      ) : null}
-      {brandCount ? (
-        <EditorialWarning title="Marcas">
-          {brandCount} marca{brandCount === 1 ? '' : 's'} — el sitio mostrará tabs por marca cuando el frontend migre.
+        <EditorialWarning title="CTA">
+          Sin CTA: esta especialidad no tendrá botón de acción en el Home.
         </EditorialWarning>
       ) : null}
       {props.renderDefault({
         ...props,
         renderField: (fieldProps) => {
-          if (fieldProps.name === 'gallery') {
-            return (
-              <EditorialGalleryGrid hint={EDITORIAL_COPY.specialties.categoryGalleryHint}>
-                {fieldProps.renderDefault(fieldProps)}
-              </EditorialGalleryGrid>
-            )
-          }
+          const field = renderFieldContent(fieldProps)
           if (fieldProps.name === 'features') {
             return (
               <EditorialFeatureList hint={EDITORIAL_COPY.specialties.featuresHint}>
-                {fieldProps.renderDefault(fieldProps)}
+                {field}
               </EditorialFeatureList>
             )
           }
           if (fieldProps.name === 'cta') {
             return (
-              <EditorialCtaEditor cta={value.cta} hint="CTA principal de la categoría.">
-                {fieldProps.renderDefault(fieldProps)}
+              <EditorialCtaEditor cta={value.cta} hint="Enlace o botón al pie de la sección en el Home.">
+                {field}
               </EditorialCtaEditor>
             )
           }
-          return fieldProps.renderDefault(fieldProps)
+          return field
         },
       })}
     </Stack>

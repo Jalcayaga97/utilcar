@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, MessageCircle } from 'lucide-react'
-import { SITE } from '@/constants/site'
-import { useCtaButtonLabels } from '@/hooks/useCms'
+import { useCompanyInfo, useCtaButtonLabels } from '@/hooks/useCms'
 import { cn } from '@/lib/cn'
 
 const btnBase = cn(
@@ -65,6 +64,7 @@ export function CtaButtonGroup({
   align = 'center',
 }) {
   const labels = useCtaButtonLabels()
+  const company = useCompanyInfo()
   const resolvedPrimaryLabel = primaryLabel ?? labels.primaryLabel
   const resolvedPrimaryTo = primaryTo ?? labels.primaryTo
   const styles = variants[variant] ?? variants.dark
@@ -95,7 +95,7 @@ export function CtaButtonGroup({
 
       {showWhatsApp && (
         <a
-          href={SITE.whatsappUrl}
+          href={company.whatsappUrl}
           className={styles.secondary}
           target="_blank"
           rel="noopener noreferrer"

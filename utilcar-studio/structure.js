@@ -4,6 +4,11 @@ import {
   HOME_DOCUMENT_PANE_ID,
   HOME_BUILDER_VIEW_ID,
 } from './schemas/presentation/studioNavigation.js'
+import {
+  SERVICE_SUB_PAGE_KEYS,
+  serviceSubPageDocumentId,
+} from './schemas/content/serviceSubPage.js'
+import { SITE_SETTINGS_DOCUMENT_ID } from './schemas/content/siteSettings.js'
 
 const HOME_ID = HOME_DOCUMENT_ID
 
@@ -38,20 +43,43 @@ function pageSingleton(S, { listId, title, schemaType, documentId }) {
   })
 }
 
-function catalogsSection(S) {
+function servicesSection(S) {
+  const subPages = SERVICE_SUB_PAGE_KEYS.map(({ value, title }) =>
+    pageSingleton(S, {
+      listId: `service-${value}`,
+      title,
+      schemaType: 'serviceSubPage',
+      documentId: serviceSubPageDocumentId(value),
+    }),
+  )
+
   return S.listItem()
-    .title('Catálogos')
-    .id('catalogs')
+    .title('Servicios')
+    .id('services')
     .child(
       S.list()
-        .title('Catálogos')
+        .title('Servicios')
         .items([
-          S.listItem()
-            .title('Marcas')
-            .id('brands')
-            .child(S.documentTypeList('brand').title('Marcas')),
+          pageSingleton(S, {
+            listId: 'services-hub',
+            title: 'Hub de navegación',
+            schemaType: 'servicesPage',
+            documentId: 'servicesPage',
+          }),
+          S.divider(),
+          ...subPages,
         ]),
     )
+}
+
+function siteSettingsEntry(S) {
+  return pageSingleton(S, {
+    listId: 'site-settings',
+    title: 'Configuración del sitio',
+    schemaType: 'siteSettings',
+    documentId: SITE_SETTINGS_DOCUMENT_ID,
+    documentTitle: 'Configuración del sitio',
+  })
 }
 
 export const structure = (S, context) => {
@@ -66,23 +94,30 @@ export const structure = (S, context) => {
       paneId: HOME_DOCUMENT_PANE_ID,
       views: homeViews(S),
     }),
+    servicesSection(S),
+    siteSettingsEntry(S),
     S.listItem()
-      .title('Servicios')
-      .id('services')
-      .child(S.documentTypeList('servicesPage').title('Páginas de servicio')),
-    pageSingleton(S, {
-      listId: 'work',
-      title: 'Trabajos',
-      schemaType: 'workPage',
-      documentId: 'workPage',
-    }),
+      .title('Trabajos')
+      .id('work')
+      .child(
+        S.list()
+          .title('Trabajos realizados')
+          .items([
+            pageSingleton(S, {
+              listId: 'work-page',
+              title: 'Página Trabajos',
+              schemaType: 'workPage',
+              documentId: 'workPage',
+            }),
+            S.documentTypeListItem('workProject').title('Proyectos'),
+          ]),
+      ),
     pageSingleton(S, {
       listId: 'contact',
       title: 'Contacto',
       schemaType: 'contactPage',
       documentId: 'contactPage',
     }),
-    catalogsSection(S),
   ]
 
   const legacyItems = LEGACY_ADMIN_PAGES.map((page) =>

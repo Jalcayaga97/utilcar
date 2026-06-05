@@ -10,7 +10,9 @@ import { Hero } from '@/components/sections/Hero'
 import { MainServices } from '@/components/sections/MainServices'
 import { EspecialidadesUtilcar } from '@/components/sections/EspecialidadesUtilcar'
 import { CtaBanner } from '@/components/sections/CtaBanner'
-import { USE_BLOCK_RESOLVER, USE_SPECIALTIES_V2 } from '@/lib/cms/config'
+import { USE_BLOCK_RESOLVER, USE_SPECIALTIES_V2, isSanityEnabled } from '@/lib/cms/config'
+import { logHomeRuntime } from '@/lib/cms/homeRuntimeLog'
+import { buildHomeSourceMap } from '@/lib/cms/homeSourceMap'
 import {
   getActiveHeroSection,
   getActivePortfolioSection,
@@ -39,19 +41,20 @@ import {
   logSpecialtiesBlockFullSection,
   warnSpecialtiesBlockLegacyFallback,
 } from '@/lib/cms/specialtiesBlockLog'
-import { useHighlights, useHomeContent, useTrabajosPreview } from '@/hooks/useCms'
+import { useHighlights, useHomeContent, useHomePortfolioCards } from '@/hooks/useCms'
 
 export default function Home() {
   const homeContent = useHomeContent()
   const highlights = useHighlights()
-  const trabajosWorkPage = useTrabajosPreview()
+  const trabajosCatalog = useHomePortfolioCards()
   const { highlights: highlightsSection, portfolioPreview, extensions } = homeContent
 
   const heroSection = useMemo(() => getActiveHeroSection(extensions), [extensions])
 
   const whyUsSection = useMemo(() => getActiveWhyUsSection(extensions), [extensions])
   const whyUsMeta = whyUsSection ?? highlightsSection
-  const whyUsItems = whyUsSection?.items ?? highlights
+  const whyUsItems = whyUsSection?.items?.length ? whyUsSection.items : highlights
+  const whyUsSource = whyUsSection?.items?.length ? 'cms' : 'legacy'
 
   const servicesSection = useMemo(() => getActiveServicesSection(extensions), [extensions])
 
@@ -66,8 +69,17 @@ export default function Home() {
   )
 
   const portfolioMeta = portfolioSection ?? portfolioPreview
-  const trabajos = portfolioSection?.items ?? trabajosWorkPage
   const previewCount = portfolioMeta.previewCount ?? 3
+  const trabajos = useMemo(
+    () => trabajosCatalog.slice(0, previewCount),
+    [trabajosCatalog, previewCount],
+  )
+  const portfolioSource = useMemo(() => {
+    if (!trabajos.length) return 'empty'
+    if ((portfolioSection?.selectedProjects?.length ?? 0) > 0) return 'cms-selected'
+    if ((portfolioSection?.featuredProjectIds?.length ?? 0) > 0) return 'cms-featured-refs'
+    return 'cms-featured-flags'
+  }, [trabajos.length, portfolioSection?.selectedProjects?.length, portfolioSection?.featuredProjectIds?.length])
 
   const portfolioSourceRef = useRef(null)
   const whyUsSourceRef = useRef(null)
@@ -189,6 +201,61 @@ export default function Home() {
     })
   }, [specialtiesSection, extensions?.specialtiesSection?.categories?.length])
 
+  useEffect(() => {
+    if (!USE_BLOCK_RESOLVER) return
+    logHomeRuntime('hero', {
+      blockFound: Boolean(extensions?.heroSection),
+      source: heroSection ? 'cms' : 'legacy',
+    })
+    logHomeRuntime('services', {
+      blockFound: Boolean(extensions?.servicesSection),
+      itemsCount: servicesSection?.items?.length ?? 0,
+      source: servicesSection ? 'cms' : 'legacy',
+    })
+    logHomeRuntime('specialties', {
+      blockFound: Boolean(extensions?.specialtiesSection),
+      categoriesCount: specialtiesSection?.categories?.length ?? 0,
+      source: specialtiesSection ? 'cms' : 'legacy',
+    })
+    logHomeRuntime('why-utilcar', {
+      blockFound: Boolean(extensions?.whyUsSection),
+      itemsCount: whyUsSection?.items?.length ?? 0,
+      source: whyUsSource,
+    })
+    logHomeRuntime('portfolio', {
+      blockFound: Boolean(extensions?.portfolioSection),
+      selectedProjectsCount: portfolioSection?.selectedProjects?.length ?? 0,
+      featuredProjectsCount: portfolioSection?.featuredProjectIds?.length ?? 0,
+      source: portfolioSource,
+    })
+    logHomeRuntime('cta', {
+      blockFound: Boolean(extensions),
+      source: 'cms-mirror',
+    })
+
+    if (import.meta.env.DEV) {
+      const map = buildHomeSourceMap({
+        extensions,
+        heroSection,
+        servicesSection,
+        specialtiesSection,
+        whyUsSection,
+        portfolioSection,
+        sanityEnabled: isSanityEnabled(),
+      })
+      console.info('[home-source-map]', map)
+    }
+  }, [
+    extensions,
+    heroSection,
+    servicesSection,
+    specialtiesSection,
+    whyUsSection,
+    portfolioSection,
+    whyUsSource,
+    portfolioSource,
+  ])
+
   return (
     <>
       <PageMeta page="home" />
@@ -203,6 +270,7 @@ export default function Home() {
         <SectionHeader
           eyebrow={whyUsMeta.eyebrow}
           title={whyUsMeta.title}
+          description={whyUsMeta.description}
           align="center"
         />
         <Grid cols={3}>
@@ -241,7 +309,7 @@ export default function Home() {
             <Card key={trabajo.id} hover className="flex h-full flex-col">
               <WorkCardImage
                 imageKey={trabajo.imageKey}
-                src={trabajo.imageUrl}
+                src={trabajo.imageUrl ?? trabajo.image}
                 alt={trabajo.imageAlt}
                 className="mb-4"
               />

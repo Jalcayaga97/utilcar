@@ -42,6 +42,10 @@ export function stripSchemaVersion(data) {
 export function parseSanityPayload(data) {
   if (!data) return null
 
+  if (Array.isArray(data)) {
+    return data
+  }
+
   try {
     assertSchemaVersion(data)
     return stripSchemaVersion(data)

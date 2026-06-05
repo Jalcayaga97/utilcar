@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { ArrowRight, Wrench } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { mapContractItemsForMainServices } from '@/lib/cms/contracts/servicesContract'
+import { resolveCmsIcon } from '@/lib/cms/icons/resolveCmsIcon'
 import { useHomeContent, useServices } from '@/hooks/useCms'
 import { getServiceImage } from '@/assets/images'
 import { Section, SectionHeader } from '@/components/ui/Section'
@@ -12,8 +13,8 @@ const ease = [0.25, 0.1, 0.25, 1]
 const FALLBACK_ICON = Wrench
 
 function ServiceCard({ service, index, cardLinkLabel }) {
-  const Icon = service.icon ?? FALLBACK_ICON
-  const image = getServiceImage(service.id)
+  const Icon = resolveCmsIcon(service.icon) ?? FALLBACK_ICON
+  const image = service.imageUrl ?? getServiceImage(service.id)
   const linkLabel = service.cardLinkLabel ?? cardLinkLabel
 
   return (
@@ -96,16 +97,20 @@ export function MainServices({ activeSection = null }) {
 
   const sectionMeta = activeSection ?? legacyServicesMeta
   const defaultCardLinkLabel = sectionMeta.cardLinkLabel || 'Ver más'
+  const cmsActive = Boolean(activeSection?.items?.length)
 
   const services = useMemo(() => {
-    if (!activeSection?.items?.length) return legacyServices
-
+    if (!cmsActive) {
+      return legacyServices
+    }
     return mapContractItemsForMainServices(
       activeSection.items,
-      legacyServices,
       defaultCardLinkLabel,
-    )
-  }, [activeSection, legacyServices, defaultCardLinkLabel])
+    ).map((item) => ({
+      ...item,
+      icon: resolveCmsIcon(item.icon),
+    }))
+  }, [cmsActive, activeSection, legacyServices, defaultCardLinkLabel])
 
   return (
     <Section className="bg-white">

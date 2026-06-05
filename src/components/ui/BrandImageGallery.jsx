@@ -4,9 +4,16 @@ import { ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { SmartImage } from '@/components/ui/SmartImage'
 import { useAdjacentImagePreload } from '@/hooks/useAdjacentImagePreload'
+import { pickImageUrl } from '@/lib/cms/assets/resolveImage'
 
 const ease = [0.25, 0.1, 0.25, 1]
-const getGallerySrc = (img) => img?.src
+
+function resolveGalleryImageSrc(img) {
+  if (!img) return null
+  return img.src || img.url || pickImageUrl(img.image) || pickImageUrl(img.asset) || pickImageUrl(img) || null
+}
+
+const getGallerySrc = (img) => resolveGalleryImageSrc(img)
 
 /**
  * Galería editorial por marca: imagen principal, thumbnails y lightbox opcional.
@@ -16,7 +23,13 @@ export function BrandImageGallery({ images, brandName, className }) {
   const [lightboxIndex, setLightboxIndex] = useState(null)
   const lightboxOpen = lightboxIndex !== null
 
-  const safeImages = images?.length ? images : []
+  const safeImages = (images ?? [])
+    .map((img) => {
+      const src = resolveGalleryImageSrc(img)
+      if (!src) return null
+      return { ...img, src }
+    })
+    .filter(Boolean)
   useAdjacentImagePreload(lightboxOpen ? lightboxIndex : null, safeImages, getGallerySrc)
   const current = safeImages[selected] ?? safeImages[0]
 

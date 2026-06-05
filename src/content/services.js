@@ -657,6 +657,12 @@ export const banquetasContent = {
       'Tres líneas de fabricación con especificaciones técnicas, opciones de equipamiento y registro visual de trabajos reales.',
     items: BANQUETAS_CATEGORIES,
   },
+  gallery: {
+    eyebrow: 'Galería',
+    title: 'Trabajos realizados',
+    description:
+      'Fabricación e instalación de banquetas registradas en proyectos reales para transporte de personal, escolar y adultos.',
+  },
   cta: {
     title: 'Solicite banquetas a medida para su flota',
     description:
@@ -874,6 +880,12 @@ export const accesoriosContent = {
     description:
       'Seleccione una categoría para ver especificaciones, registro visual y detalle de cada producto.',
     categories: ACCESORIOS_CATEGORIES,
+  },
+  gallery: {
+    eyebrow: 'Galería',
+    title: 'Trabajos realizados',
+    description:
+      'Instalaciones reales de cabeceras, apoya brazos, balizas y señalética en proyectos Utilcar.',
   },
   cta: {
     title: 'Consulte accesorios para su equipamiento',

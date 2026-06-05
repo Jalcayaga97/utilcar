@@ -2,11 +2,10 @@ import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
 import { PageMeta } from '@/components/seo/PageMeta'
 import { ServicePageHero } from '@/components/sections/ServicePageHero'
+import { ServicePagePortfolio } from '@/components/sections/ServicePagePortfolio'
 import { ServiceCtaDark } from '@/components/sections/ServiceCtaDark'
 import { Section, SectionHeader } from '@/components/ui/Section'
-import { ImageGallery } from '@/components/ui/ImageGallery'
-import { IMAGES } from '@/assets/images'
-import { useButacasContent } from '@/hooks/useCms'
+import { useServicePageDisplay } from '@/hooks/useCms'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
@@ -31,18 +30,19 @@ function SpecBlock({ title: blockTitle, items }) {
 }
 
 export default function Butacas() {
-  const { hero, intro, specs, gallery, cta } = useButacasContent()
-  const { title, paragraphs } = intro
+  const { content, heroImage, portfolioProjects, seo } = useServicePageDisplay('butacas')
+  const { hero, intro, specs, gallery } = content
 
   return (
     <>
-      <PageMeta page="butacas" />
+      <PageMeta page="butacas" cmsSeo={seo ?? undefined} />
 
       <ServicePageHero
         eyebrow={hero.eyebrow}
         title={hero.title}
         subtitle={hero.subtitle}
-        image={IMAGES.butacas.hero}
+        highlights={hero.highlights}
+        image={heroImage}
         imageAlt={hero.imageAlt}
       />
 
@@ -54,17 +54,10 @@ export default function Butacas() {
           transition={{ duration: 0.5, ease }}
           className="mx-auto max-w-3xl"
         >
-          <SectionHeader
-            eyebrow={intro.eyebrow}
-            title={title}
-            className="mb-8"
-          />
+          <SectionHeader eyebrow={intro.eyebrow} title={intro.title} className="mb-8" />
           <div className="space-y-5">
-            {paragraphs.map((paragraph) => (
-              <p
-                key={paragraph}
-                className="text-base leading-relaxed text-ink-muted sm:text-lg"
-              >
+            {(intro.paragraphs ?? []).map((paragraph) => (
+              <p key={paragraph} className="text-base leading-relaxed text-ink-muted sm:text-lg">
                 {paragraph}
               </p>
             ))}
@@ -87,32 +80,21 @@ export default function Butacas() {
           transition={{ duration: 0.5, ease }}
           className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6"
         >
-          {specs.sections.map((block) => (
+          {(specs.sections ?? []).map((block) => (
             <SpecBlock key={block.title} title={block.title} items={block.items} />
           ))}
         </motion.div>
       </Section>
 
-      <Section>
-        <SectionHeader
-          eyebrow={gallery.eyebrow}
-          title={gallery.title}
-          description={gallery.description}
-          align="center"
-          className="mx-auto max-w-2xl"
-        />
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.05, ease }}
-          className="mt-12"
-        >
-          <ImageGallery images={IMAGES.butacas.gallery} />
-        </motion.div>
-      </Section>
+      <ServicePagePortfolio
+        pageKey="butacas"
+        eyebrow={gallery.eyebrow}
+        title={gallery.title}
+        description={gallery.description}
+        projects={portfolioProjects ?? []}
+      />
 
-      <ServiceCtaDark title={cta.title} description={cta.description} />
+      <ServiceCtaDark />
     </>
   )
 }

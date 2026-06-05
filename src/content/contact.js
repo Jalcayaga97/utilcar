@@ -1,5 +1,6 @@
 /**
- * Contenido Contacto — mock CMS local (preparado para Sanity).
+ * Contenido editorial Contacto — mock CMS local.
+ * Datos corporativos (teléfono, email, dirección): siteSettings.company / SITE.
  */
 
 const CONTACTO_SERVICIOS = [
@@ -39,7 +40,6 @@ const CONTACTO_FAQ = [
   },
 ]
 
-
 export const contactContent = {
   hero: {
     eyebrow: 'Utilcar',
@@ -48,6 +48,7 @@ export const contactContent = {
     imageAlt: 'Taller Utilcar Conversiones — conversiones y equipamiento automotriz',
   },
   intro: {
+    paragraphs: [],
     formHint:
       'Si lo prefiere, puede escribirnos mediante el formulario en línea y le responderemos a la brevedad.',
   },
@@ -59,10 +60,7 @@ export const contactContent = {
       phone: 'Teléfono',
       email: 'Correos',
       address: 'Dirección',
-      hours: {
-        title: 'Horario',
-        lines: ['Lunes a viernes', 'Horario comercial'],
-      },
+      hours: { title: 'Horario' },
     },
   },
   cta: {

@@ -3,6 +3,10 @@ import { EditorialSectionHeader } from './EditorialSectionHeader.jsx'
 import { EditorialGalleryGrid, EditorialFeatureList, EditorialCtaEditor } from './editorial/index.js'
 import { EDITORIAL_COPY } from '../editorial.js'
 
+function renderFieldContent(fieldProps) {
+  return fieldProps.children ?? null
+}
+
 export function SpecialtyBrandEditorialInput(props) {
   const value = props.value ?? {}
 
@@ -16,28 +20,29 @@ export function SpecialtyBrandEditorialInput(props) {
       {props.renderDefault({
         ...props,
         renderField: (fieldProps) => {
+          const field = renderFieldContent(fieldProps)
           if (fieldProps.name === 'galleries') {
             return (
               <EditorialGalleryGrid hint={EDITORIAL_COPY.specialties.brandGalleryHint}>
-                {fieldProps.renderDefault(fieldProps)}
+                {field}
               </EditorialGalleryGrid>
             )
           }
           if (fieldProps.name === 'features') {
             return (
               <EditorialFeatureList hint="Specs técnicas o compatibilidad por marca.">
-                {fieldProps.renderDefault(fieldProps)}
+                {field}
               </EditorialFeatureList>
             )
           }
           if (fieldProps.name === 'cta') {
             return (
               <EditorialCtaEditor cta={value.cta}>
-                {fieldProps.renderDefault(fieldProps)}
+                {field}
               </EditorialCtaEditor>
             )
           }
-          return fieldProps.renderDefault(fieldProps)
+          return field
         },
       })}
     </Stack>

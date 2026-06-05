@@ -14,6 +14,7 @@ import {
   serviceBlockItem,
   whyUsBlockItem,
   portfolioBlockItem,
+  featuredProjectRef,
 } from './content/blocks/items/index.js'
 import { brand } from './content/brand.js'
 import {
@@ -22,6 +23,7 @@ import {
   specialtiesBlock,
   servicesBlock,
   whyUsBlock,
+  whyUtilcarBlock,
   portfolioBlock,
   galleryBlock,
   ctaBlock,
@@ -35,7 +37,10 @@ import { pageBlock } from './legacy/objects/pageBlock.js'
 import { especialidadItem } from './legacy/objects/especialidadItem.js'
 import { servicesPage } from './legacy/pages/servicesPage.js'
 import { workPage } from './legacy/pages/workPage.js'
-import { contactPage } from './legacy/pages/contactPage.js'
+import { contactPage } from './content/contactPage.js'
+import { serviceSubPage, serviceTab } from './content/serviceSubPage.js'
+import { workProject } from './content/workProject.js'
+import { siteSettings, serviceCtaObject, companyObject } from './content/siteSettings.js'
 
 /** Tipos activos en producción + legacy registrados para GROQ/API. */
 export const schemaTypes = [
@@ -53,10 +58,12 @@ export const schemaTypes = [
   serviceBlockItem,
   whyUsBlockItem,
   portfolioBlockItem,
+  featuredProjectRef,
   heroBlock,
   specialtiesBlock,
   servicesBlock,
   whyUsBlock,
+  whyUtilcarBlock,
   portfolioBlock,
   galleryBlock,
   ctaBlock,
@@ -65,8 +72,14 @@ export const schemaTypes = [
   richTextBlock,
   mapBlock,
   seoBlock,
+  serviceCtaObject,
+  companyObject,
   especialidadItem,
   brand,
+  serviceTab,
+  serviceSubPage,
+  workProject,
+  siteSettings,
   homePage,
   servicesPage,
   workPage,

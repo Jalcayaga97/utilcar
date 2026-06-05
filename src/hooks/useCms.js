@@ -3,6 +3,8 @@ import {
   EMPTY_HOME_EXTENSIONS,
   getHomeContent,
   getEspecialidades,
+  getHomePortfolioCards,
+  getLocalHomePortfolioCards,
 } from '@/lib/cms/home.adapter'
 import {
   getServices,
@@ -11,6 +13,7 @@ import {
   getServicePaths,
   getMainNavLinks,
   getServiceCtaDefaults,
+  getGlobalServiceCta,
   getCtaButtonLabels,
   getTalleresMovilesContent,
   getVentanasLunetasContent,
@@ -22,8 +25,9 @@ import {
   getBanquetasCategories,
   getAccesoriosCategories,
 } from '@/lib/cms/services.adapter'
-import { getWorkContent, getTrabajosPreview, getTrabajosPageHero, getWorkBundle } from '@/lib/cms/work.adapter'
-import { getContactContent, getContactDisplay } from '@/lib/cms/contact.adapter'
+import { getWorkContent, getTrabajosPreview, getTrabajosPageHero, getWorkBundle, getWorkPageDisplay } from '@/lib/cms/work.adapter'
+import { getContactContent, getContactPageDisplay } from '@/lib/cms/contact.adapter'
+import { getCompanyInfo, getLocalCompanyInfo } from '@/lib/cms/company.adapter'
 import { getServicePageDisplay } from '@/lib/cms/services.adapter'
 import {
   getValidatedLocalServicesBundle,
@@ -81,6 +85,13 @@ export function useEspecialidades() {
   return useCmsData(getValidatedLocalEspecialidades(), getEspecialidades)
 }
 
+/** Trabajos recientes en Home — selectedProjects del portfolioBlock o fallback flags. */
+export function useHomePortfolioCards() {
+  const local = useMemo(() => getLocalHomePortfolioCards(), [])
+  const fetcher = useCallback(() => getHomePortfolioCards(), [])
+  return useCmsData(local, fetcher)
+}
+
 export function useServices() {
   return useCmsData(localServices().services, getServices)
 }
@@ -103,6 +114,10 @@ export function useServicePaths() {
 
 export function useServiceCtaDefaults() {
   return useCmsData(localServices().serviceCtaDefaults, getServiceCtaDefaults)
+}
+
+export function useGlobalServiceCta() {
+  return useCmsData(localServices().serviceCtaDefaults, getGlobalServiceCta)
 }
 
 export function useCtaButtonLabels() {
@@ -169,6 +184,22 @@ export function useWorkBundleMeta() {
   return useCmsData(empty, fetcher)
 }
 
+function localWorkPageDisplayHook() {
+  const bundle = localWork()
+  return {
+    content: bundle.workContent.page,
+    heroImage: bundle.trabajosPageHero,
+    seo: null,
+    source: 'legacy',
+  }
+}
+
+export function useWorkPageDisplay() {
+  const local = useMemo(() => localWorkPageDisplayHook(), [])
+  const fetcher = useCallback(() => getWorkPageDisplay(), [])
+  return useCmsData(local, fetcher)
+}
+
 function localServicePageDisplay(pageKey) {
   const bundle = localServices()
   const fieldMap = {
@@ -180,10 +211,18 @@ function localServicePageDisplay(pageKey) {
     accesorios: 'accesorios',
   }
   const field = fieldMap[pageKey]
+  const tabsMap = {
+    'ventanas-lunetas': bundle.ventanasBrands,
+    banquetas: bundle.banquetasCategories,
+    accesorios: bundle.accesoriosCategories,
+  }
   return {
     content: field ? bundle[field] : {},
     heroImage: null,
-    galleryImages: null,
+    portfolioProjects: [],
+    portfolioSource: 'none',
+    tabs: tabsMap[pageKey] ?? [],
+    seo: null,
     source: 'legacy',
   }
 }
@@ -198,15 +237,25 @@ export function useContactContent() {
   return useCmsData(getValidatedLocalContactContent(), getContactContent)
 }
 
-export function useContactDisplay() {
+export function useContactPageDisplay() {
   const local = useMemo(
     () => ({
       content: getValidatedLocalContactContent(),
       heroImage: null,
+      seo: null,
       source: 'legacy',
     }),
     [],
   )
-  const fetcher = useCallback(() => getContactDisplay(), [])
+  const fetcher = useCallback(() => getContactPageDisplay(), [])
   return useCmsData(local, fetcher)
+}
+
+/** @deprecated Usar useContactPageDisplay */
+export function useContactDisplay() {
+  return useContactPageDisplay()
+}
+
+export function useCompanyInfo() {
+  return useCmsData(getLocalCompanyInfo(), getCompanyInfo)
 }

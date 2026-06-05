@@ -66,11 +66,13 @@ export const EDITORIAL_COPY = {
   },
   specialties: {
     sectionDescription:
-      'Categorías visibles en Home: ventanas, buses escolares, banquetas, etc. Cada categoría puede tener marcas, galerías y CTAs.',
-    categoryGalleryHint: 'Galería general de la categoría. Si hay marcas, cada marca puede tener su propia galería.',
-    featuresHint: 'Grupos de especificaciones técnicas o beneficios. Reemplaza la lista plana legacy.',
-    brandsHint: 'Marcas por categoría (tabs). Ej. Toyota, Peugeot dentro de Ventanas.',
-    brandGalleryHint: 'Imágenes específicas de la marca. Recomendado al menos una foto.',
+      'Las tres especialidades que aparecen en el Home. Cada una es una sección editorial, no una página aparte.',
+    categoryDescription:
+      'Título, descripción, imagen, especificaciones y CTA. Lo que edites aquí es lo que verás en Inicio → Especialidades.',
+    categoryGalleryHint: '[DEPRECATED] Galería legacy — no editable.',
+    featuresHint: 'Grupos de especificaciones (ej. Compatibilidad, Equipamiento). Cada grupo con su lista de ítems.',
+    brandsHint: '[DEPRECATED] Marcas legacy — no editable.',
+    brandGalleryHint: '[DEPRECATED] Galería de marca legacy.',
   },
   services: {
     sectionDescription: 'Tarjetas de servicios principales en el Home.',
@@ -91,14 +93,13 @@ export const SPECIALTY_FIELDSETS = [
 
 export const SPECIALTY_CATEGORY_FIELDSETS = [
   { name: 'hero', title: 'Contenido principal', options: { collapsible: false } },
-  { name: 'content', title: 'Descripción', options: { collapsible: true, collapsed: false } },
   { name: 'media', title: 'Imagen principal', options: { collapsible: true, collapsed: false } },
-  { name: 'gallery', title: 'Galería', options: { collapsible: true, collapsed: true } },
-  { name: 'features', title: 'Características', options: { collapsible: true, collapsed: true } },
-  { name: 'brands', title: 'Marcas', options: { collapsible: true, collapsed: true } },
-  { name: 'cta', title: 'CTA', options: { collapsible: true, collapsed: true } },
+  { name: 'features', title: 'Características', options: { collapsible: true, collapsed: false } },
+  { name: 'cta', title: 'CTA', options: { collapsible: true, collapsed: false } },
   { name: 'options', title: 'Opciones', options: { collapsible: true, collapsed: true } },
-  { name: 'advanced', title: 'Layout (admin)', options: { collapsible: true, collapsed: true } },
+  { name: 'gallery', title: '[DEPRECATED] Galería', options: { collapsible: true, collapsed: true } },
+  { name: 'brands', title: '[DEPRECATED] Marcas', options: { collapsible: true, collapsed: true } },
+  { name: 'advanced', title: '[DEPRECATED] Layout', options: { collapsible: true, collapsed: true } },
 ]
 
 export const SPECIALTY_BRAND_FIELDSETS = [
