@@ -36,6 +36,18 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;')
 }
 
+export function buildContactErrorBody(error) {
+  return {
+    ok: false,
+    error: error?.message || String(error),
+    stack: process.env.NODE_ENV !== 'production' ? error?.stack : undefined,
+  }
+}
+
+export function contactErrorResponse(error, status = 500) {
+  return Response.json(buildContactErrorBody(error), { status })
+}
+
 export function parseContactPayload(raw) {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
     return { ok: false, status: 400, error: 'invalid_payload' }
@@ -103,11 +115,11 @@ export async function sendContactEmail(data) {
   })
 
   if (result.error) {
+    const resendError = new Error(result.error.message ?? String(result.error))
     return {
       ok: false,
       status: 500,
-      error: 'resend_failed',
-      detail: result.error.message ?? String(result.error),
+      error: resendError,
     }
   }
 
@@ -115,18 +127,21 @@ export async function sendContactEmail(data) {
 }
 
 export async function handleContactPost(body) {
-  const parsed = parseContactPayload(body)
-  if (!parsed.ok) {
-    return { status: parsed.status, body: { ok: false, error: parsed.error } }
-  }
-
-  const sent = await sendContactEmail(parsed.data)
-  if (!sent.ok) {
-    return {
-      status: sent.status,
-      body: { ok: false, error: sent.error, detail: sent.detail },
+  try {
+    const parsed = parseContactPayload(body)
+    if (!parsed.ok) {
+      return { status: parsed.status, body: { ok: false, error: parsed.error } }
     }
-  }
 
-  return { status: 200, body: { ok: true, id: sent.id } }
+    const sent = await sendContactEmail(parsed.data)
+    if (!sent.ok) {
+      const error = sent.error instanceof Error ? sent.error : new Error(String(sent.error))
+      return { status: sent.status, body: buildContactErrorBody(error) }
+    }
+
+    return { status: 200, body: { ok: true, id: sent.id } }
+  } catch (error) {
+    console.error('CONTACT ERROR:', error)
+    return { status: 500, body: buildContactErrorBody(error) }
+  }
 }
