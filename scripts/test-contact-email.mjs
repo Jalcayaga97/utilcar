@@ -38,9 +38,9 @@ const result = await handleContactPost(TEST_PAYLOAD)
 console.info(`status: ${result.status}`)
 console.info(`body: ${JSON.stringify(result.body)}`)
 
-if (!process.env.RESEND_API_KEY) {
-  console.info('\n⚠ RESEND_API_KEY no configurada — no se puede confirmar recepción de correo.')
-  process.exit(result.status === 500 && result.body?.error === 'missing_resend_api_key' ? 0 : 1)
+if (!process.env.RESEND_API_KEY || !process.env.RESEND_FROM_EMAIL) {
+  console.info('\n⚠ RESEND_API_KEY / RESEND_FROM_EMAIL no configuradas — no se puede confirmar recepción.')
+  process.exit(result.status === 503 && result.body?.error === 'missing_email_config' ? 0 : 1)
 }
 
 if (result.status === 200 && result.body?.ok) {

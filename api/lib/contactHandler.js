@@ -24,7 +24,14 @@ function sanitizeField(value, maxLength) {
 }
 
 function isValidEmail(value) {
-  return EMAIL_RE.test(value) && value.length <= FIELD_LIMITS.mail
+  if (value == null) return false
+  const email = String(value).trim()
+  if (!email || email.length > FIELD_LIMITS.mail) return false
+  return EMAIL_RE.test(email)
+}
+
+function isNonEmptyString(value) {
+  return typeof value === 'string' && value.trim().length > 0
 }
 
 function escapeHtml(value) {
@@ -36,17 +43,38 @@ function escapeHtml(value) {
     .replace(/'/g, '&#39;')
 }
 
-export function buildContactErrorBody(error) {
-  return {
-    ok: false,
-    error: error?.message || String(error),
-    stack: process.env.NODE_ENV !== 'production' ? error?.stack : undefined,
+/** string | array → primer valor no vacío con trim; null/undefined → '' */
+export function normalizeRecipient(value) {
+  if (value == null) return ''
+
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      if (item == null) continue
+      const candidate = String(item).trim()
+      if (candidate) return candidate
+    }
+    return ''
   }
+
+  if (typeof value === 'string') return value.trim()
+
+  return ''
+}
+
+function responseBody(error, detail) {
+  const body = { ok: false, error }
+  if (detail) body.detail = detail
+  return body
+}
+
+function invalidInput(reason) {
+  console.error('CONTACT VALIDATION:', reason)
+  return { ok: false, status: 400, body: responseBody('invalid_input') }
 }
 
 export function parseContactPayload(raw) {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
-    return { ok: false, status: 400, error: 'invalid_payload' }
+    return invalidInput('invalid_payload')
   }
 
   const nombre = sanitizeField(raw.nombre, FIELD_LIMITS.nombre)
@@ -55,16 +83,16 @@ export function parseContactPayload(raw) {
   const telefono = sanitizeField(raw.telefono, FIELD_LIMITS.telefono)
   const servicio = sanitizeField(raw.servicio, FIELD_LIMITS.servicio)
   const consulta = sanitizeField(raw.consulta, FIELD_LIMITS.consulta)
-  const to = sanitizeField(raw.to, FIELD_LIMITS.to)
+  const to = sanitizeField(normalizeRecipient(raw.to), FIELD_LIMITS.to)
   const submittedAt = sanitizeField(raw.submittedAt, 40) || new Date().toISOString()
 
-  if (!nombre) return { ok: false, status: 400, error: 'missing_nombre' }
-  if (!mail) return { ok: false, status: 400, error: 'missing_mail' }
-  if (!isValidEmail(mail)) return { ok: false, status: 400, error: 'invalid_mail' }
-  if (!servicio) return { ok: false, status: 400, error: 'missing_servicio' }
-  if (!consulta) return { ok: false, status: 400, error: 'missing_consulta' }
-  if (!to) return { ok: false, status: 400, error: 'missing_to' }
-  if (!isValidEmail(to)) return { ok: false, status: 400, error: 'invalid_to' }
+  if (!nombre) return invalidInput('missing_nombre')
+  if (!mail) return invalidInput('missing_mail')
+  if (!isValidEmail(mail)) return invalidInput('invalid_mail')
+  if (!servicio) return invalidInput('missing_servicio')
+  if (!consulta) return invalidInput('missing_consulta')
+  if (!to) return invalidInput('missing_to')
+  if (!isValidEmail(to)) return invalidInput('invalid_to')
 
   return {
     ok: true,
@@ -93,62 +121,99 @@ function buildEmailHtml(data) {
   return `<!DOCTYPE html><html><body style="font-family:sans-serif;line-height:1.5;color:#111">${body}</body></html>`
 }
 
-export async function sendContactEmail(data) {
-  const apiKey = String(process.env.RESEND_API_KEY ?? '').trim()
-  if (!apiKey) {
-    console.error('CONTACT ERROR: RESEND_API_KEY no configurada en el entorno')
-    return {
-      ok: false,
-      status: 503,
-      error: new Error('missing_resend_api_key'),
-    }
+function validateBeforeResend(data) {
+  if (!isNonEmptyString(data.consulta)) {
+    console.error('CONTACT VALIDATION: data.consulta vacío')
+    return { ok: false, status: 400, body: responseBody('invalid_input') }
   }
 
-  const from = String(process.env.RESEND_FROM_EMAIL ?? '').trim() || 'Utilcar <onboarding@resend.dev>'
+  if (!isValidEmail(data.mail)) {
+    console.error('CONTACT VALIDATION: data.mail inválido')
+    return { ok: false, status: 400, body: responseBody('invalid_input') }
+  }
+
+  const to = normalizeRecipient(data.to)
+  if (!to || !isValidEmail(to)) {
+    console.error('CONTACT VALIDATION: data.to inválido')
+    return { ok: false, status: 400, body: responseBody('invalid_input') }
+  }
+
+  return { ok: true, to }
+}
+
+function getEmailConfig() {
+  const apiKey = String(process.env.RESEND_API_KEY ?? '').trim()
+  const from = String(process.env.RESEND_FROM_EMAIL ?? '').trim()
+
+  if (!apiKey || !from) {
+    console.error('CONTACT CONFIG: RESEND_API_KEY o RESEND_FROM_EMAIL faltante')
+    return { ok: false, status: 503, body: responseBody('missing_email_config') }
+  }
+
+  if (!isNonEmptyString(from)) {
+    console.error('CONTACT CONFIG: RESEND_FROM_EMAIL vacío tras trim')
+    return { ok: false, status: 503, body: responseBody('missing_email_config') }
+  }
+
+  return { ok: true, apiKey, from }
+}
+
+export async function sendContactEmail(data) {
+  console.log('📦 CONTACT BODY:', data)
+
+  const inputCheck = validateBeforeResend(data)
+  if (!inputCheck.ok) return inputCheck
+
+  const config = getEmailConfig()
+  if (!config.ok) return config
+
+  const from = config.from
+  const to = inputCheck.to
+  const subject = 'Nuevo contacto'
+  const html = buildEmailHtml(data)
+
+  if (!isNonEmptyString(from) || !isValidEmail(to) || !isValidEmail(data.mail) || !isNonEmptyString(subject) || !isNonEmptyString(html)) {
+    console.error('CONTACT VALIDATION: payload Resend incompleto o inválido')
+    return { ok: false, status: 400, body: responseBody('invalid_input') }
+  }
+
+  const resendPayload = {
+    from,
+    to,
+    replyTo: data.mail,
+    subject,
+    html,
+  }
+
+  console.log('📤 RESEND PAYLOAD:', resendPayload)
 
   try {
-    const resend = new Resend(apiKey)
-
-    const result = await resend.emails.send({
-      from,
-      to: data.to,
-      replyTo: data.mail,
-      subject: 'Nueva consulta desde utilcar.cl',
-      html: buildEmailHtml(data),
-    })
+    const resend = new Resend(config.apiKey)
+    const result = await resend.emails.send(resendPayload)
 
     if (result.error) {
-      console.error('CONTACT ERROR: Resend API', result.error)
-      return {
-        ok: false,
-        status: 502,
-        error: new Error(result.error.message ?? JSON.stringify(result.error)),
-      }
+      const detail = result.error.message ?? JSON.stringify(result.error)
+      console.error('RESEND FAIL:', result.error)
+      return { ok: false, status: 502, body: responseBody('resend_failed', detail) }
     }
 
-    return { ok: true, status: 200, id: result.data?.id ?? null }
-  } catch (error) {
-    console.error('CONTACT ERROR: Resend send failed', error)
-    return { ok: false, status: 502, error }
+    return { ok: true, status: 200, body: { ok: true, id: result.data?.id ?? null } }
+  } catch (err) {
+    console.error('RESEND FAIL:', err)
+    const detail = err instanceof Error ? err.message : String(err)
+    return { ok: false, status: 502, body: responseBody('resend_failed', detail) }
   }
 }
 
 export async function handleContactPost(body) {
   try {
     const parsed = parseContactPayload(body)
-    if (!parsed.ok) {
-      return { status: parsed.status, body: { ok: false, error: parsed.error } }
-    }
+    if (!parsed.ok) return parsed
 
-    const sent = await sendContactEmail(parsed.data)
-    if (!sent.ok) {
-      const error = sent.error instanceof Error ? sent.error : new Error(String(sent.error))
-      return { status: sent.status, body: buildContactErrorBody(error) }
-    }
-
-    return { status: 200, body: { ok: true, id: sent.id } }
+    return await sendContactEmail(parsed.data)
   } catch (error) {
     console.error('CONTACT ERROR:', error)
-    return { status: 500, body: buildContactErrorBody(error) }
+    const detail = error instanceof Error ? error.message : String(error)
+    return { ok: false, status: 502, body: responseBody('resend_failed', detail) }
   }
 }

@@ -1,5 +1,5 @@
 import { loadEnv } from 'vite'
-import { buildContactErrorBody, handleContactPost } from '../../api/lib/contactHandler.js'
+import { handleContactPost } from '../../api/lib/contactHandler.js'
 
 function readJsonBody(req) {
   return new Promise((resolve, reject) => {
@@ -43,7 +43,7 @@ export function contactApiPlugin() {
         }
 
         if (req.method !== 'POST') {
-          sendJson(res, 405, { ok: false, error: 'method_not_allowed' })
+          sendJson(res, 400, { ok: false, error: 'invalid_input' })
           return
         }
 
@@ -53,7 +53,8 @@ export function contactApiPlugin() {
           sendJson(res, result.status, result.body)
         } catch (error) {
           console.error('CONTACT ERROR:', error)
-          sendJson(res, 500, buildContactErrorBody(error))
+          const detail = error instanceof Error ? error.message : String(error)
+          sendJson(res, 502, { ok: false, error: 'resend_failed', detail })
         }
       })
     },
