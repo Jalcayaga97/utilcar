@@ -1,16 +1,39 @@
 import { buildContactErrorBody, handleContactPost } from './lib/contactHandler.js'
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST')
-    return res.status(405).json({ ok: false })
-  }
+/**
+ * Vercel Node.js Function — Web Standard fetch export.
+ * Runtime: Node.js (no Edge). Respuestas vía Response.json().
+ */
+export default {
+  async fetch(request) {
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        status: 204,
+        headers: { Allow: 'POST, OPTIONS' },
+      })
+    }
 
-  try {
-    const result = await handleContactPost(req.body ?? {})
-    return res.status(result.status).json(result.body)
-  } catch (error) {
-    console.error('CONTACT ERROR:', error)
-    return res.status(500).json(buildContactErrorBody(error))
-  }
+    if (request.method !== 'POST') {
+      return Response.json({ ok: false, error: 'method_not_allowed' }, { status: 405 })
+    }
+
+    try {
+      let body
+      try {
+        body = await request.json()
+      } catch {
+        return Response.json({ ok: false, error: 'invalid_json' }, { status: 400 })
+      }
+
+      if (body == null || typeof body !== 'object' || Array.isArray(body)) {
+        return Response.json({ ok: false, error: 'invalid_payload' }, { status: 400 })
+      }
+
+      const result = await handleContactPost(body)
+      return Response.json(result.body, { status: result.status })
+    } catch (error) {
+      console.error('CONTACT ERROR:', error)
+      return Response.json(buildContactErrorBody(error), { status: 500 })
+    }
+  },
 }

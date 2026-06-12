@@ -44,10 +44,6 @@ export function buildContactErrorBody(error) {
   }
 }
 
-export function contactErrorResponse(error, status = 500) {
-  return Response.json(buildContactErrorBody(error), { status })
-}
-
 export function parseContactPayload(raw) {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
     return { ok: false, status: 400, error: 'invalid_payload' }
@@ -98,32 +94,43 @@ function buildEmailHtml(data) {
 }
 
 export async function sendContactEmail(data) {
-  const apiKey = process.env.RESEND_API_KEY
+  const apiKey = String(process.env.RESEND_API_KEY ?? '').trim()
   if (!apiKey) {
-    return { ok: false, status: 500, error: 'missing_resend_api_key' }
-  }
-
-  const from = process.env.RESEND_FROM_EMAIL || 'Utilcar <onboarding@resend.dev>'
-  const resend = new Resend(apiKey)
-
-  const result = await resend.emails.send({
-    from,
-    to: data.to,
-    replyTo: data.mail,
-    subject: 'Nueva consulta desde utilcar.cl',
-    html: buildEmailHtml(data),
-  })
-
-  if (result.error) {
-    const resendError = new Error(result.error.message ?? String(result.error))
+    console.error('CONTACT ERROR: RESEND_API_KEY no configurada en el entorno')
     return {
       ok: false,
-      status: 500,
-      error: resendError,
+      status: 503,
+      error: new Error('missing_resend_api_key'),
     }
   }
 
-  return { ok: true, status: 200, id: result.data?.id ?? null }
+  const from = String(process.env.RESEND_FROM_EMAIL ?? '').trim() || 'Utilcar <onboarding@resend.dev>'
+
+  try {
+    const resend = new Resend(apiKey)
+
+    const result = await resend.emails.send({
+      from,
+      to: data.to,
+      replyTo: data.mail,
+      subject: 'Nueva consulta desde utilcar.cl',
+      html: buildEmailHtml(data),
+    })
+
+    if (result.error) {
+      console.error('CONTACT ERROR: Resend API', result.error)
+      return {
+        ok: false,
+        status: 502,
+        error: new Error(result.error.message ?? JSON.stringify(result.error)),
+      }
+    }
+
+    return { ok: true, status: 200, id: result.data?.id ?? null }
+  } catch (error) {
+    console.error('CONTACT ERROR: Resend send failed', error)
+    return { ok: false, status: 502, error }
+  }
 }
 
 export async function handleContactPost(body) {

@@ -1,5 +1,5 @@
 import { loadEnv } from 'vite'
-import { handleContactPost } from '../../api/lib/contactHandler.js'
+import { buildContactErrorBody, handleContactPost } from '../../api/lib/contactHandler.js'
 
 function readJsonBody(req) {
   return new Promise((resolve, reject) => {
@@ -7,7 +7,7 @@ function readJsonBody(req) {
     req.on('data', (chunk) => chunks.push(chunk))
     req.on('end', () => {
       try {
-        const raw = Buffer.concat(chunks).toString('utf8')
+        const raw = Buffer.concat(chunks).toString('utf8').trim()
         resolve(raw ? JSON.parse(raw) : {})
       } catch (error) {
         reject(error)
@@ -15,6 +15,12 @@ function readJsonBody(req) {
     })
     req.on('error', reject)
   })
+}
+
+function sendJson(res, status, body) {
+  res.statusCode = status
+  res.setHeader('Content-Type', 'application/json; charset=utf-8')
+  res.end(JSON.stringify(body))
 }
 
 export function contactApiPlugin() {
@@ -37,23 +43,17 @@ export function contactApiPlugin() {
         }
 
         if (req.method !== 'POST') {
-          res.statusCode = 405
-          res.setHeader('Content-Type', 'application/json')
-          res.end(JSON.stringify({ ok: false }))
+          sendJson(res, 405, { ok: false, error: 'method_not_allowed' })
           return
         }
 
         try {
           const body = await readJsonBody(req)
           const result = await handleContactPost(body)
-          res.statusCode = result.status
-          res.setHeader('Content-Type', 'application/json')
-          res.end(JSON.stringify(result.body))
+          sendJson(res, result.status, result.body)
         } catch (error) {
-          console.error('[dev/api/contact]', error)
-          res.statusCode = 500
-          res.setHeader('Content-Type', 'application/json')
-          res.end(JSON.stringify({ ok: false }))
+          console.error('CONTACT ERROR:', error)
+          sendJson(res, 500, buildContactErrorBody(error))
         }
       })
     },
