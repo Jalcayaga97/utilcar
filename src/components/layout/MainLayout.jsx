@@ -1,5 +1,6 @@
 import { Outlet, ScrollRestoration } from 'react-router-dom'
 import { StructuredData } from '@/components/seo/StructuredData'
+import { FloatingWhatsAppButton } from '@/components/common/FloatingWhatsAppButton'
 import { Navbar } from './Navbar'
 import { Footer } from './Footer'
 
@@ -12,6 +13,7 @@ export function MainLayout() {
         <Outlet />
       </main>
       <Footer />
+      <FloatingWhatsAppButton />
       <ScrollRestoration />
     </div>
   )

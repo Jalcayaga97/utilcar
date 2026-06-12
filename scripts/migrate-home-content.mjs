@@ -25,68 +25,7 @@ const TRABAJOS_PREVIEW_IDS = ['1', '2', '3']
 const verifyOnly = process.argv.includes('--verify') || process.argv.includes('--dry')
 const doMigrate = !verifyOnly
 
-const SERVICE_ENTRIES = [
-  {
-    id: 'talleres',
-    title: 'Talleres móviles',
-    description:
-      'Unidades equipadas para servicio técnico en ruta, con mobiliario, electricidad y seguridad certificada.',
-    path: '/talleres-moviles',
-    imageAlt: 'Taller móvil en furgón',
-    icon: 'wrench',
-    file: 'src/assets/images/services/talleres.jpg',
-  },
-  {
-    id: 'ventanas',
-    title: 'Ventanas y Lunetas',
-    description:
-      'Ventiletes y lunetas a medida por marca y modelo, con terminaciones industriales y sellado profesional.',
-    path: '/ventanas-lunetas',
-    imageAlt: 'Ventanas laterales corredizas',
-    icon: 'settings',
-    file: 'src/assets/images/services/ventanas.jpg',
-  },
-  {
-    id: 'escolar',
-    title: 'Equipamiento Escolar',
-    description:
-      'Conversiones para transporte escolar con normativas de seguridad, asientos y accesorios homologados.',
-    path: '/equipamiento-escolar',
-    imageAlt: 'Equipamiento escolar en bus',
-    icon: 'bus',
-    file: 'src/assets/images/services/escolar.jpg',
-  },
-  {
-    id: 'banquetas',
-    title: 'Banquetas',
-    description:
-      'Banquetas modulares para vans y minibuses, tapizados técnicos y anclajes reforzados.',
-    path: '/banquetas',
-    imageAlt: 'Banquetas para minibús',
-    icon: 'star',
-    file: 'src/assets/images/services/banquetas.jpg',
-  },
-  {
-    id: 'butacas',
-    title: 'Butacas',
-    description:
-      'Butacas ergonómicas para flotas corporativas y turismo, con opciones reclinables y cinturones.',
-    path: '/butacas',
-    imageAlt: 'Butacas ergonómicas a medida',
-    icon: 'users',
-    file: 'src/assets/images/services/butacas.jfif',
-  },
-  {
-    id: 'accesorios',
-    title: 'Accesorios',
-    description:
-      'Portaequipaje, divisores, pisos, iluminación LED y complementos para conversiones integrales.',
-    path: '/accesorios',
-    imageAlt: 'Accesorios para conversión vehicular',
-    icon: 'truck',
-    file: 'src/assets/images/services/accesorios.jpg',
-  },
-]
+import { SERVICE_ENTRIES } from './lib/serviceCatalogManifest.mjs'
 
 const ESPECIALIDADES = homeContent.especialidades?.items ?? []
 const SPECIALTY_IMAGES = {
@@ -191,9 +130,7 @@ async function buildHomeBlocks(uploadImage) {
     _key: createKey(),
     enabled: true,
     order: 0,
-    title: hero.title,
-    subtitle: hero.subtitle,
-    highlights: hero.highlights ?? [],
+    title: 'Conversiones, modificaciones, tapicería y equipamientos automotrices.',
     textLinkLabel: hero.secondaryLink?.label ?? 'Ver trabajos realizados',
     textLinkUrl: hero.secondaryLink?.to ?? '/trabajos-realizados',
     image: heroImage,
@@ -328,27 +265,6 @@ const doc = {
   _type: 'homePage',
   schemaVersion: SCHEMA_VERSION_VALUE,
   blocks,
-  hero: {
-    title: homeContent.hero.title,
-    subtitle: homeContent.hero.subtitle,
-    highlights: homeContent.hero.highlights,
-    secondaryLink: homeContent.hero.secondaryLink,
-    imageAlt: homeContent.hero.imageAlt,
-  },
-  services: homeContent.services,
-  especialidades: {
-    eyebrow: homeContent.especialidades.eyebrow,
-    title: homeContent.especialidades.title,
-    description: homeContent.especialidades.description,
-    itemEyebrowPrefix: homeContent.especialidades.itemEyebrowPrefix,
-  },
-  highlights: homeContent.highlights,
-  portfolioPreview: homeContent.portfolioPreview,
-  ctaBanner: {
-    title: homeContent.ctaBanner.title,
-    description: homeContent.ctaBanner.description,
-  },
-  specialtiesNew: [],
 }
 
 await client.createOrReplace(doc)

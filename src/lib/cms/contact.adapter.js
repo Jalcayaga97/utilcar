@@ -1,8 +1,8 @@
-import { isSanityEnabled } from '@/lib/cms/config'
+import { isContactCmsActive, isSanityEnabled } from '@/lib/cms/config'
 import { loadCached } from '@/lib/cms/adapterCache'
 import { getValidatedLocalContactContent } from '@/lib/cms/localContent'
 import {
-  buildActiveContactBundle,
+  emptyContactPageContent,
   mapContactPageRuntime,
 } from '@/lib/cms/resolvers/contactPageResolver'
 import { validateContent } from '@/lib/cms/validate'
@@ -12,37 +12,32 @@ import { fetchContactPage } from '@/lib/sanity/fetch'
 const CACHE_KEY = 'cms:contact-page'
 
 async function loadContactPageFromSanity() {
-  const local = getValidatedLocalContactContent()
   const remote = await fetchContactPage()
-
-  if (!remote) {
-    return mapContactPageRuntime(local, {}, { remote: null })
-  }
+  if (!remote) return null
 
   const resolved = {
     extensions: remote.extensions ?? {},
     _pageSource: remote._pageSource,
   }
 
-  return mapContactPageRuntime(local, resolved, {
+  return mapContactPageRuntime(emptyContactPageContent(), resolved, {
     remote: {
       form: remote.form,
-      servicios: remote.servicios,
+      blocks: remote.blocks,
+      details: remote.details,
     },
   })
 }
 
 async function resolveContactPageBundle() {
-  const local = getValidatedLocalContactContent()
-
-  if (!isSanityEnabled()) {
-    return mapContactPageRuntime(local, {}, {})
+  if (!isSanityEnabled() || !isContactCmsActive()) {
+    return mapContactPageRuntime(getValidatedLocalContactContent(), {}, {})
   }
 
   try {
     return await loadCached(CACHE_KEY, loadContactPageFromSanity)
   } catch {
-    return mapContactPageRuntime(local, {}, {})
+    return null
   }
 }
 
@@ -53,38 +48,40 @@ function localContactPageDisplay() {
     heroImage: null,
     seo: null,
     source: 'legacy',
+    isLoading: false,
   }
 }
 
 export async function getContactPageDisplay() {
-  if (!isSanityEnabled()) {
+  if (!isContactCmsActive()) {
     return localContactPageDisplay()
   }
 
-  try {
-    const bundle = await resolveContactPageBundle()
-    const validated = validateContent(
-      ContactContentSchema,
-      bundle.content,
-      getValidatedLocalContactContent(),
-      'sanity:contact-page',
-    )
+  const bundle = await resolveContactPageBundle()
+  if (!bundle || bundle._contactSource !== 'cms') {
+    return null
+  }
 
-    return {
-      content: validated,
-      heroImage: bundle.heroImage ?? null,
-      seo: bundle.seo ?? null,
-      source: bundle._contactSource ?? 'legacy',
-    }
-  } catch {
-    return localContactPageDisplay()
+  const validated = validateContent(
+    ContactContentSchema,
+    bundle.content,
+    getValidatedLocalContactContent(),
+    'sanity:contact-page',
+  )
+
+  return {
+    content: validated,
+    heroImage: bundle.heroImage ?? null,
+    seo: bundle.seo ?? null,
+    source: 'cms',
+    isLoading: false,
   }
 }
 
 /** Contenido editorial completo (formulario, FAQ, etc.). */
 export async function getContactContent() {
   const display = await getContactPageDisplay()
-  return display.content
+  return display?.content ?? getValidatedLocalContactContent()
 }
 
 /** @deprecated Usar getContactPageDisplay */
@@ -94,7 +91,7 @@ export async function getContactDisplay() {
 
 export async function getContactHeroImage() {
   const display = await getContactPageDisplay()
-  return display.heroImage ?? null
+  return display?.heroImage ?? null
 }
 
 export function getLocalContactContent() {

@@ -12,6 +12,7 @@ export const pageBlockTypeNames = [
   'faqBlock',
   'featuresBlock',
   'richTextBlock',
+  'showcaseCarouselBlock',
   'mapBlock',
   'seoBlock',
 ]
@@ -43,12 +44,13 @@ export function workPageBlocksField(overrides = {}) {
   })
 }
 
-/** Bloques editoriales de Página Contacto (sin portfolio, servicios hub, mapa corporativo). */
+/** Bloques editoriales de Página Contacto (sin portfolio ni servicios hub). */
 export const CONTACT_PAGE_BLOCK_TYPE_NAMES = [
   'heroBlock',
   'richTextBlock',
   'faqBlock',
   'ctaBlock',
+  'mapBlock',
   'seoBlock',
 ]
 
@@ -62,6 +64,28 @@ export function contactPageBlocksField(overrides = {}) {
     description:
       'Hero, Intro (richText), FAQ, CTA y SEO. Teléfono y dirección en Configuración del sitio → Datos corporativos.',
     of: contactPageBlockTypes(),
+    ...overrides,
+  })
+}
+
+/** Bloques editoriales de Página Sobre Nosotros. */
+export const ABOUT_PAGE_BLOCK_TYPE_NAMES = [
+  'heroBlock',
+  'richTextBlock',
+  'featureGridBlock',
+  'ctaBlock',
+  'seoBlock',
+]
+
+export function aboutPageBlockTypes() {
+  return ABOUT_PAGE_BLOCK_TYPE_NAMES.map((type) => ({ type }))
+}
+
+export function aboutPageBlocksField(overrides = {}) {
+  return pageBlocksField({
+    title: 'Secciones de la página',
+    description: 'Hero, Historia, Qué hacemos, CTA y SEO.',
+    of: aboutPageBlockTypes(),
     ...overrides,
   })
 }

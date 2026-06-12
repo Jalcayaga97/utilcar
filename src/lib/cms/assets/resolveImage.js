@@ -9,6 +9,42 @@ import { warnRuntime } from '@/lib/cms/runtimeLog'
 const PLACEHOLDER_DATA_URI =
   'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect fill="%23f4f4f5" width="400" height="300"/%3E%3C/svg%3E'
 
+const SANITY_CDN_HOST = 'cdn.sanity.io'
+export const SANITY_WEBP_QUALITY = 80
+
+export function isSanityCdnUrl(url) {
+  if (!url || typeof url !== 'string') return false
+  try {
+    return new URL(url).hostname === SANITY_CDN_HOST
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Entrega WebP desde Sanity CDN (fm=webp, q=80) sin romper URLs locales ni data URIs.
+ */
+export function optimizeSanityCdnUrl(
+  url,
+  { format = 'webp', quality = SANITY_WEBP_QUALITY } = {},
+) {
+  if (!isSanityCdnUrl(url)) return url
+  try {
+    const parsed = new URL(url)
+    if (parsed.searchParams.get('fm') === format) {
+      if (!parsed.searchParams.has('q')) {
+        parsed.searchParams.set('q', String(quality))
+      }
+      return parsed.toString()
+    }
+    parsed.searchParams.set('fm', format)
+    parsed.searchParams.set('q', String(quality))
+    return parsed.toString()
+  } catch {
+    return url
+  }
+}
+
 export function isValidImageUrl(url) {
   if (!url || typeof url !== 'string') return false
   if (url.startsWith('data:image/')) return true
@@ -36,7 +72,8 @@ export function buildSanityImageUrlFromRef(ref) {
   if (!projectId?.trim() || !dataset?.trim()) return null
 
   const [, hash, dimensions, format] = match
-  return `https://cdn.sanity.io/images/${projectId.trim()}/${dataset.trim()}/${hash}-${dimensions}.${format}`
+  const base = `https://cdn.sanity.io/images/${projectId.trim()}/${dataset.trim()}/${hash}-${dimensions}.${format}`
+  return optimizeSanityCdnUrl(base)
 }
 
 export function pickImageUrl(imageField) {
@@ -44,7 +81,7 @@ export function pickImageUrl(imageField) {
   if (typeof imageField === 'string') return isValidImageUrl(imageField) ? imageField : null
 
   const directUrl = imageField?.url ?? imageField?.asset?.url ?? null
-  if (isValidImageUrl(directUrl)) return directUrl
+  if (isValidImageUrl(directUrl)) return optimizeSanityCdnUrl(directUrl)
 
   const ref =
     imageField?.asset?._ref ??

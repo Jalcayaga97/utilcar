@@ -37,8 +37,15 @@ const companyPayload = {
   socialLinks: [{ platform: 'WhatsApp', url: SITE.whatsappUrl }],
 }
 
+const DEFAULT_CONTACT_EMAIL = 'julioignaciorodriguez97@gmail.com'
+
 if (existing?.serviceCta?.title && existing?.company?.primaryEmail) {
-  console.info(`✓ siteSettings ya existe (${SITE_SETTINGS_DOCUMENT_ID})`)
+  if (!existing.contactEmail) {
+    await client.patch(SITE_SETTINGS_DOCUMENT_ID).set({ contactEmail: DEFAULT_CONTACT_EMAIL }).commit()
+    console.info(`+ contactEmail añadido en siteSettings (${DEFAULT_CONTACT_EMAIL})`)
+  } else {
+    console.info(`✓ siteSettings ya existe (${SITE_SETTINGS_DOCUMENT_ID})`)
+  }
   process.exit(0)
 }
 
@@ -46,6 +53,7 @@ await client.createOrReplace({
   _id: SITE_SETTINGS_DOCUMENT_ID,
   _type: 'siteSettings',
   schemaVersion: SCHEMA_VERSION_VALUE,
+  contactEmail: existing?.contactEmail || DEFAULT_CONTACT_EMAIL,
   company: existing?.company?.primaryEmail ? existing.company : companyPayload,
   serviceCta: existing?.serviceCta?.title
     ? existing.serviceCta

@@ -1,3 +1,6 @@
+import { pickImageUrl } from '@/lib/cms/assets/resolveImage'
+import { SITE } from '@/constants/site'
+
 function sanitizeString(value) {
   if (value == null) return ''
   return String(value).trim()
@@ -12,7 +15,7 @@ export function seoSectionContract(raw = {}) {
     canonicalPath: sanitizeString(raw.canonicalPath),
     noindex: Boolean(raw.noindex),
     ogImage: {
-      url: raw.ogImage?.asset?.url ?? raw.ogImage?.url ?? null,
+      url: pickImageUrl(raw.ogImage) ?? null,
       alt: sanitizeString(raw.ogImage?.alt),
     },
     warnings: [],
@@ -40,6 +43,41 @@ export function mapSeoBlockToContract(raw) {
 }
 
 /**
+ * Resuelve imagen social: seoBlock.ogImage → hero.image → SITE.ogImage
+ */
+export function resolveSocialImageUrl({
+  seoOgImageUrl = null,
+  heroImageUrl = null,
+  defaultOgImage = SITE.ogImage,
+} = {}) {
+  return seoOgImageUrl || heroImageUrl || defaultOgImage || null
+}
+
+/**
+ * Enriquece seoSection con ogImage resuelto en runtime (sin mutar editorial).
+ */
+export function enrichSeoSectionForRuntime(seoSection, heroSection) {
+  if (!seoSection) return null
+  const heroUrl = pickImageUrl(heroSection?.image)
+  const seoOgUrl = seoSection.ogImage?.url ?? null
+  const resolvedUrl = resolveSocialImageUrl({
+    seoOgImageUrl: seoOgUrl,
+    heroImageUrl: heroUrl,
+  })
+  return {
+    ...seoSection,
+    ogImage: {
+      url: resolvedUrl,
+      alt:
+        seoSection.ogImage?.alt ||
+        heroSection?.imageAlt ||
+        heroSection?.image?.alt ||
+        '',
+    },
+  }
+}
+
+/**
  * Merge SEO CMS sobre baseline local (constants/seo.js).
  * @param {object} base — { title, description, keywords, path }
  * @param {object | null} cmsSeo
@@ -54,6 +92,9 @@ export function mergePageSeo(base, cmsSeo) {
     keywords: cmsSeo.keywords || base.keywords,
     path: cmsSeo.canonicalPath || base.path,
     noindex: cmsSeo.noindex ?? false,
-    ogImage: cmsSeo.ogImage?.url || base.ogImage,
+    ogImage: resolveSocialImageUrl({
+      seoOgImageUrl: cmsSeo.ogImage?.url ?? null,
+      defaultOgImage: base.ogImage || SITE.ogImage,
+    }),
   }
 }

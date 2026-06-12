@@ -25,6 +25,8 @@ export const EMPTY_HOME_EXTENSIONS = {
   portfolioItems: [],
   specialtiesSection: null,
   specialtiesItems: [],
+  showcaseCarouselSection: null,
+  brandCarouselSection: null,
 }
 
 function withHomeExtensions(homeContent, extensions) {

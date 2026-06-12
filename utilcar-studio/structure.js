@@ -9,6 +9,7 @@ import {
   serviceSubPageDocumentId,
 } from './schemas/content/serviceSubPage.js'
 import { SITE_SETTINGS_DOCUMENT_ID } from './schemas/content/siteSettings.js'
+import { SERVICE_LINKS_MANIFEST } from '../scripts/lib/serviceCatalogManifest.mjs'
 
 const HOME_ID = HOME_DOCUMENT_ID
 
@@ -43,8 +44,19 @@ function pageSingleton(S, { listId, title, schemaType, documentId }) {
   })
 }
 
+/** Mismo orden que Navbar/Footer (SERVICE_LINKS → SERVICE_LINKS_MANIFEST). */
+function orderedServiceSubPageEntries() {
+  const byPageKey = new Map(SERVICE_SUB_PAGE_KEYS.map((entry) => [entry.value, entry]))
+  return SERVICE_LINKS_MANIFEST.map((link) => {
+    const pageKey = link.path.replace(/^\//, '')
+    const entry = byPageKey.get(pageKey)
+    if (!entry) return null
+    return { value: entry.value, title: entry.title ?? link.label }
+  }).filter(Boolean)
+}
+
 function servicesSection(S) {
-  const subPages = SERVICE_SUB_PAGE_KEYS.map(({ value, title }) =>
+  const subPages = orderedServiceSubPageEntries().map(({ value, title }) =>
     pageSingleton(S, {
       listId: `service-${value}`,
       title,
@@ -110,6 +122,21 @@ export const structure = (S, context) => {
               documentId: 'workPage',
             }),
             S.documentTypeListItem('workProject').title('Proyectos'),
+          ]),
+      ),
+    S.listItem()
+      .title('Empresa')
+      .id('company')
+      .child(
+        S.list()
+          .title('Empresa')
+          .items([
+            pageSingleton(S, {
+              listId: 'about-page',
+              title: 'Sobre Nosotros',
+              schemaType: 'aboutPage',
+              documentId: 'aboutPage',
+            }),
           ]),
       ),
     pageSingleton(S, {

@@ -46,6 +46,19 @@ export const companyObject = {
       title: 'Redes sociales',
       type: 'array',
       of: [socialLinkType],
+      description: 'Legacy — preferir instagramUrl y facebookUrl.',
+    },
+    {
+      name: 'instagramUrl',
+      title: 'Instagram — URL',
+      type: 'url',
+      description: 'Enlace al perfil de Instagram (header y SEO).',
+    },
+    {
+      name: 'facebookUrl',
+      title: 'Facebook — URL',
+      type: 'url',
+      description: 'Enlace al perfil de Facebook (header y SEO).',
     },
   ],
 }
@@ -100,6 +113,14 @@ export const siteSettings = {
       type: 'serviceCta',
       description:
         'Texto del banner inferior compartido. Las páginas con ctaBlock propio lo reemplazan.',
+    },
+    {
+      name: 'contactEmail',
+      title: 'Correo del formulario de contacto',
+      type: 'string',
+      description: 'Correo que recibirá las consultas enviadas desde el formulario de contacto.',
+      initialValue: 'julioignaciorodriguez97@gmail.com',
+      validation: (Rule) => Rule.email(),
     },
   ],
   preview: {

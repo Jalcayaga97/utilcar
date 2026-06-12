@@ -1,12 +1,22 @@
 import { getSanityClient } from '@/lib/sanity/client'
 import { loadCached } from '@/lib/cms/adapterCache'
-import { USE_BLOCK_RESOLVER, USE_CONTACT_V2, USE_PAGE_RESOLVER, USE_SERVICES_V2, USE_WORK_V2 } from '@/lib/cms/config'
+import {
+  USE_ABOUT_V2,
+  USE_BLOCK_RESOLVER,
+  USE_CONTACT_V2,
+  USE_PAGE_RESOLVER,
+  USE_SERVICES_V2,
+  USE_WORK_V2,
+} from '@/lib/cms/config'
 import { legacyFieldsFromBlocks } from '@/lib/cms/homeResolver'
+import { resolveAboutPageDocument } from '@/lib/cms/resolvers/aboutPageResolver'
 import { resolveContactPageDocument } from '@/lib/cms/resolvers/contactPageResolver'
 import { resolveWorkPageDocument } from '@/lib/cms/resolvers/workPageResolver'
 import { getActiveSpecialties } from '@/lib/cms/specialties'
 import { parseSanityPayload } from '@/lib/cms/validate'
 import {
+  ABOUT_QUERY,
+  ABOUT_QUERY_WITH_BLOCKS,
   CONTACT_QUERY,
   CONTACT_QUERY_WITH_BLOCKS,
   ESPECIALIDADES_QUERY,
@@ -114,6 +124,18 @@ export function fetchWorkPage() {
     const doc = await fetchQuery(query)
     if (!doc) return null
     const resolved = resolveWorkPageDocument(doc)
+    return { ...doc, extensions: resolved.extensions, _pageSource: resolved.source }
+  })
+}
+
+export function fetchAboutPage() {
+  const query = USE_PAGE_RESOLVER && USE_ABOUT_V2 ? ABOUT_QUERY_WITH_BLOCKS : ABOUT_QUERY
+  const cacheKey =
+    USE_PAGE_RESOLVER && USE_ABOUT_V2 ? 'sanity:about-page-blocks' : 'sanity:about-page'
+  return loadCached(cacheKey, async () => {
+    const doc = await fetchQuery(query)
+    if (!doc) return null
+    const resolved = resolveAboutPageDocument(doc)
     return { ...doc, extensions: resolved.extensions, _pageSource: resolved.source }
   })
 }

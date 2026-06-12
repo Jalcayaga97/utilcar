@@ -1,35 +1,37 @@
-import { ENV } from '@/constants/env'
-
 /**
- * Envío del formulario de contacto.
- *
- * Integración futura (descomentar y configurar):
- * - Resend: POST a API route con RESEND_API_KEY
- * - EmailJS: emailjs.send(serviceId, templateId, payload)
+ * Envío del formulario de contacto vía POST /api/contact (Resend en servidor).
  *
  * @param {Object} formData — campos del formulario
  * @returns {Promise<{ ok: boolean }>}
  */
-export async function submitContact(formData) {
+export async function submitContact(formData, { to } = {}) {
+  const destination = String(to ?? '').trim()
+  if (!destination) {
+    throw new Error('missing_contact_email')
+  }
+
   const payload = {
     ...formData,
-    to: ENV.contactEmail,
+    to: destination,
     submittedAt: new Date().toISOString(),
   }
 
-  if (import.meta.env.DEV) {
-    void payload
+  const res = await fetch('/api/contact', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+
+  let data = null
+  try {
+    data = await res.json()
+  } catch {
+    data = null
   }
 
-  // Ejemplo Resend (futuro):
-  // const res = await fetch('/api/contact', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify(payload),
-  // })
-  // if (!res.ok) throw new Error('send_failed')
-
-  await new Promise((resolve) => setTimeout(resolve, 900))
+  if (!res.ok || !data?.ok) {
+    throw new Error('send_failed')
+  }
 
   return { ok: true }
 }

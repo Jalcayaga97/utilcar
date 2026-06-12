@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion'
 import { PageMeta } from '@/components/seo/PageMeta'
 import { ServicePageHero } from '@/components/sections/ServicePageHero'
+import { ServicePageShowcaseSection } from '@/components/sections/ServicePageShowcaseSection'
 import { ServicePagePortfolio } from '@/components/sections/ServicePagePortfolio'
 import { ServiceCtaDark } from '@/components/sections/ServiceCtaDark'
 import { BanquetasCategoryPanel } from '@/components/sections/BanquetasCategoryPanel'
 import { Section, SectionHeader } from '@/components/ui/Section'
+import { CmsPageSkeleton } from '@/components/cms/CmsPageSkeleton'
 import { useServicePageDisplay } from '@/hooks/useCms'
 
 const ease = [0.25, 0.1, 0.25, 1]
@@ -18,11 +20,13 @@ function hasRichTextContent(intro) {
 }
 
 export default function Banquetas() {
-  const { content, heroImage, portfolioProjects, tabs, seo, source } =
+  const { content, heroImage, portfolioProjects, tabs, seo, source, showcaseImages, isLoading } =
     useServicePageDisplay('banquetas')
   const { hero, intro, gallery, categories } = content
   const isCms = source === 'cms'
   const showIntro = hasRichTextContent(intro)
+
+  if (isLoading) return <CmsPageSkeleton variant="service" />
 
   return (
     <>
@@ -36,6 +40,8 @@ export default function Banquetas() {
         image={heroImage}
         imageAlt={hero.imageAlt}
       />
+
+      <ServicePageShowcaseSection showcase={content.showcase} images={showcaseImages} />
 
       {showIntro ? (
         <Section>
@@ -87,7 +93,7 @@ export default function Banquetas() {
         projects={portfolioProjects ?? []}
       />
 
-      <ServiceCtaDark />
+      <ServiceCtaDark {...(isCms ? content.cta : undefined)} />
     </>
   )
 }

@@ -12,13 +12,9 @@ import {
   whyUsBlock,
   whyUtilcarBlock,
   portfolioBlock,
-  galleryBlock,
   ctaBlock,
-  faqBlock,
-  featuresBlock,
-  richTextBlock,
-  mapBlock,
-  seoBlock,
+  showcaseCarouselBlock,
+  brandCarouselBlock,
 } from './blocks/index.js'
 import { HomePageBlocksArrayInput } from '../presentation/components/HomePageBlocksArrayInput.jsx'
 import { HomePageBlockItemInput } from '../presentation/components/HomePageBlockItemInput.jsx'
@@ -52,16 +48,14 @@ export const homePage = {
       type: 'array',
       of: [
         { type: 'heroBlock' },
+        { type: 'showcaseCarouselBlock' },
         { type: 'specialtiesBlock' },
         { type: 'servicesBlock' },
         { type: 'whyUsBlock' },
         { type: 'whyUtilcarBlock' },
         { type: 'portfolioBlock' },
-        { type: 'galleryBlock' },
+        { type: 'brandCarouselBlock' },
         { type: 'ctaBlock' },
-        { type: 'faqBlock' },
-        { type: 'featuresBlock' },
-        { type: 'richTextBlock' },
       ],
       options: {
         sortable: true,
@@ -189,11 +183,7 @@ export {
   whyUsBlock,
   whyUtilcarBlock,
   portfolioBlock,
-  galleryBlock,
   ctaBlock,
-  faqBlock,
-  featuresBlock,
-  richTextBlock,
-  mapBlock,
-  seoBlock,
+  showcaseCarouselBlock,
+  brandCarouselBlock,
 }

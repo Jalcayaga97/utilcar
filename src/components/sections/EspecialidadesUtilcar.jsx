@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/cn'
-import { useEspecialidades, useHomeContent } from '@/hooks/useCms'
+import { useEspecialidades } from '@/hooks/useCms'
+import { useHomeContent } from '@/contexts/HomeContentContext'
 import { Section, SectionHeader } from '@/components/ui/Section'
 import { Button } from '@/components/ui/Button'
 import {
@@ -21,7 +22,7 @@ const ease = [0.25, 0.1, 0.25, 1]
 function TechnicalList({ items, className }) {
   return (
     <ul className={cn('space-y-2.5', className)}>
-      {items.map((item) => (
+      {(items ?? []).map((item) => (
         <li
           key={item}
           className="flex gap-3 text-sm leading-relaxed text-ink-muted sm:text-[0.9375rem]"
@@ -198,7 +199,7 @@ function EspecialidadBlock({ item, reverse, index, itemEyebrowPrefix }) {
 
         <div className="mt-6 space-y-4">
           {(slice.specGroups ?? []).map((group) => (
-            <SpecGroup key={group.title} title={group.title} items={group.items} />
+            <SpecGroup key={group.title} title={group.title} items={group.items ?? []} />
           ))}
         </div>
 

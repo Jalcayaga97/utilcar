@@ -2,20 +2,25 @@ import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
 import { PageMeta } from '@/components/seo/PageMeta'
 import { ServicePageHero } from '@/components/sections/ServicePageHero'
+import { ServicePageShowcaseSection } from '@/components/sections/ServicePageShowcaseSection'
 import { ServicePagePortfolio } from '@/components/sections/ServicePagePortfolio'
 import { ServiceCtaDark } from '@/components/sections/ServiceCtaDark'
-import { BrandEquipmentPanel } from '@/components/sections/BrandEquipmentPanel'
 import { Section, SectionHeader } from '@/components/ui/Section'
+import { CmsPageSkeleton } from '@/components/cms/CmsPageSkeleton'
 import { useServicePageDisplay } from '@/hooks/useCms'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
 export default function VentanasLunetas() {
-  const { content, heroImage, portfolioProjects, tabs, seo, source } =
+  const { content, heroImage, portfolioProjects, seo, source, showcaseImages, isLoading } =
     useServicePageDisplay('ventanas-lunetas')
-  const { hero, intro, gallery, brands } = content
+
+  if (isLoading) return <CmsPageSkeleton variant="service" />
+
+  const hero = content.hero ?? {}
+  const intro = content.intro ?? {}
+  const gallery = content.gallery ?? {}
   const { title, paragraphs, procesoTemplado, especificaciones } = intro
-  const isCms = source === 'cms'
 
   return (
     <>
@@ -29,6 +34,8 @@ export default function VentanasLunetas() {
         image={heroImage}
         imageAlt={hero.imageAlt}
       />
+
+      <ServicePageShowcaseSection showcase={content.showcase} images={showcaseImages} />
 
       <Section>
         <motion.div
@@ -74,21 +81,6 @@ export default function VentanasLunetas() {
         </motion.div>
       </Section>
 
-      {tabs?.length ? (
-        <Section>
-          <SectionHeader
-            eyebrow={brands.eyebrow}
-            title={brands.title}
-            description={brands.description}
-            align="center"
-            className="mx-auto max-w-2xl"
-          />
-          <div className="mt-12">
-            <BrandEquipmentPanel tabs={tabs} cmsFirst={isCms} />
-          </div>
-        </Section>
-      ) : null}
-
       <ServicePagePortfolio
         pageKey="ventanas-lunetas"
         eyebrow={gallery.eyebrow}
@@ -97,7 +89,7 @@ export default function VentanasLunetas() {
         projects={portfolioProjects ?? []}
       />
 
-      <ServiceCtaDark />
+      <ServiceCtaDark {...(source === 'cms' ? content.cta : undefined)} />
     </>
   )
 }

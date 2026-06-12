@@ -45,12 +45,18 @@ export const HOME_BLOCKS_PROJECTION = `blocks[]{
   buttonLabel,
   buttonLink,
   buttonText,
+  primaryLabel,
+  primaryTo,
   highlights,
   textLinkLabel,
   textLinkUrl,
   imageAlt,
   eyebrow,
   image{ asset->{ _id, url }, alt },
+  primaryImage{ asset->{ _id, url }, alt },
+  primaryImageAlt,
+  secondaryImage{ asset->{ _id, url }, alt },
+  secondaryImageAlt,
   mobileImage{ asset->{ _id, url }, alt },
   itemEyebrowPrefix,
   embedQuery,
@@ -64,6 +70,20 @@ export const HOME_BLOCKS_PROJECTION = `blocks[]{
     _key,
     title,
     items[]
+  },
+  images[]{
+    _key,
+    title,
+    caption,
+    alt,
+    image{ asset->{ _id, url }, alt }
+  },
+  brands[]{
+    _key,
+    name,
+    website,
+    active,
+    logo{ asset->{ _id, url, extension, originalFilename }, alt }
   },
   items[]{
     _key,
@@ -263,6 +283,7 @@ export const SERVICES_QUERY_WITH_BLOCKS = `*[_type == "servicesPage"][0]{
 
 export const SITE_SETTINGS_QUERY = `*[_type == "siteSettings" && _id == "siteSettings"][0]{
   "_schemaVersion": schemaVersion,
+  contactEmail,
   company{
     legalName,
     phone,
@@ -274,6 +295,8 @@ export const SITE_SETTINGS_QUERY = `*[_type == "siteSettings" && _id == "siteSet
     addressCity,
     openingHours,
     mapsEmbedQuery,
+    instagramUrl,
+    facebookUrl,
     socialLinks[]{ platform, url }
   },
   serviceCta{
@@ -337,7 +360,16 @@ export const WORK_QUERY_WITH_BLOCKS = `*[_type == "workPage"][0]{
 
 const CONTACT_DOCUMENT_FIELDS = `
   form,
-  servicios`
+  details{
+    title,
+    description,
+    cards{
+      phone{ enabled, title },
+      email{ enabled, title },
+      address{ enabled, title },
+      hours{ enabled, title }
+    }
+  }`
 
 export const CONTACT_QUERY = `*[_type == "contactPage"][0]{
   "_schemaVersion": schemaVersion,${CONTACT_DOCUMENT_FIELDS}
@@ -346,4 +378,13 @@ export const CONTACT_QUERY = `*[_type == "contactPage"][0]{
 export const CONTACT_QUERY_WITH_BLOCKS = `*[_type == "contactPage"][0]{
   "_schemaVersion": schemaVersion,
   ${PAGE_BLOCKS_PROJECTION},${CONTACT_DOCUMENT_FIELDS}
+}`
+
+export const ABOUT_QUERY = `*[_type == "aboutPage"][0]{
+  "_schemaVersion": schemaVersion
+}`
+
+export const ABOUT_QUERY_WITH_BLOCKS = `*[_type == "aboutPage"][0]{
+  "_schemaVersion": schemaVersion,
+  ${PAGE_BLOCKS_PROJECTION}
 }`

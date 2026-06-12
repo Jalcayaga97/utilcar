@@ -25,8 +25,9 @@ export {
   getBanquetasContent,
   getButacasContent,
   getAccesoriosContent,
-  getVentanasBrands,
+  getEquipamientoMarcaTabs,
   getBanquetasCategories,
+  getButacasCategories,
   getAccesoriosCategories,
 } from './services.adapter'
 export { getWorkContent, getTrabajosPreview, getTrabajosPageHero, getWorkPageDisplay } from './work.adapter'

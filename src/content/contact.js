@@ -3,15 +3,7 @@
  * Datos corporativos (teléfono, email, dirección): siteSettings.company / SITE.
  */
 
-const CONTACTO_SERVICIOS = [
-  'Talleres móviles',
-  'Ventanas y lunetas',
-  'Equipamiento escolar',
-  'Banquetas',
-  'Butacas',
-  'Accesorios',
-  'Proyecto personalizado',
-]
+import { buildContactFormServiceOptions } from '@/lib/services/serviceCatalog'
 
 const CONTACTO_FAQ = [
   {
@@ -57,10 +49,10 @@ export const contactContent = {
     description:
       'Atención personalizada para conversiones automotrices, equipamiento escolar, talleres móviles y proyectos especiales.',
     cards: {
-      phone: 'Teléfono',
-      email: 'Correos',
-      address: 'Dirección',
-      hours: { title: 'Horario' },
+      phone: { enabled: true, title: 'Teléfono' },
+      email: { enabled: true, title: 'Correos' },
+      address: { enabled: true, title: 'Dirección' },
+      hours: { enabled: true, title: 'Horario' },
     },
   },
   cta: {
@@ -87,7 +79,6 @@ export const contactContent = {
       empresa: { label: 'Empresa', placeholder: 'Opcional' },
       mail: { label: 'Mail', placeholder: 'correo@empresa.cl', required: true },
       telefono: { label: 'Teléfono', placeholder: '+56 9 ...' },
-      fax: { label: 'Fax', placeholder: 'Opcional' },
       servicio: { label: 'Servicio de interés', placeholder: 'Seleccionar servicio...' },
       consulta: {
         label: 'Consulta',
@@ -105,8 +96,8 @@ export const contactContent = {
     error:
       'No pudimos enviar su consulta en este momento. Intente nuevamente o contáctenos por teléfono o WhatsApp.',
   },
-  servicios: CONTACTO_SERVICIOS,
+  servicios: buildContactFormServiceOptions(),
   faqItems: CONTACTO_FAQ,
 }
 
-export { CONTACTO_SERVICIOS, CONTACTO_FAQ }
+export { CONTACTO_FAQ }

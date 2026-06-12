@@ -66,7 +66,7 @@ export function CtaButtonGroup({
   const labels = useCtaButtonLabels()
   const company = useCompanyInfo()
   const resolvedPrimaryLabel = primaryLabel ?? labels.primaryLabel
-  const resolvedPrimaryTo = primaryTo ?? labels.primaryTo
+  const resolvedPrimaryTo = primaryTo ?? labels.primaryTo ?? '#contacto'
   const styles = variants[variant] ?? variants.dark
   const isHashLink = resolvedPrimaryTo.startsWith('#')
   const PrimaryTag = isHashLink ? 'a' : Link
@@ -93,7 +93,7 @@ export function CtaButtonGroup({
         <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
       </PrimaryTag>
 
-      {showWhatsApp && (
+      {showWhatsApp && company?.whatsappUrl ? (
         <a
           href={company.whatsappUrl}
           className={styles.secondary}
@@ -104,7 +104,7 @@ export function CtaButtonGroup({
           <MessageCircle className="h-4 w-4 shrink-0" strokeWidth={1.5} aria-hidden />
           {labels.whatsAppLabel}
         </a>
-      )}
+      ) : null}
     </div>
   )
 }

@@ -7,6 +7,11 @@ const formFieldSchema = z.object({
   required: z.boolean().optional(),
 })
 
+const contactDetailCardSchema = z.object({
+  enabled: z.boolean().optional().default(true),
+  title: z.string(),
+})
+
 export const ContactContentSchema = z.object({
   hero: pageHeroSchema,
   intro: z.object({
@@ -17,20 +22,21 @@ export const ContactContentSchema = z.object({
     title: z.string(),
     description: z.string(),
     cards: z.object({
-      phone: z.string(),
-      email: z.string(),
-      address: z.string(),
-      hours: z.object({
-        title: z.string(),
-      }),
+      phone: contactDetailCardSchema,
+      email: contactDetailCardSchema,
+      address: contactDetailCardSchema,
+      hours: contactDetailCardSchema,
     }),
   }),
   cta: ctaBlockSchema,
-  map: z.object({
-    eyebrow: z.string(),
-    title: z.string(),
-    iframeTitle: z.string(),
-  }),
+  map: z
+    .object({
+      eyebrow: z.string(),
+      title: z.string(),
+      iframeTitle: z.string(),
+      embedQuery: z.string().optional(),
+    })
+    .nullable(),
   faq: z.object({
     eyebrow: z.string(),
     title: z.string(),
@@ -43,7 +49,6 @@ export const ContactContentSchema = z.object({
       empresa: formFieldSchema,
       mail: formFieldSchema,
       telefono: formFieldSchema,
-      fax: formFieldSchema,
       servicio: formFieldSchema,
       consulta: formFieldSchema,
     }),

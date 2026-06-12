@@ -1,14 +1,77 @@
 import { isSanityEnabled, USE_CONTACT_V2, USE_PAGE_RESOLVER } from '@/lib/cms/config'
-import { resolveContactHero } from '@/lib/cms/assets/resolveContactAssets'
+import { contactContent } from '@/content/contact'
+import { resolveContactHero, resolveContactMap } from '@/lib/cms/assets/resolveContactAssets'
+import { findMapBlockRaw } from '@/lib/cms/resolvers/mapBlockResolver'
 import { buildGlobalServiceCta } from '@/lib/cms/resolvers/globalServiceCtaResolver'
 import { getActiveFaqSection } from '@/lib/cms/resolvers/faqBlockResolver'
 import { getActiveRichTextSection } from '@/lib/cms/resolvers/richTextBlockResolver'
 import { getActiveSeoSection } from '@/lib/cms/resolvers/seoBlockResolver'
+import { enrichSeoSectionForRuntime } from '@/lib/cms/contracts/seoBlockContract'
 import { resolvePageFromBlocks, getActivePageSection } from '@/lib/cms/resolvers/global/pageResolver'
 import { warnPageLegacyFallback } from '@/lib/cms/resolvers/global/pageResolverLog'
 import { logRuntime } from '@/lib/cms/runtimeLog'
+import { buildContactFormServiceOptions } from '@/lib/services/serviceCatalog'
 
 const PAGE_ID = 'contact'
+
+const CONTACT_FORM_FIELD_KEYS = ['nombre', 'empresa', 'mail', 'telefono', 'servicio', 'consulta']
+
+function safeString(value) {
+  if (value == null) return ''
+  const s = String(value).trim()
+  return s || ''
+}
+
+function mergeFormField(defaults, remote) {
+  const base = defaults ?? {}
+  const fromRemote = remote ?? {}
+  const field = {
+    label: safeString(fromRemote.label) || safeString(base.label) || '',
+    placeholder: safeString(fromRemote.placeholder) || safeString(base.placeholder) || '',
+  }
+  const required = fromRemote.required ?? base.required
+  if (required != null) field.required = Boolean(required)
+  return field
+}
+
+/** Formulario contacto — merge CMS parcial + defaults estructurales (labels, submit, success). */
+export function resolveContactForm(remote = {}) {
+  const defaults = contactContent.form
+  const remoteFields = remote?.fields ?? {}
+  const fields = Object.fromEntries(
+    CONTACT_FORM_FIELD_KEYS.map((key) => [
+      key,
+      mergeFormField(defaults.fields[key], remoteFields[key]),
+    ]),
+  )
+
+  const hasHeading = remote != null && Object.prototype.hasOwnProperty.call(remote, 'heading')
+  const hasError = remote != null && Object.prototype.hasOwnProperty.call(remote, 'error')
+
+  return {
+    heading: hasHeading ? safeString(remote.heading) : safeString(defaults.heading),
+    fields,
+    submit: {
+      idle: safeString(remote?.submit?.idle) || safeString(defaults.submit?.idle) || 'Enviar consulta',
+      loading:
+        safeString(remote?.submit?.loading) ||
+        safeString(defaults.submit?.loading) ||
+        'Enviando...',
+    },
+    success: {
+      title:
+        safeString(remote?.success?.title) ||
+        safeString(defaults.success?.title) ||
+        'Consulta enviada',
+      message: safeString(remote?.success?.message) || safeString(defaults.success?.message) || '',
+      resetLabel:
+        safeString(remote?.success?.resetLabel) ||
+        safeString(defaults.success?.resetLabel) ||
+        'Enviar otra consulta',
+    },
+    error: hasError ? safeString(remote.error) : safeString(defaults.error),
+  }
+}
 
 export function resolveContactPageDocument(doc) {
   if (!doc) return { extensions: {}, warnings: [], source: 'legacy-fallback' }
@@ -32,32 +95,105 @@ function isContactPageCms(resolved) {
   return USE_PAGE_RESOLVER && USE_CONTACT_V2 && Object.keys(extensions).length > 0
 }
 
-function emptyContactPageContent() {
+const CONTACT_DETAIL_CARD_DEFAULTS = {
+  phone: { enabled: true, title: 'Teléfono' },
+  email: { enabled: true, title: 'Correos' },
+  address: { enabled: true, title: 'Dirección' },
+  hours: { enabled: true, title: 'Horario' },
+}
+
+/** Etiquetas estructurales de UI — fallback si contactPage.details no está poblado. */
+const CONTACT_UI_DEFAULTS = {
+  details: {
+    title: 'Datos de contacto',
+    description: '',
+    cards: { ...CONTACT_DETAIL_CARD_DEFAULTS },
+  },
+  map: {
+    eyebrow: 'Ubicación',
+    title: 'Visítenos en taller',
+    iframeTitle: 'Ubicación Utilcar Conversiones en Google Maps',
+  },
+}
+
+export function emptyContactPageContent() {
   return {
     hero: { eyebrow: '', title: '', subtitle: '', imageAlt: '' },
     intro: { formHint: '', paragraphs: [] },
-    details: {
-      title: '',
-      description: '',
-      cards: {
-        phone: '',
-        email: '',
-        address: '',
-        hours: { title: '' },
-      },
-    },
-    map: { eyebrow: '', title: '', iframeTitle: '' },
+    details: { ...CONTACT_UI_DEFAULTS.details },
+    map: { ...CONTACT_UI_DEFAULTS.map },
     faq: { eyebrow: '', title: '', description: '' },
     cta: { title: '', description: '', primaryLabel: '', primaryTo: '' },
-    form: {
-      heading: '',
-      fields: {},
-      submit: { idle: '', loading: '' },
-      success: { title: '', message: '', resetLabel: '' },
-      error: '',
-    },
+    form: resolveContactForm({ heading: '', error: '' }),
     servicios: [],
     faqItems: [],
+  }
+}
+
+/**
+ * Mapa Contacto — oculto editorialmente si mapBlock.enabled === false.
+ * Sin mapBlock en documento → defaults estructurales; nunca fallback si está desactivado.
+ */
+function resolveContactPageMap({ mapBlock, mapSection, useLegacyMerge, legacyMap, siteMapsQuery }) {
+  if (mapBlock?.enabled === false) {
+    return null
+  }
+  if (mapSection) {
+    return resolveContactMap(
+      mapSection,
+      useLegacyMerge ? legacyMap : CONTACT_UI_DEFAULTS.map,
+      siteMapsQuery,
+    )
+  }
+  return useLegacyMerge ? { ...legacyMap } : { ...CONTACT_UI_DEFAULTS.map }
+}
+
+function legacyDetailCardTitle(card, fallback) {
+  if (typeof card === 'string') return card
+  return card?.title ?? fallback
+}
+
+function legacyDetailCardEnabled(card) {
+  if (typeof card === 'object' && card != null && card.enabled === false) return false
+  return true
+}
+
+function resolveContactDetailsCard(remoteCard, legacyCard, fallback) {
+  const legacyTitle = legacyDetailCardTitle(legacyCard, fallback)
+  const legacyEnabled = legacyDetailCardEnabled(legacyCard)
+
+  if (remoteCard == null) {
+    return { enabled: legacyEnabled, title: legacyTitle || fallback }
+  }
+
+  return {
+    enabled: remoteCard.enabled !== false,
+    title: safeString(remoteCard.title) || legacyTitle || fallback,
+  }
+}
+
+/** Sección lateral Datos de contacto — títulos y visibilidad desde contactPage.details. */
+export function resolveContactPageDetails(remote = {}, legacy = CONTACT_UI_DEFAULTS.details) {
+  const remoteCards = remote?.cards ?? {}
+  const legacyCards = legacy?.cards ?? CONTACT_DETAIL_CARD_DEFAULTS
+  const defaults = CONTACT_DETAIL_CARD_DEFAULTS
+
+  return {
+    title:
+      safeString(remote?.title) ||
+      safeString(legacy?.title) ||
+      CONTACT_UI_DEFAULTS.details.title,
+    description: safeString(remote?.description) ?? safeString(legacy?.description) ?? '',
+    cards: {
+      phone: resolveContactDetailsCard(remoteCards.phone, legacyCards.phone, defaults.phone.title),
+      email: resolveContactDetailsCard(remoteCards.email, legacyCards.email, defaults.email.title),
+      address: resolveContactDetailsCard(
+        remoteCards.address,
+        legacyCards.address,
+        defaults.address.title,
+      ),
+      hours: resolveContactDetailsCard(remoteCards.hours, legacyCards.hours, defaults.hours.title),
+    },
   }
 }
 
@@ -82,43 +218,56 @@ export function resolveContactPageCta(ctaSection, legacyCta) {
  */
 export function buildContactPageContentFromCms(resolved, options = {}) {
   const { extensions } = resolved
+  const useLegacyMerge = options.useLegacyMerge === true
   const legacyContent = options.legacyContent ?? emptyContactPageContent()
 
   const heroSection = getActiveContactHeroSection(extensions)
   const richTextSection = getActiveRichTextSection(extensions)
   const faqSection = getActiveFaqSection(extensions)
+  const mapBlock = findMapBlockRaw(options.blocks)
+  const mapSection = getActivePageSection(extensions, 'mapSection')
   const ctaSection = extensions?.ctaSection
 
-  const heroResolved = resolveContactHero(heroSection, legacyContent.hero)
+  const heroResolved = resolveContactHero(
+    heroSection,
+    useLegacyMerge ? legacyContent.hero : null,
+  )
 
   const content = emptyContactPageContent()
 
   content.hero = {
-    eyebrow: heroSection?.eyebrow ?? legacyContent.hero?.eyebrow ?? '',
-    title: heroSection?.title ?? legacyContent.hero?.title ?? '',
-    subtitle: heroSection?.subtitle ?? legacyContent.hero?.subtitle ?? '',
-    imageAlt: heroResolved.alt || legacyContent.hero?.imageAlt || '',
+    eyebrow: heroSection?.eyebrow ?? (useLegacyMerge ? legacyContent.hero?.eyebrow : '') ?? '',
+    title: heroSection?.title ?? (useLegacyMerge ? legacyContent.hero?.title : '') ?? '',
+    subtitle: heroSection?.subtitle ?? (useLegacyMerge ? legacyContent.hero?.subtitle : '') ?? '',
+    imageAlt:
+      heroResolved.alt ||
+      (useLegacyMerge ? legacyContent.hero?.imageAlt : '') ||
+      '',
   }
 
   const paragraphs = richTextSection?.paragraphs?.length
     ? richTextSection.paragraphs
-    : legacyContent.intro?.paragraphs ?? []
+    : useLegacyMerge
+      ? (legacyContent.intro?.paragraphs ?? [])
+      : []
 
   content.intro = {
-    formHint: legacyContent.intro?.formHint ?? '',
+    formHint: useLegacyMerge ? (legacyContent.intro?.formHint ?? '') : '',
     paragraphs,
   }
 
-  content.details = legacyContent.details ?? content.details
-  content.map = legacyContent.map ?? content.map
-
   content.faq = faqSection
     ? {
-        eyebrow: faqSection.eyebrow || legacyContent.faq?.eyebrow || '',
-        title: faqSection.title || legacyContent.faq?.title || '',
-        description: faqSection.description || legacyContent.faq?.description || '',
+        eyebrow: faqSection.eyebrow || (useLegacyMerge ? legacyContent.faq?.eyebrow : '') || '',
+        title: faqSection.title || (useLegacyMerge ? legacyContent.faq?.title : '') || '',
+        description:
+          faqSection.description ||
+          (useLegacyMerge ? legacyContent.faq?.description : '') ||
+          '',
       }
-    : { ...legacyContent.faq }
+    : useLegacyMerge
+      ? { ...legacyContent.faq }
+      : { eyebrow: '', title: '', description: '' }
 
   content.faqItems = faqSection?.items?.length
     ? faqSection.items.map((item) => ({
@@ -126,19 +275,40 @@ export function buildContactPageContentFromCms(resolved, options = {}) {
         question: item.question,
         answer: item.answer,
       }))
-    : [...(legacyContent.faqItems ?? [])]
+    : useLegacyMerge
+      ? [...(legacyContent.faqItems ?? [])]
+      : []
 
-  content.cta = resolveContactPageCta(ctaSection, legacyContent.cta)
+  content.cta = resolveContactPageCta(
+    ctaSection,
+    useLegacyMerge ? legacyContent.cta : undefined,
+  )
 
-  content.form = options.form ?? legacyContent.form ?? content.form
-  content.servicios = options.servicios?.length
-    ? options.servicios
-    : [...(legacyContent.servicios ?? [])]
+  content.details = resolveContactPageDetails(
+    options.details,
+    useLegacyMerge ? legacyContent.details : CONTACT_UI_DEFAULTS.details,
+  )
+
+  content.map = resolveContactPageMap({
+    mapBlock,
+    mapSection,
+    useLegacyMerge,
+    legacyMap: legacyContent.map,
+    siteMapsQuery: options.siteMapsQuery,
+  })
+
+  content.form = resolveContactForm(
+    options.form ?? (useLegacyMerge ? legacyContent.form : {}),
+  )
+  content.servicios = buildContactFormServiceOptions()
 
   return {
     content,
     heroImage: heroResolved.src,
-    seo: getActiveSeoSection(extensions),
+    seo: enrichSeoSectionForRuntime(
+      getActiveSeoSection(extensions),
+      extensions?.heroSection,
+    ),
     source: 'cms',
   }
 }
@@ -146,14 +316,17 @@ export function buildContactPageContentFromCms(resolved, options = {}) {
 function mergeContactDocumentFields(legacyContent, remote = {}) {
   return {
     ...legacyContent,
-    form: remote.form ?? legacyContent.form,
-    servicios: remote.servicios?.length ? remote.servicios : legacyContent.servicios,
+    details: resolveContactPageDetails(remote.details, legacyContent.details),
+    form: resolveContactForm(remote.form ?? legacyContent.form ?? {}),
+    servicios: buildContactFormServiceOptions(),
   }
 }
 
-/** Formulario y servicios del documento — disponibles aunque blocks[] use ruta legacy. */
+/** Campos de documento (form, details, servicios) — disponibles aunque blocks[] use ruta legacy. */
 function applyRemoteFormAndServicios(legacyContent, remote = {}) {
-  if (!remote?.form) return legacyContent
+  if (!remote?.form && remote?.details == null) {
+    return legacyContent
+  }
   return mergeContactDocumentFields(legacyContent, remote)
 }
 
@@ -182,11 +355,12 @@ export function mapContactPageRuntime(legacyContent, resolved = {}, options = {}
     }
   }
 
-  const mergedLegacy = mergeContactDocumentFields(legacyContent, options.remote ?? {})
   const built = buildContactPageContentFromCms(resolved, {
-    legacyContent: mergedLegacy,
+    legacyContent: emptyContactPageContent(),
+    useLegacyMerge: false,
     form: options.remote?.form,
-    servicios: options.remote?.servicios,
+    blocks: options.remote?.blocks,
+    details: options.remote?.details,
   })
 
   logRuntime('contact-page', {

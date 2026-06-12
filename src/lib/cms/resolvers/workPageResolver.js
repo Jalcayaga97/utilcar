@@ -17,12 +17,14 @@ import { warnPageLegacyFallback } from '@/lib/cms/resolvers/global/pageResolverL
 import { getActiveRichTextSection } from '@/lib/cms/resolvers/richTextBlockResolver'
 
 import { getActiveSeoSection } from '@/lib/cms/resolvers/seoBlockResolver'
+import { enrichSeoSectionForRuntime } from '@/lib/cms/contracts/seoBlockContract'
 
 import { buildGlobalServiceCta } from '@/lib/cms/resolvers/globalServiceCtaResolver'
 
 import { logRuntime } from '@/lib/cms/runtimeLog'
 
 import { deepMerge } from '@/lib/cms/merge'
+import { getValidatedLocalWorkBundle } from '@/lib/cms/localContent'
 
 import {
   buildWorkFiltersFromProjects,
@@ -52,7 +54,7 @@ export function getActiveWorkHeroSection(extensions) {
   return getActivePageSection(extensions, 'heroSection')
 }
 
-function emptyWorkPageContent() {
+export function emptyWorkPageContent() {
   return {
     hero: { eyebrow: '', title: '', subtitle: '', imageAlt: '' },
     intro: { eyebrow: '', title: '', paragraphs: [] },
@@ -123,20 +125,37 @@ export function buildWorkPageContentFromCms(resolved, options = {}) {
   return {
     content,
     heroImage: heroResolved.src,
-    seo: getActiveSeoSection(extensions),
+    seo: enrichSeoSectionForRuntime(
+      getActiveSeoSection(extensions),
+      extensions?.heroSection,
+    ),
     source: 'cms',
   }
 }
 
-function assembleWorkContent(legacyContent, pageContent, workProjects, remoteUi = {}) {
+function assembleWorkContent(pageContent, workProjects, remoteUi = {}, legacyContent = null) {
   const portfolio = mapWorkProjectsToPortfolio(workProjects)
-  const filters = buildWorkFiltersFromProjects(workProjects, legacyContent.filters)
-  const ui = deepMerge(legacyContent.ui, remoteUi)
+  const structuralDefaults = legacyContent ?? getValidatedLocalWorkBundle()?.workContent
+  const filters = buildWorkFiltersFromProjects(
+    workProjects,
+    structuralDefaults?.filters ?? [],
+  )
+  const ui = deepMerge(structuralDefaults?.ui ?? {}, remoteUi)
   if (!ui.pageSize) ui.pageSize = DEFAULT_PAGE_SIZE
   if (!ui.homePreviewMax) ui.homePreviewMax = DEFAULT_HOME_PREVIEW_MAX
 
+  if (legacyContent) {
+    return {
+      ...legacyContent,
+      page: pageContent,
+      portfolio,
+      preview: [],
+      filters,
+      ui,
+    }
+  }
+
   return {
-    ...legacyContent,
     page: pageContent,
     portfolio,
     preview: [],
@@ -165,7 +184,6 @@ export function mapWorkPageRuntime(legacyBundle, resolved = {}, options = {}) {
 
   const built = buildWorkPageContentFromCms(resolved, options)
   const workContent = assembleWorkContent(
-    legacyContent,
     built.content,
     workProjects,
     resolved.ui ?? {},
@@ -240,7 +258,12 @@ export function buildWorkSection(extensions, legacyBundle, remoteFlat = {}) {
   if (!portfolio.length) return null
 
   const built = buildWorkPageContentFromCms({ extensions })
-  const workContent = assembleWorkContent(legacyContent, built.content, workProjects, remoteFlat.ui ?? {})
+  const workContent = assembleWorkContent(
+    built.content,
+    workProjects,
+    remoteFlat.ui ?? {},
+    legacyContent,
+  )
 
   return {
     workContent,

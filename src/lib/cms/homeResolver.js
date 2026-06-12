@@ -15,6 +15,8 @@ import * as whyUsResolver from '@/lib/cms/resolvers/whyUsResolver'
 import * as specialtiesResolver from '@/lib/cms/resolvers/specialtiesResolver'
 import * as portfolioResolver from '@/lib/cms/resolvers/portfolioResolver'
 import * as ctaResolver from '@/lib/cms/resolvers/ctaResolver'
+import * as showcaseCarouselResolver from '@/lib/cms/resolvers/showcaseCarouselBlockResolver'
+import * as brandCarouselResolver from '@/lib/cms/resolvers/brandCarouselBlockResolver'
 
 export {
   getValidPortfolioItems,
@@ -36,9 +38,17 @@ export {
   getActiveSpecialtiesSection,
   mapSpecialtiesSectionToDisplayList,
 } from '@/lib/cms/resolvers/specialtiesResolver'
+export {
+  getActiveShowcaseCarouselSection,
+} from '@/lib/cms/resolvers/showcaseCarouselBlockResolver'
+export {
+  getActiveBrandCarouselSection,
+} from '@/lib/cms/resolvers/brandCarouselBlockResolver'
 
 const WARNING_COLLECTORS = [
   heroResolver.collectHeroWarnings,
+  showcaseCarouselResolver.collectShowcaseCarouselWarnings,
+  brandCarouselResolver.collectBrandCarouselWarnings,
   specialtiesResolver.collectSpecialtiesWarnings,
   servicesResolver.collectServicesWarnings,
   whyUsResolver.collectWhyUsWarnings,
@@ -76,14 +86,20 @@ function buildExtensions(blocks) {
   const whyUsBlock = whyUsResolver.findWhyUsBlock(list)
   const portfolioBlock = portfolioResolver.findPortfolioBlockInList(list)
   const specialtiesBlock = specialtiesResolver.findSpecialtiesBlock(list)
+  const showcaseBlock = showcaseCarouselResolver.findShowcaseCarouselBlock(list)
+  const brandCarouselBlock = brandCarouselResolver.findBrandCarouselBlock(list)
   const heroSection = heroResolver.buildHeroSection(heroBlock)
   const whyUsSection = whyUsResolver.buildWhyUsSection(whyUsBlock)
   const servicesSection = servicesResolver.buildServicesSection(servicesBlock)
   const portfolioSection = portfolioResolver.resolvePortfolioSection(portfolioBlock)
   const specialtiesSection = specialtiesResolver.buildSpecialtiesSection(specialtiesBlock)
+  const showcaseCarouselSection = showcaseCarouselResolver.buildShowcaseCarouselSection(showcaseBlock)
+  const brandCarouselSection = brandCarouselResolver.buildBrandCarouselSection(brandCarouselBlock)
 
   return {
     heroSection,
+    showcaseCarouselSection,
+    brandCarouselSection,
     servicesSection,
     /** @deprecated Usar servicesSection; shape legacy adapter. */
     servicesItems: servicesResolver.resolveServicesItemsFromSection(servicesSection),
@@ -130,6 +146,8 @@ function emptyExtensions() {
     portfolioItems: [],
     specialtiesSection: specialtiesResolver.emptySpecialtiesSectionExtension(),
     specialtiesItems: specialtiesResolver.emptySpecialtiesExtension(),
+    showcaseCarouselSection: null,
+    brandCarouselSection: null,
   }
 }
 

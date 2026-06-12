@@ -2,9 +2,12 @@ import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
 import { PageMeta } from '@/components/seo/PageMeta'
 import { ServicePageHero } from '@/components/sections/ServicePageHero'
+import { ServicePageShowcaseSection } from '@/components/sections/ServicePageShowcaseSection'
 import { ServicePagePortfolio } from '@/components/sections/ServicePagePortfolio'
 import { ServiceCtaDark } from '@/components/sections/ServiceCtaDark'
+import { BrandEquipmentPanel } from '@/components/sections/BrandEquipmentPanel'
 import { Section, SectionHeader } from '@/components/ui/Section'
+import { CmsPageSkeleton } from '@/components/cms/CmsPageSkeleton'
 import { useServicePageDisplay } from '@/hooks/useCms'
 
 const ease = [0.25, 0.1, 0.25, 1]
@@ -16,7 +19,7 @@ function SpecBlock({ title: blockTitle, items }) {
         {blockTitle}
       </h3>
       <ul className="mt-4 space-y-2.5">
-        {items.map((item) => (
+        {(items ?? []).map((item) => (
           <li key={item} className="flex gap-3 text-sm leading-relaxed text-ink-muted">
             <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-surface">
               <Check className="h-3 w-3 text-ink" strokeWidth={2} />
@@ -30,9 +33,12 @@ function SpecBlock({ title: blockTitle, items }) {
 }
 
 export default function EquipamientoEscolar() {
-  const { content, heroImage, portfolioProjects, seo } =
+  const { content, heroImage, portfolioProjects, tabs, seo, source, showcaseImages, isLoading } =
     useServicePageDisplay('equipamiento-escolar')
-  const { hero, intro, specs, gallery } = content
+  const { hero, intro, specs, gallery, brands } = content
+  const isCms = source === 'cms'
+
+  if (isLoading) return <CmsPageSkeleton variant="service" />
 
   return (
     <>
@@ -46,6 +52,8 @@ export default function EquipamientoEscolar() {
         image={heroImage}
         imageAlt={hero.imageAlt}
       />
+
+      <ServicePageShowcaseSection showcase={content.showcase} images={showcaseImages} />
 
       <Section>
         <motion.div
@@ -82,10 +90,25 @@ export default function EquipamientoEscolar() {
           className="mt-12 grid gap-4 sm:grid-cols-2 lg:gap-6"
         >
           {(specs.sections ?? []).map((block) => (
-            <SpecBlock key={block.title} title={block.title} items={block.items} />
+            <SpecBlock key={block.title} title={block.title} items={block.items ?? []} />
           ))}
         </motion.div>
       </Section>
+
+      {tabs?.length ? (
+        <Section>
+          <SectionHeader
+            eyebrow={brands.eyebrow}
+            title={brands.title}
+            description={brands.description}
+            align="center"
+            className="mx-auto max-w-2xl"
+          />
+          <div className="mt-12">
+            <BrandEquipmentPanel tabs={tabs} cmsFirst={isCms} />
+          </div>
+        </Section>
+      ) : null}
 
       <ServicePagePortfolio
         pageKey="equipamiento-escolar"
@@ -95,7 +118,7 @@ export default function EquipamientoEscolar() {
         projects={portfolioProjects ?? []}
       />
 
-      <ServiceCtaDark />
+      <ServiceCtaDark {...(isCms ? content.cta : undefined)} />
     </>
   )
 }

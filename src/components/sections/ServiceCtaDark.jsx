@@ -18,7 +18,7 @@ export function ServiceCtaDark({
 
   const resolvedTitle = title ?? global.title
   const resolvedDescription = description ?? global.description
-  const resolvedPrimaryLabel = primaryLabel ?? global.primaryLabel
+  const resolvedPrimaryLabel = primaryLabel || global.primaryLabel
   const resolvedPrimaryTo = primaryTo ?? global.primaryTo
 
   return (

@@ -9,21 +9,51 @@ import {
   Truck,
   Wrench,
   AppWindow,
+  Shield,
+  Layers,
+  RotateCcw,
+  Shirt,
+  BedDouble,
+  Scissors,
 } from 'lucide-react'
+import {
+  proteccionCabinaContent,
+  cambioPisosContent,
+  reclinacionesContent,
+  fundasContent,
+  literasContent,
+  tapiceriaContent,
+  TAPICERIA_CATEGORIES,
+} from './interiorServices.js'
+import { EQUIPAMIENTO_MARCA_TABS } from './equipamientoEscolarBrands.js'
 
+/** Menú Servicios — orden alfabético por label (fuente única: desktop, mobile, footer). */
 const SERVICE_LINKS = [
-  { label: 'Talleres móviles', path: '/talleres-moviles' },
-  { label: 'Ventanas y Lunetas', path: '/ventanas-lunetas' },
-  { label: 'Equipamiento Escolar', path: '/equipamiento-escolar' },
+  { label: 'Accesorios', path: '/accesorios' },
   { label: 'Banquetas', path: '/banquetas' },
   { label: 'Butacas', path: '/butacas' },
-  { label: 'Accesorios', path: '/accesorios' },
+  { label: 'Cambio de pisos', path: '/cambio-pisos' },
+  { label: 'Equipamiento Escolar', path: '/equipamiento-escolar' },
+  { label: 'Fundas', path: '/fundas' },
+  { label: 'Literas', path: '/literas' },
+  { label: 'Protección de cabina', path: '/proteccion-cabina' },
+  { label: 'Reclinaciones', path: '/reclinaciones' },
+  { label: 'Talleres móviles', path: '/talleres-moviles' },
+  { label: 'Tapicería', path: '/tapiceria' },
+  { label: 'Ventanas y Lunetas', path: '/ventanas-lunetas' },
 ]
 
 /** Navegación principal (sin servicios — van en dropdown) */
 const MAIN_NAV_LINKS = [
   { label: 'Inicio', path: '/' },
   { label: 'Trabajos', path: '/trabajos-realizados' },
+  { label: 'Contacto', path: '/contacto' },
+]
+
+/** Enlaces sección Empresa en footer */
+const EMPRESA_NAV_LINKS = [
+  { label: 'Sobre Nosotros', path: '/sobre-nosotros' },
+  { label: 'Trabajos Realizados', path: '/trabajos-realizados' },
   { label: 'Contacto', path: '/contacto' },
 ]
 
@@ -87,6 +117,60 @@ const SERVICES_LIST = [
     path: '/accesorios',
     icon: Truck,
   },
+  {
+    id: 'proteccion-cabina',
+    title: 'Protección de cabina',
+    imageAlt: 'Protección interior de cabina en vehículo utilitario — Utilcar',
+    description:
+      'Revestimientos y protección de cabina para uso intensivo, con materiales resistentes y terminaciones profesionales.',
+    path: '/proteccion-cabina',
+    icon: Shield,
+  },
+  {
+    id: 'cambio-pisos',
+    title: 'Cambio de pisos',
+    imageAlt: 'Cambio de piso técnico en habitáculo de vehículo comercial — Utilcar',
+    description:
+      'Instalación y renovación de pisos interiores para minibuses, furgones y vehículos especiales.',
+    path: '/cambio-pisos',
+    icon: Layers,
+  },
+  {
+    id: 'reclinaciones',
+    title: 'Reclinaciones',
+    imageAlt: 'Sistema reclinable en butaca de transporte — Utilcar',
+    description:
+      'Mecanismos reclinables para butacas y banquetas en transporte ejecutivo y turismo.',
+    path: '/reclinaciones',
+    icon: RotateCcw,
+  },
+  {
+    id: 'fundas',
+    title: 'Fundas',
+    imageAlt: 'Fundas a medida para asientos de vehículo — Utilcar',
+    description:
+      'Fundas personalizadas para protección, uniformidad de flota y fácil mantenimiento.',
+    path: '/fundas',
+    icon: Shirt,
+  },
+  {
+    id: 'literas',
+    title: 'Literas',
+    imageAlt: 'Literas instaladas en vehículo comercial — Utilcar',
+    description:
+      'Fabricación e instalación de literas para descanso de tripulación y aplicaciones especiales.',
+    path: '/literas',
+    icon: BedDouble,
+  },
+  {
+    id: 'tapiceria',
+    title: 'Tapicería',
+    imageAlt: 'Tapicería vehicular — terminaciones Utilcar Conversiones',
+    description:
+      'Cambio de tapiz, reparación y personalización interior para vehículos comerciales.',
+    path: '/tapiceria',
+    icon: Scissors,
+  },
 ]
 
 const HIGHLIGHTS_LIST = [
@@ -115,14 +199,29 @@ const SERVICE_ICONS = {
   banquetas: Sofa,
   butacas: LayoutGrid,
   accesorios: Truck,
+  'proteccion-cabina': Shield,
+  'cambio-pisos': Layers,
+  reclinaciones: RotateCcw,
+  fundas: Shirt,
+  literas: BedDouble,
+  tapiceria: Scissors,
 }
 
 const HIGHLIGHT_ICONS = [Bus, Truck, Wrench]
 
-export const SERVICES = SERVICES_LIST.map((service) => ({
-  ...service,
-  icon: SERVICE_ICONS[service.id],
-}))
+const servicesByPath = Object.fromEntries(SERVICES_LIST.map((service) => [service.path, service]))
+
+/** Catálogo ordenado por SERVICE_LINKS (misma fuente que Navbar y Footer). */
+export const SERVICES = SERVICE_LINKS.map((link) => {
+  const service = servicesByPath[link.path]
+  if (!service) return null
+  return {
+    ...service,
+    title: link.label,
+    path: link.path,
+    icon: SERVICE_ICONS[service.id],
+  }
+}).filter(Boolean)
 
 export const HIGHLIGHTS = HIGHLIGHTS_LIST.map((item, index) => ({
   ...item,
@@ -220,239 +319,6 @@ const VENTANAS_INTRO = {
 
 
 
-/** Equipamiento por marca — categorías: Ventanas, Asientos, Seguridad, Interior, Opcionales */
-const VENTANAS_BRANDS = [
-  {
-    id: 'toyota',
-    name: 'Toyota',
-    models: ['Hiace', 'Hilux', 'Proace / Proace City'],
-    sections: [
-      specSection('Ventanas', [
-        'Ventanas corredizas laterales en marco de aluminio electropintado.',
-        'Luneta trasera y ventiletes según versión de carrocería.',
-        'Vidrios templados con seguro perforado.',
-        'Kits para Hiace de transporte escolar y uso mixto.',
-      ]),
-      specSection('Asientos', [
-        'Butacas y banquetas para Hiace y Proace.',
-        'Distribuciones 2+1, 3+0 y personalizadas.',
-        'Espuma de alta densidad en asiento y respaldo.',
-      ]),
-      specSection('Seguridad', [
-        'Cinturones de seguridad de dos puntas.',
-        'Balizas y señalética según normativa de transporte.',
-        'Anclajes al piso certificados.',
-      ]),
-      specSection('Interior', [
-        'Revestimiento interior en madera o material a elección.',
-        'Piso antideslizante en zona de carga.',
-        'Iluminación LED perimetral opcional.',
-      ]),
-      specSection('Opcionales', [
-        'Cabeceras regulables.',
-        'Portaequipaje interior.',
-        'Malla de seguridad en ventanas.',
-        'Climatización según proyecto.',
-      ]),
-    ],
-  },
-  {
-    id: 'peugeot',
-    name: 'Peugeot',
-    models: ['Boxer', 'Partner', 'Expert / Traveller'],
-    sections: [
-      specSection('Ventanas', [
-        'Ventiletes y lunetas para Boxer y Expert (chasis K0).',
-        'Ventanas corredizas de 2.ª y 3.ª fila según batalla (L2 / L3).',
-        'Sustitución o apertura de huecos a medida en carrocería.',
-        'Vidrio templado tintado según aplicación.',
-      ]),
-      specSection('Asientos', [
-        'Banquetas modulares para Boxer escolar y turismo.',
-        'Butacas individuales para Traveller ejecutivo.',
-        'Tapizados en vinil técnico Bronco Benz u opción a elección.',
-      ]),
-      specSection('Seguridad', [
-        'Cinturones en todas las plazas homologadas.',
-        'Letrero reglamentario de tres caras.',
-        'Sistema de balizas para transporte escolar.',
-      ]),
-      specSection('Interior', [
-        'Forrado de interiores y terminaciones en zona habitáculo.',
-        'Pasillos y accesos según reglamento.',
-        'Revestimientos sanitizables.',
-      ]),
-      specSection('Opcionales', [
-        'Ventanas fijas en puertas traseras dobles.',
-        'Divisores de carga.',
-        'Portavasos y mesas abatibles.',
-      ]),
-    ],
-  },
-  {
-    id: 'renault',
-    name: 'Renault',
-    models: ['Master', 'Kangoo', 'Trafic'],
-    sections: [
-      specSection('Ventanas', [
-        'Kit de ventanas laterales para Master.',
-        'Ventilete corredizo y luneta trasera.',
-        'Ventanas para Kangoo de reparto y escolar.',
-        'Sellado profesional con burletes técnicos.',
-      ]),
-      specSection('Asientos', [
-        'Equipamiento escolar en Master con butacas homologadas.',
-        'Banquetas para traslado de personal en Trafic.',
-        'Patas en perfil 50×30 electropintado.',
-      ]),
-      specSection('Seguridad', [
-        'Instalación según reglamentos del Ministerio de Transporte.',
-        'Salidas de emergencia señalizadas.',
-        'Cinturones de dos puntas en todas las plazas.',
-      ]),
-      specSection('Interior', [
-        'Revestimiento de piso y laterales.',
-        'Compartimientos para herramientas en versiones técnicas.',
-        'Aislación y terminación perimetral.',
-      ]),
-      specSection('Opcionales', [
-        'Ventanas con apertura parcial.',
-        'Estanterías modulares.',
-        'Iluminación de lectura.',
-      ]),
-    ],
-  },
-  {
-    id: 'suzuki',
-    name: 'Suzuki',
-    models: ['Super Carry', 'Every', 'APV'],
-    sections: [
-      specSection('Ventanas', [
-        'Ventanas laterales para utilitarios compactos.',
-        'Luneta trasera a medida.',
-        'Marco de aluminio electropintado con felpa.',
-        'Vidrios templados de seguridad.',
-      ]),
-      specSection('Asientos', [
-        'Banquetas para transporte urbano y escolar.',
-        'Redistribución de plazas según habilitación.',
-        'Tapiz en vinil liso de alta resistencia.',
-      ]),
-      specSection('Seguridad', [
-        'Cinturones según normativa vigente.',
-        'Cartelería de identificación escolar.',
-        'Fijaciones reforzadas al chasis del vehículo.',
-      ]),
-      specSection('Interior', [
-        'Revestimiento básico o premium según uso.',
-        'Piso en material antideslizante.',
-        'Protección de paneles interiores.',
-      ]),
-      specSection('Opcionales', [
-        'Portaequipaje en techo.',
-        'Red de carga.',
-        'Ventilación adicional.',
-      ]),
-    ],
-  },
-  {
-    id: 'fiat',
-    name: 'Fiat',
-    models: ['Ducato', 'Fiorino', 'Scudo'],
-    sections: [
-      specSection('Ventanas', [
-        'Ventanas corredizas y fijas para Ducato (chasis X250 / X290).',
-        'Lunetas de doble puerta trasera.',
-        'Ventiletes para Fiorino y Scudo.',
-        'Compatibilidad con batallas L1, L2, L3 y L4.',
-      ]),
-      specSection('Asientos', [
-        'Butacas y banquetas para Ducato escolar y corporativo.',
-        'Configuración de pasillo central homologado.',
-        'Espuma 6 cm asiento / 4 cm respaldo.',
-      ]),
-      specSection('Seguridad', [
-        'Homologación para transporte de pasajeros.',
-        'Balizas y letreros reglamentarios.',
-        'Anclajes testeados en piso.',
-      ]),
-      specSection('Interior', [
-        'Forrado completo de habitáculo.',
-        'Revestimiento en zona de carga.',
-        'Terminaciones en cantos y uniones.',
-      ]),
-      specSection('Opcionales', [
-        'Ventanas 180° en puertas traseras (según bisagra).',
-        'Aislantes térmicos.',
-        'Módulos de almacenaje.',
-      ]),
-    ],
-  },
-  {
-    id: 'citroen',
-    name: 'Citroën',
-    models: ['Jumper', 'Berlingo', 'Spacetourer'],
-    sections: [
-      specSection('Ventanas', [
-        'Ventanas corredizas para Jumper (equivalente Boxer / Ducato).',
-        'Luneta y ventiletes para Berlingo.',
-        'Kits para Spacetourer de pasajeros.',
-        'Cristales templados con tratamiento de seguridad.',
-      ]),
-      specSection('Asientos', [
-        'Equipamiento de butacas para transporte escolar.',
-        'Banquetas en configuraciones múltiples.',
-        'Cabecera regulable opcional.',
-      ]),
-      specSection('Seguridad', [
-        'Cumplimiento normativa Ministerio de Transporte.',
-        'Cinturones de dos puntas obligatorios.',
-        'Señalética y balizas homologadas.',
-      ]),
-      specSection('Interior', [
-        'Tapicería y revestimientos interiores.',
-        'Pisos técnicos para alto tránsito.',
-        'Paneles laterales forrados.',
-      ]),
-      specSection('Opcionales', [
-        'Ventanas fijas traseras.',
-        'Climatización posterior.',
-        'Portaobjetos y divisiones modulares.',
-      ]),
-    ],
-  },
-  {
-    id: 'chevrolet',
-    name: 'Chevrolet',
-    subtitle: 'Opciones de equipamiento',
-    sections: [
-      specSection('Ventanas', [
-        '2 ventanas de corredera en marco de aluminio electropintado, con botaguas y felpa importada para el deslizamiento de vidrios.',
-        'Vidrios templados con seguro perforado.',
-      ]),
-      specSection('Asientos', [
-        'Asiento adulto tipo banqueta abatible, fabricado en tubo de 2 mm.',
-        'Disponible en dos modelos de sujeción: por seguro o por correas.',
-        'Parrilla de suspensión con resortes de acero inoxidable entrelazados para mayor resistencia y funcionamiento uniforme.',
-        'Espuma de poliuretano de alta densidad.',
-        'Tapiz combinado en vinil con tela a elección.',
-      ]),
-      specSection('Seguridad', [
-        '3 cinturones de seguridad de 2 puntas.',
-      ]),
-      specSection('Interior', [
-        '2 asientos laterales abatibles traseros.',
-        'Forrado de costados.',
-        'Forrado de cielo interior.',
-      ]),
-      specSection('Opcionales', [
-        'Hasta 3 cabeceras regulables en la banqueta principal.',
-      ]),
-    ],
-  },
-]
-
-
 export const ventanasLunetasContent = {
   hero: {
     eyebrow: 'Servicios',
@@ -467,12 +333,6 @@ export const ventanasLunetasContent = {
     title: 'Trabajos de ventanas y lunetas',
     description:
       'Instalaciones realizadas con marco de aluminio electropintado, vidrios templados y terminación profesional.',
-  },
-  brands: {
-    eyebrow: 'Por marca',
-    title: 'Equipamiento por marca',
-    description:
-      'Soluciones de ventanas, asientos, seguridad, interior y opcionales organizadas según cada fabricante.',
   },
   cta: {
     title: 'Solicite una solución personalizada para su operación',
@@ -549,6 +409,12 @@ export const equipamientoEscolarContent = {
       'Soluciones integrales para transporte escolar: seguridad, interior, configuración y opcionales según normativa vigente.',
     sections: ESCOLAR_SECTIONS,
   },
+  brands: {
+    eyebrow: 'Por marca',
+    title: 'Equipamiento por marca',
+    description:
+      'Soluciones de ventanas, asientos, seguridad, interior y opcionales organizadas según cada fabricante.',
+  },
   gallery: {
     eyebrow: 'Galería',
     title: 'Trabajos de equipamiento escolar',
@@ -567,58 +433,8 @@ export const equipamientoEscolarContent = {
 
 const BANQUETAS_CATEGORIES = [
   {
-    id: 'adultos',
-    name: 'Banquetas Adultos',
-    intro: [
-      'Fabricamos banquetas para adultos con estructura reforzada y procesos de fabricación controlados que garantizan resistencia, seguridad y durabilidad en uso intensivo.',
-    ],
-    sections: [
-      specSection('Características de fabricación', [
-        'Estructura de tubo de 1" × 2 mm doblada mediante sistema con sensores electrónicos para mantener igualdad de curvas sin afectar la resistencia del material.',
-        'Soldadura con equipo MIG para mayor resistencia estructural.',
-        'Parrilla de suspensión con resortes de acero inoxidable entrelazados.',
-      ]),
-      specSection('Opciones de equipamiento', [
-        'Asiento con espuma de 6 cm de alta densidad.',
-        'Respaldo con espuma de 4 cm de alta densidad.',
-        'Cabecera regulable opcional.',
-        'Tapiz a elección del cliente.',
-        'Patas en perfil rectangular 50×30 electropintadas.',
-        'Cinturones de seguridad de dos puntas.',
-      ]),
-    ],
-    extra: {
-      title: 'Ventanas semi originales',
-      lead: 'Contamos con juegos de ventanas semi originales pegadas y abatibles para diferentes marcas:',
-      brands: ['Peugeot', 'Fiat', 'Citroën', 'Renault'],
-      closing:
-        'Cuentan con certificaciones de seguridad y serigrafías idénticas a las originales.',
-    },
-  },
-  {
-    id: 'traslado',
-    name: 'Traslado de Personal',
-    intro: [
-      'Banquetas diseñadas para transporte de personal en minibuses y utilitarios, con estructura simétrica y terminaciones orientadas al uso corporativo diario.',
-    ],
-    sections: [
-      specSection('Características de fabricación', [
-        'Estructura de tubo de 1" × 2 mm doblada simétricamente.',
-        'Soldadura con equipo MIG para mayor resistencia estructural.',
-        'Parrilla de suspensión con resortes de acero inoxidable entrelazados.',
-      ]),
-      specSection('Opciones de equipamiento', [
-        'Espuma de poliuretano de alta densidad.',
-        'Cabecera fija.',
-        'Tapiz a elección del cliente.',
-        'Patas en perfil rectangular 50×30 electropintadas.',
-        'Cinturones de seguridad de dos puntas.',
-      ]),
-    ],
-  },
-  {
     id: 'escolares',
-    name: 'Escolares',
+    name: 'Banquetas escolares',
     intro: [
       'Línea de banquetas para transporte escolar, fabricadas según requerimientos de seguridad, confort y normativa de transporte de pasajeros.',
     ],
@@ -636,6 +452,50 @@ const BANQUETAS_CATEGORIES = [
         'Tapiz de cubiertas en vinil técnico Bronco Benz.',
         'Patas en perfil rectangular 50×30 electropintadas.',
         'Cinturones de seguridad de dos puntas (uso obligatorio).',
+      ]),
+    ],
+  },
+  {
+    id: 'furgones',
+    name: 'Banquetas para furgones',
+    intro: [
+      'Banquetas diseñadas para furgones utilitarios, minibuses y conversiones de pasajeros, optimizadas para espacios compactos con estructura reforzada y terminaciones orientadas al uso diario.',
+    ],
+    sections: [
+      specSection('Aplicación', [
+        'Minibuses, furgones convertidos y transporte corporativo.',
+        'Layouts modulares según batalla, accesos y capacidad del vehículo.',
+        'Integración con equipamiento interior y señalética del proyecto.',
+      ]),
+      specSection('Opciones de equipamiento', [
+        'Estructura de tubo de 1" × 2 mm doblada simétricamente.',
+        'Soldadura con equipo MIG para mayor resistencia estructural.',
+        'Espuma de poliuretano de alta densidad.',
+        'Tapiz a elección del cliente.',
+        'Patas en perfil rectangular 50×30 electropintadas.',
+        'Cinturones de seguridad de dos puntas.',
+      ]),
+    ],
+  },
+  {
+    id: 'camiones',
+    name: 'Banquetas para camiones',
+    intro: [
+      'Banquetas para camiones de transporte de pasajeros y aplicaciones de larga distancia, con estructura reforzada, ergonomía y tapizados técnicos para uso intensivo en ruta.',
+    ],
+    sections: [
+      specSection('Aplicación', [
+        'Transporte interurbano y regional en camiones habilitados para pasajeros.',
+        'Configuraciones en riel o anclaje directo según carrocería y normativa.',
+        'Distribuciones personalizadas según capacidad y pasillo homologado.',
+      ]),
+      specSection('Opciones de equipamiento', [
+        'Estructura de tubo de 1" × 2 mm con procesos de fabricación controlados.',
+        'Soldadura con equipo MIG para mayor resistencia estructural.',
+        'Espuma de alta densidad en asiento y respaldo.',
+        'Tapizados técnicos resistentes al desgaste.',
+        'Cabecera regulable opcional.',
+        'Cinturones de tres puntas según normativa.',
       ]),
     ],
   },
@@ -719,6 +579,50 @@ const BUTACAS_SECTIONS = [
 ]
 
 
+const BUTACAS_CATEGORIES = [
+  {
+    id: 'camiones',
+    name: 'Butacas para camiones',
+    intro: [
+      'Butacas diseñadas para camiones de transporte de pasajeros y aplicaciones de larga distancia, con estructura reforzada, ergonomía y tapizados técnicos para uso intensivo en ruta.',
+    ],
+    sections: [
+      specSection('Aplicación', [
+        'Transporte interurbano y regional en camiones habilitados para pasajeros.',
+        'Configuraciones en riel o anclaje directo según carrocería y normativa.',
+        'Distribuciones personalizadas según capacidad y pasillo homologado.',
+      ]),
+      specSection('Equipamiento', [
+        'Espuma de alta densidad en asiento y respaldo.',
+        'Tapizados técnicos resistentes al desgaste.',
+        'Mecanismos reclinables opcionales.',
+        'Cinturones de tres puntas según normativa.',
+      ]),
+    ],
+  },
+  {
+    id: 'furgones',
+    name: 'Butacas para furgones',
+    intro: [
+      'Butacas para furgones utilitarios, minibuses y conversiones de pasajeros, optimizadas para espacios compactos sin sacrificar confort, seguridad ni terminaciones de tapicería.',
+    ],
+    sections: [
+      specSection('Aplicación', [
+        'Minibuses, furgones convertidos y transporte corporativo.',
+        'Layouts modulares según batalla y accesos del vehículo.',
+        'Integración con equipamiento interior y señalética del proyecto.',
+      ]),
+      specSection('Equipamiento', [
+        'Estructura metálica con tratamiento anticorrosivo.',
+        'Tapizados premium antimanchas y costuras reforzadas.',
+        'Portavasos, mesas abatibles y accesorios integrados a pedido.',
+        'Instalación en taller Utilcar con control de calidad.',
+      ]),
+    ],
+  },
+]
+
+
 export const butacasContent = {
   hero: {
     eyebrow: 'Servicios',
@@ -734,6 +638,13 @@ export const butacasContent = {
     description:
       'Fabricación real en taller propio: materiales seleccionados, terminaciones cuidadas y configuración según cada proyecto.',
     sections: BUTACAS_SECTIONS,
+  },
+  categories: {
+    eyebrow: 'Líneas de producto',
+    title: 'Butacas por aplicación',
+    description:
+      'Dos líneas de fabricación con especificaciones técnicas, opciones de equipamiento y registro visual de trabajos reales.',
+    items: BUTACAS_CATEGORIES,
   },
   gallery: {
     eyebrow: 'Registro visual',
@@ -897,16 +808,25 @@ export const accesoriosContent = {
 export {
   SERVICE_LINKS,
   MAIN_NAV_LINKS,
+  EMPRESA_NAV_LINKS,
   TALLERES_INTRO,
   TALLERES_SOLUCIONES,
   TALLERES_CARACTERISTICAS,
   VENTANAS_INTRO,
-  VENTANAS_BRANDS,
+  EQUIPAMIENTO_MARCA_TABS,
   ESCOLAR_INTRO,
   ESCOLAR_SECTIONS,
   BANQUETAS_CATEGORIES,
+  BUTACAS_CATEGORIES,
   BUTACAS_INTRO,
   BUTACAS_SECTIONS,
   ACCESORIOS_PAGE_INTRO,
   ACCESORIOS_CATEGORIES,
+  TAPICERIA_CATEGORIES,
+  proteccionCabinaContent,
+  cambioPisosContent,
+  reclinacionesContent,
+  fundasContent,
+  literasContent,
+  tapiceriaContent,
 }

@@ -40,6 +40,7 @@ import accDistintivo from '@/assets/images/accesorios/distintivo-escolar/esc.jpg
 import trabajoTaller from '@/assets/images/trabajos/taller-hiace.jpg'
 import trabajoVentanas from '@/assets/images/trabajos/ventanas-master.jpg'
 import trabajoMinibus from '@/assets/images/trabajos/minibus-boxer.jpg'
+import { buildWorkCategoryFilters } from '@/lib/services/serviceCatalog'
 
 const TRABAJOS_PAGE_HERO = tallerTr247
 
@@ -51,15 +52,7 @@ const TRABAJOS_PORTFOLIO_INTRO = {
   ],
 }
 
-const TRABAJOS_FILTERS = [
-  { id: 'all', label: 'Todos' },
-  { id: 'talleres-moviles', label: 'Talleres móviles' },
-  { id: 'ventanas-lunetas', label: 'Ventanas y lunetas' },
-  { id: 'equipamiento-escolar', label: 'Equipamiento escolar' },
-  { id: 'banquetas', label: 'Banquetas' },
-  { id: 'butacas', label: 'Butacas' },
-  { id: 'accesorios', label: 'Accesorios' },
-]
+const TRABAJOS_FILTERS = buildWorkCategoryFilters()
 
 const item = (id, title, category, categoryId, image, description, imageAlt) => ({
   id,
@@ -421,7 +414,7 @@ export const workContent = {
   portfolio: TRABAJOS_PORTFOLIO,
   preview: TRABAJOS_PREVIEW,
   ui: {
-    emptyMessage: 'No hay trabajos en esta categoría.',
+    emptyMessage: 'Aún no hay proyectos registrados para este servicio.',
     loadMoreLabel: 'Cargar más',
     pageSize: 9,
     homePreviewMax: 4,

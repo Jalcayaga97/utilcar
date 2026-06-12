@@ -1,6 +1,7 @@
 import { Container } from '@/components/ui/Container'
 import { CtaButtonGroup } from '@/components/sections/CtaButtonGroup'
-import { useGlobalServiceCta, useHomeContent } from '@/hooks/useCms'
+import { useGlobalServiceCta } from '@/hooks/useCms'
+import { useHomeContent } from '@/contexts/HomeContentContext'
 
 /**
  * Banner CTA Home — título/descripción editables; botones desde siteSettings.serviceCta.

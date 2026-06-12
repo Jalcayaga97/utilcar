@@ -67,3 +67,21 @@
     white-space: normal;
   }
 }
+
+@keyframes whatsapp-attention {
+  0%,
+  88%,
+  100% {
+    transform: scale(1);
+  }
+
+  94% {
+    transform: scale(1.05);
+  }
+}
+
+@layer utilities {
+  .animate-whatsapp-attention {
+    animation: whatsapp-attention 10s ease-in-out infinite;
+  }
+}

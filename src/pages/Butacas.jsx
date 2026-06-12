@@ -2,9 +2,13 @@ import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
 import { PageMeta } from '@/components/seo/PageMeta'
 import { ServicePageHero } from '@/components/sections/ServicePageHero'
+import { ServicePageShowcaseSection } from '@/components/sections/ServicePageShowcaseSection'
 import { ServicePagePortfolio } from '@/components/sections/ServicePagePortfolio'
 import { ServiceCtaDark } from '@/components/sections/ServiceCtaDark'
+import { BanquetasCategoryPanel } from '@/components/sections/BanquetasCategoryPanel'
 import { Section, SectionHeader } from '@/components/ui/Section'
+import { getButacasCategoryGallery } from '@/assets/images'
+import { CmsPageSkeleton } from '@/components/cms/CmsPageSkeleton'
 import { useServicePageDisplay } from '@/hooks/useCms'
 
 const ease = [0.25, 0.1, 0.25, 1]
@@ -16,7 +20,7 @@ function SpecBlock({ title: blockTitle, items }) {
         {blockTitle}
       </h3>
       <ul className="mt-4 space-y-2.5">
-        {items.map((item) => (
+        {(items ?? []).map((item) => (
           <li key={item} className="flex gap-3 text-sm leading-relaxed text-ink-muted">
             <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-surface">
               <Check className="h-3 w-3 text-ink" strokeWidth={2} />
@@ -30,8 +34,12 @@ function SpecBlock({ title: blockTitle, items }) {
 }
 
 export default function Butacas() {
-  const { content, heroImage, portfolioProjects, seo } = useServicePageDisplay('butacas')
-  const { hero, intro, specs, gallery } = content
+  const { content, heroImage, portfolioProjects, tabs, seo, source, showcaseImages, isLoading } =
+    useServicePageDisplay('butacas')
+  const { hero, intro, specs, gallery, categories } = content
+  const isCms = source === 'cms'
+
+  if (isLoading) return <CmsPageSkeleton variant="service" />
 
   return (
     <>
@@ -45,6 +53,8 @@ export default function Butacas() {
         image={heroImage}
         imageAlt={hero.imageAlt}
       />
+
+      <ServicePageShowcaseSection showcase={content.showcase} images={showcaseImages} />
 
       <Section>
         <motion.div
@@ -81,10 +91,37 @@ export default function Butacas() {
           className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6"
         >
           {(specs.sections ?? []).map((block) => (
-            <SpecBlock key={block.title} title={block.title} items={block.items} />
+            <SpecBlock key={block.title} title={block.title} items={block.items ?? []} />
           ))}
         </motion.div>
       </Section>
+
+      {tabs?.length ? (
+        <Section>
+          <SectionHeader
+            eyebrow={categories.eyebrow}
+            title={categories.title}
+            description={categories.description}
+            align="center"
+            className="mx-auto max-w-2xl"
+          />
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease }}
+            className="mt-12"
+          >
+            <BanquetasCategoryPanel
+              tabs={tabs}
+              cmsFirst={isCms}
+              resolveCategoryGallery={getButacasCategoryGallery}
+              ariaLabel="Líneas de butacas"
+              tabIndicatorId="butacas-tab-indicator"
+            />
+          </motion.div>
+        </Section>
+      ) : null}
 
       <ServicePagePortfolio
         pageKey="butacas"
@@ -94,7 +131,7 @@ export default function Butacas() {
         projects={portfolioProjects ?? []}
       />
 
-      <ServiceCtaDark />
+      <ServiceCtaDark {...(isCms ? content.cta : undefined)} />
     </>
   )
 }

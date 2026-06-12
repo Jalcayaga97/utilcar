@@ -5,7 +5,9 @@ import { ArrowRight, Wrench } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { mapContractItemsForMainServices } from '@/lib/cms/contracts/servicesContract'
 import { resolveCmsIcon } from '@/lib/cms/icons/resolveCmsIcon'
-import { useHomeContent, useServices } from '@/hooks/useCms'
+import { buildMainServiceCards } from '@/lib/services/serviceCatalog'
+import { useServiceLinks, useServices } from '@/hooks/useCms'
+import { useHomeContent } from '@/contexts/HomeContentContext'
 import { getServiceImage } from '@/assets/images'
 import { Section, SectionHeader } from '@/components/ui/Section'
 
@@ -93,31 +95,38 @@ function ServiceCard({ service, index, cardLinkLabel }) {
  */
 export function MainServices({ activeSection = null }) {
   const { services: legacyServicesMeta } = useHomeContent()
-  const legacyServices = useServices()
+  const serviceLinks = useServiceLinks()
+  const servicesCatalog = useServices()
 
   const sectionMeta = activeSection ?? legacyServicesMeta
   const defaultCardLinkLabel = sectionMeta.cardLinkLabel || 'Ver más'
-  const cmsActive = Boolean(activeSection?.items?.length)
 
   const services = useMemo(() => {
-    if (!cmsActive) {
-      return legacyServices
-    }
-    return mapContractItemsForMainServices(
-      activeSection.items,
-      defaultCardLinkLabel,
-    ).map((item) => ({
+    const cmsByPath = activeSection?.items?.length
+      ? Object.fromEntries(
+          mapContractItemsForMainServices(activeSection.items, defaultCardLinkLabel).map(
+            (item) => [item.path, item],
+          ),
+        )
+      : {}
+
+    return buildMainServiceCards({
+      serviceLinks,
+      services: servicesCatalog,
+      cmsByPath,
+      cardLinkLabel: defaultCardLinkLabel,
+    }).map((item) => ({
       ...item,
-      icon: resolveCmsIcon(item.icon),
+      icon: typeof item.icon === 'string' ? resolveCmsIcon(item.icon) : item.icon,
     }))
-  }, [cmsActive, activeSection, legacyServices, defaultCardLinkLabel])
+  }, [serviceLinks, servicesCatalog, activeSection?.items, defaultCardLinkLabel])
 
   return (
     <Section className="bg-white">
       <SectionHeader
         eyebrow={sectionMeta.eyebrow}
-        title={sectionMeta.title}
-        description={sectionMeta.description}
+        title={sectionMeta?.title ?? ''}
+        description={sectionMeta?.description ?? ''}
       />
 
       <ul className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-7">

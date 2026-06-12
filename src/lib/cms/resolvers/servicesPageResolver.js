@@ -7,7 +7,9 @@ import { resolvePageFromBlocks, getActivePageSection } from '@/lib/cms/resolvers
 import { warnPageLegacyFallback } from '@/lib/cms/resolvers/global/pageResolverLog'
 import { getActiveFeaturesSection } from '@/lib/cms/resolvers/featuresBlockResolver'
 import { getActiveRichTextSection } from '@/lib/cms/resolvers/richTextBlockResolver'
+import { getActiveShowcaseCarouselSection } from '@/lib/cms/resolvers/showcaseCarouselBlockResolver'
 import { getActiveSeoSection } from '@/lib/cms/resolvers/seoBlockResolver'
+import { enrichSeoSectionForRuntime } from '@/lib/cms/contracts/seoBlockContract'
 import { getActiveServicesSection } from '@/lib/cms/resolvers/servicesResolver'
 import { resolveServicePageCta, buildGlobalServiceCta } from '@/lib/cms/resolvers/globalServiceCtaResolver'
 import {
@@ -94,6 +96,7 @@ function emptyServicePageContent() {
     catalog: { eyebrow: '', title: '', description: '' },
     brands: { eyebrow: '', title: '', description: '' },
     cta: { title: '', description: '', primaryLabel: '', primaryTo: '' },
+    showcase: null,
   }
 }
 
@@ -116,6 +119,7 @@ export function buildServicePageContentFromCms(pageKey, resolved, options = {}) 
   const richTextSection = getActiveRichTextSection(extensions)
   const featuresSection = getActiveFeaturesSection(extensions)
   const portfolioSection = extensions?.portfolioSection
+  const showcaseSection = getActiveShowcaseCarouselSection(extensions)
   const ctaSection = extensions?.ctaSection
 
   const hero = resolveServicePageHero(heroSection, null, null, pageKey)
@@ -206,13 +210,25 @@ export function buildServicePageContentFromCms(pageKey, resolved, options = {}) 
 
   content.cta = resolveServicePageCta(ctaSection, globalCta)
 
+  content.showcase = showcaseSection
+    ? {
+        eyebrow: showcaseSection.eyebrow ?? '',
+        title: showcaseSection.title ?? '',
+        description: showcaseSection.description ?? '',
+      }
+    : null
+
   return {
     content,
     heroImage: hero.src,
+    showcaseImages: showcaseSection?.images ?? [],
     portfolioProjects: portfolioResolved.projects,
     portfolioSource: portfolioResolved.source,
     tabs,
-    seo: getActiveSeoSection(extensions),
+    seo: enrichSeoSectionForRuntime(
+      getActiveSeoSection(extensions),
+      extensions?.heroSection,
+    ),
     source: 'cms',
   }
 }
@@ -230,15 +246,9 @@ function isServiceSubPageCms(resolved) {
   )
 }
 
-function tabHasCmsGallery(tab) {
-  return (tab?.gallery ?? []).some(
-    (item) => typeof item?.src === 'string' && item.src.trim().length > 0,
-  )
-}
-
 function resolveServicePageTabs(legacyContent, resolved) {
   const cmsTabs = resolved?.tabs ?? []
-  if (cmsTabs.some(tabHasCmsGallery)) return cmsTabs
+  if (cmsTabs.length > 0) return cmsTabs
   return legacyContent.tabs ?? []
 }
 
@@ -297,6 +307,7 @@ export function mapServicePageRuntime(pageKey, legacyContent, resolved, options 
     return {
       content: legacyContent,
       heroImage: null,
+      showcaseImages: [],
       portfolioProjects: portfolioResolved.projects,
       portfolioSource: portfolioResolved.source,
       tabs: resolveServicePageTabs(legacyContent, resolved),
@@ -306,6 +317,7 @@ export function mapServicePageRuntime(pageKey, legacyContent, resolved, options 
   }
 
   const built = buildServicePageContentFromCms(pageKey, resolved, options)
+  const resolvedTabs = resolveServicePageTabs(legacyContent, resolved)
 
   logServiceHeroTrace({
     pageKey,
@@ -326,13 +338,14 @@ export function mapServicePageRuntime(pageKey, legacyContent, resolved, options 
     highlightsCount: built.content?.hero?.highlights?.length ?? 0,
     portfolioCount: built.portfolioProjects?.length ?? 0,
     portfolioSource: built.portfolioSource,
-    tabCount: built.tabs?.length ?? 0,
+    tabCount: resolvedTabs?.length ?? 0,
   })
 
   return {
     ...built,
+    tabs: resolvedTabs,
     servicesSection: getActiveServicesPageSection(extensions),
-    servicesTabs: built.tabs,
+    servicesTabs: resolvedTabs,
   }
 }
 

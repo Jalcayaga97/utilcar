@@ -6,6 +6,26 @@ function safeString(value, fallback = '') {
   return s || fallback
 }
 
+/**
+ * Párrafos introductorios del tab — solo datos CMS (raw tab).
+ * `description` es «Descripción breve» en Studio; `intro[]` son párrafos extendidos.
+ * Cuando el editor actualiza description, debe reflejarse aunque intro[] conserve seed antiguo.
+ */
+export function resolveServiceTabIntro(raw = {}) {
+  const description = safeString(raw.description)
+  const paragraphs = (raw.intro ?? [])
+    .flatMap((p) => (Array.isArray(p) ? p : [p]))
+    .map((p) => safeString(p))
+    .filter(Boolean)
+
+  if (description) {
+    const tail = paragraphs.filter((p) => p !== description)
+    return [description, ...tail]
+  }
+
+  return paragraphs
+}
+
 export function normalizeServiceTab(raw = {}, index = 0) {
   const id = safeString(raw.id, `tab-${index}`)
   const gallery = normalizeGalleryImages(
@@ -23,7 +43,7 @@ export function normalizeServiceTab(raw = {}, index = 0) {
     description: safeString(raw.description),
     models: (raw.models ?? []).map((m) => safeString(m)).filter(Boolean),
     subtitle: safeString(raw.subtitle),
-    intro: (raw.intro ?? []).map((p) => safeString(p)).filter(Boolean),
+    intro: resolveServiceTabIntro(raw),
     sections: (raw.sections ?? []).map((section) => ({
       title: safeString(section?.title),
       items: (section?.items ?? []).map((item) => safeString(item)).filter(Boolean),

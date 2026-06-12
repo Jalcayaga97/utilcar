@@ -50,20 +50,37 @@ function banquetaAlt(categoryName, index, total) {
   return `${base} — vista ${index + 1} de ${total}`
 }
 
+const tapiceriaCategoriasGalerias = {
+  'cambio-tapiz': [],
+  'reparacion-tapiceria': [],
+  'personalizacion-interior': [],
+}
+
+const butacasCategoriasGalerias = {
+  camiones: [
+    { src: butaca1, alt: 'Butacas para camiones — tapizado y terminaciones Utilcar' },
+    { src: butaca2, alt: 'Butacas para camiones — detalle de costuras y acabados' },
+  ],
+  furgones: [
+    { src: butaca3, alt: 'Butacas para furgones — estructura y confort' },
+    { src: butaca1, alt: 'Butacas para furgones — fabricación a medida Utilcar' },
+  ],
+}
+
 const banquetasCategoriasGalerias = {
-  adultos: [
-    { src: banquetaAdulto1, alt: banquetaAlt('Banquetas Adultos', 0, 2) },
-    { src: banquetaAdulto2, alt: banquetaAlt('Banquetas Adultos', 1, 2) },
-  ],
-  traslado: [
-    { src: banquetaTraslado1, alt: banquetaAlt('Traslado de Personal', 0, 3) },
-    { src: banquetaTraslado2, alt: banquetaAlt('Traslado de Personal', 1, 3) },
-    { src: banquetaTraslado3, alt: banquetaAlt('Traslado de Personal', 2, 3) },
-  ],
   escolares: [
-    { src: banquetaEscolar1, alt: banquetaAlt('Escolares', 0, 3) },
-    { src: banquetaEscolar2, alt: banquetaAlt('Escolares', 1, 3) },
-    { src: banquetaEscolar3, alt: banquetaAlt('Escolares', 2, 3) },
+    { src: banquetaEscolar1, alt: banquetaAlt('Banquetas escolares', 0, 3) },
+    { src: banquetaEscolar2, alt: banquetaAlt('Banquetas escolares', 1, 3) },
+    { src: banquetaEscolar3, alt: banquetaAlt('Banquetas escolares', 2, 3) },
+  ],
+  furgones: [
+    { src: banquetaTraslado1, alt: banquetaAlt('Banquetas para furgones', 0, 3) },
+    { src: banquetaTraslado2, alt: banquetaAlt('Banquetas para furgones', 1, 3) },
+    { src: banquetaTraslado3, alt: banquetaAlt('Banquetas para furgones', 2, 3) },
+  ],
+  camiones: [
+    { src: banquetaAdulto1, alt: banquetaAlt('Banquetas para camiones', 0, 2) },
+    { src: banquetaAdulto2, alt: banquetaAlt('Banquetas para camiones', 1, 2) },
   ],
 }
 
@@ -137,6 +154,12 @@ export const IMAGES = {
     banquetas,
     butacas,
     accesorios,
+    'proteccion-cabina': butacas,
+    'cambio-pisos': banquetas,
+    reclinaciones: butacas,
+    fundas: banquetas,
+    literas: banquetas,
+    tapiceria: butacas,
   },
   trabajos: {
     1: trabajoEscolar,
@@ -171,6 +194,7 @@ export const IMAGES = {
   },
   butacas: {
     hero: butaca1,
+    categoriasGalerias: butacasCategoriasGalerias,
     gallery: [
       {
         src: butaca1,
@@ -190,6 +214,15 @@ export const IMAGES = {
     hero: accCabeceras,
     categoriasGalerias: accesoriosCategoriasGalerias,
   },
+  tapiceria: {
+    hero: butacas,
+    categoriasGalerias: tapiceriaCategoriasGalerias,
+  },
+  proteccionCabina: { hero: butacas, categoriasGalerias: {} },
+  cambioPisos: { hero: banquetas, categoriasGalerias: {} },
+  reclinaciones: { hero: butacas, categoriasGalerias: {} },
+  fundas: { hero: banquetas, categoriasGalerias: {} },
+  literas: { hero: banquetas, categoriasGalerias: {} },
   escolar: {
     hero: escolarHero,
     gallery: [
@@ -233,6 +266,14 @@ export function getVentanasMarcaGallery(brandId) {
 
 export function getBanquetasCategoryGallery(categoryId) {
   return IMAGES.banquetas.categoriasGalerias[categoryId] ?? []
+}
+
+export function getTapiceriaCategoryGallery(categoryId) {
+  return IMAGES.tapiceria.categoriasGalerias[categoryId] ?? []
+}
+
+export function getButacasCategoryGallery(categoryId) {
+  return IMAGES.butacas.categoriasGalerias[categoryId] ?? []
 }
 
 export function getAccesoriosCategoryGallery(categoryId) {

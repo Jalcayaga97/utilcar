@@ -3,9 +3,11 @@ import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
 import { PageMeta } from '@/components/seo/PageMeta'
 import { ServicePageHero } from '@/components/sections/ServicePageHero'
+import { ServicePageShowcaseSection } from '@/components/sections/ServicePageShowcaseSection'
 import { ServicePagePortfolio } from '@/components/sections/ServicePagePortfolio'
 import { ServiceCtaDark } from '@/components/sections/ServiceCtaDark'
 import { Section, SectionHeader } from '@/components/ui/Section'
+import { CmsPageSkeleton } from '@/components/cms/CmsPageSkeleton'
 import { useServicePageDisplay } from '@/hooks/useCms'
 import { logRuntime } from '@/lib/cms/runtimeLog'
 import {
@@ -21,7 +23,7 @@ function BulletList({ items, title }) {
     <div className="rounded-lg border border-border bg-white p-6 sm:p-7">
       <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-ink">{title}</h3>
       <ul className="mt-5 space-y-3">
-        {items.map((item) => (
+        {(items ?? []).map((item) => (
           <li key={item} className="flex gap-3 text-sm leading-relaxed text-ink-muted">
             <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-surface">
               <Check className="h-3 w-3 text-ink" strokeWidth={2} />
@@ -35,11 +37,12 @@ function BulletList({ items, title }) {
 }
 
 export default function TalleresMoviles() {
-  const { content, heroImage, portfolioProjects, portfolioSource, seo, source } =
+  const { content, heroImage, portfolioProjects, portfolioSource, seo, source, showcaseImages, isLoading } =
     useServicePageDisplay('talleres-moviles')
   const { hero, intro, scope, gallery } = content
 
   useEffect(() => {
+    if (isLoading) return
     logRuntime('service-page', {
       pageKey: 'talleres-moviles',
       source,
@@ -75,7 +78,9 @@ export default function TalleresMoviles() {
       contentLength: intro?.paragraphs?.length ?? 0,
       contentType: 'intro.paragraphs[]',
     })
-  }, [source, portfolioSource, portfolioProjects, hero.highlights, heroImage, intro])
+  }, [source, portfolioSource, portfolioProjects, hero.highlights, heroImage, intro, isLoading])
+
+  if (isLoading) return <CmsPageSkeleton variant="service" />
 
   return (
     <>
@@ -89,6 +94,8 @@ export default function TalleresMoviles() {
         image={heroImage}
         imageAlt={hero.imageAlt}
       />
+
+      <ServicePageShowcaseSection showcase={content.showcase} images={showcaseImages} />
 
       <Section>
         <motion.div
@@ -143,7 +150,7 @@ export default function TalleresMoviles() {
         projects={portfolioProjects ?? []}
       />
 
-      <ServiceCtaDark />
+      <ServiceCtaDark {...(source === 'cms' ? content.cta : undefined)} />
     </>
   )
 }

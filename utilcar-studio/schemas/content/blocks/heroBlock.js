@@ -2,6 +2,8 @@ import { HERO_FIELDSETS, EDITORIAL_COPY } from '../../presentation/editorial.js'
 import { HeroBlockEditorialInput } from '../../presentation/components/HeroBlockEditorialInput.jsx'
 import { heroImageWarning, heroTitleLengthWarning } from '../../presentation/editorialValidators.js'
 
+const isHomePage = ({ document }) => document?._type === 'homePage'
+
 export const heroBlock = {
   name: 'heroBlock',
   title: 'Portada (Hero)',
@@ -31,7 +33,7 @@ export const heroBlock = {
       title: 'Eyebrow',
       type: 'string',
       fieldset: 'content',
-      description: 'Etiqueta superior (ej. Servicios).',
+      description: 'Etiqueta superior (ej. Servicios). En Home suele dejarse vacío.',
     },
     {
       name: 'title',
@@ -39,7 +41,8 @@ export const heroBlock = {
       type: 'string',
       fieldset: 'content',
       validation: (Rule) => [Rule.required(), heroTitleLengthWarning(Rule)],
-      description: 'Titular H1 del Home. Sé directo y orientado a conversión.',
+      description:
+        'Titular H1. En Home usar una sola línea: "Conversiones, modificaciones, tapicería y equipamientos automotrices."',
     },
     {
       name: 'subtitle',
@@ -47,16 +50,20 @@ export const heroBlock = {
       type: 'text',
       fieldset: 'content',
       rows: 3,
-      description: 'Complementa el titular con el alcance de servicios o propuesta.',
+      hidden: isHomePage,
+      description:
+        'Párrafo bajo el titular. Visible en servicios, contacto, sobre nosotros y trabajos. No se renderiza en Home.',
     },
     {
       name: 'highlights',
-      title: 'Destacados',
+      title: '[Deprecado] Destacados',
       type: 'array',
       fieldset: 'content',
       of: [{ type: 'string' }],
       options: { layout: 'tags', sortable: true },
-      description: EDITORIAL_COPY.hero.highlightsHint,
+      hidden: isHomePage,
+      readOnly: true,
+      description: 'Ya no se muestra en Home.',
     },
     {
       name: 'textLinkLabel',
@@ -91,13 +98,46 @@ export const heroBlock = {
       readOnly: true,
     },
     {
+      name: 'primaryImage',
+      title: 'Imagen principal (logo corporativo)',
+      type: 'image',
+      fieldset: 'media',
+      options: { hotspot: true },
+      hidden: ({ document }) => document?._type !== 'homePage',
+      description: 'Logo Utilcar u imagen corporativa izquierda del hero Home.',
+    },
+    {
+      name: 'primaryImageAlt',
+      title: 'Alt imagen principal',
+      type: 'string',
+      fieldset: 'media',
+      hidden: ({ document }) => document?._type !== 'homePage',
+    },
+    {
+      name: 'secondaryImage',
+      title: 'Imagen secundaria (distintivo / aniversario)',
+      type: 'image',
+      fieldset: 'media',
+      options: { hotspot: true },
+      hidden: ({ document }) => document?._type !== 'homePage',
+      description: 'Logo de años en el mercado u otro distintivo (derecha del hero Home).',
+    },
+    {
+      name: 'secondaryImageAlt',
+      title: 'Alt imagen secundaria',
+      type: 'string',
+      fieldset: 'media',
+      hidden: ({ document }) => document?._type !== 'homePage',
+    },
+    {
       name: 'image',
       title: 'Imagen hero',
       type: 'image',
       fieldset: 'media',
       options: { hotspot: true },
+      hidden: isHomePage,
       validation: heroImageWarning,
-      description: 'Imagen principal de la portada. Recomendado 16:10 o similar.',
+      description: 'Imagen principal en páginas de servicio y contacto.',
     },
     {
       name: 'mobileImage',
@@ -105,6 +145,7 @@ export const heroBlock = {
       type: 'image',
       fieldset: 'media',
       options: { hotspot: true },
+      hidden: isHomePage,
       description: 'Override para pantallas pequeñas. Si vacío, usa imagen hero.',
     },
     {
@@ -112,6 +153,7 @@ export const heroBlock = {
       title: 'Texto alternativo (alt)',
       type: 'string',
       fieldset: 'media',
+      hidden: isHomePage,
       description: EDITORIAL_COPY.hero.imageAltHint,
     },
   ],
@@ -119,11 +161,12 @@ export const heroBlock = {
     select: {
       title: 'title',
       subtitle: 'subtitle',
-      media: 'image',
+      media: 'primaryImage',
+      fallbackMedia: 'image',
       enabled: 'enabled',
       textLink: 'textLinkLabel',
     },
-    prepare({ title, subtitle, media, enabled, textLink }) {
+    prepare({ title, subtitle, media, fallbackMedia, enabled, textLink }) {
       const parts = []
       if (subtitle) parts.push(String(subtitle).slice(0, 48))
       if (textLink) parts.push(`Enlace: ${textLink}`)
@@ -131,7 +174,7 @@ export const heroBlock = {
       return {
         title: title || 'Portada (Hero)',
         subtitle: parts.join(' · ') || 'Visible',
-        media,
+        media: media ?? fallbackMedia,
       }
     },
   },

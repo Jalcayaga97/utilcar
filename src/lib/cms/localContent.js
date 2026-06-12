@@ -16,14 +16,24 @@ import {
   banquetasContent,
   butacasContent,
   accesoriosContent,
-  VENTANAS_BRANDS,
+  proteccionCabinaContent,
+  cambioPisosContent,
+  reclinacionesContent,
+  fundasContent,
+  literasContent,
+  tapiceriaContent,
+  EQUIPAMIENTO_MARCA_TABS,
+  BUTACAS_CATEGORIES,
   BANQUETAS_CATEGORIES,
   ACCESORIOS_CATEGORIES,
+  TAPICERIA_CATEGORIES,
 } from '@/content/services'
 import { workContent, TRABAJOS_PAGE_HERO } from '@/content/work'
+import { aboutContent } from '@/content/about'
 import { contactContent } from '@/content/contact'
 import { validateContent } from '@/lib/cms/validate'
 import {
+  AboutContentSchema,
   ContactContentSchema,
   EspecialidadesSchema,
   HomeContentSchema,
@@ -46,9 +56,17 @@ const localServicesBundle = {
   banquetas: banquetasContent,
   butacas: butacasContent,
   accesorios: accesoriosContent,
-  ventanasBrands: VENTANAS_BRANDS,
+  proteccionCabina: proteccionCabinaContent,
+  cambioPisos: cambioPisosContent,
+  reclinaciones: reclinacionesContent,
+  fundas: fundasContent,
+  literas: literasContent,
+  tapiceria: tapiceriaContent,
+  equipamientoMarcaTabs: EQUIPAMIENTO_MARCA_TABS,
   banquetasCategories: BANQUETAS_CATEGORIES,
+  butacasCategories: BUTACAS_CATEGORIES,
   accesoriosCategories: ACCESORIOS_CATEGORIES,
+  tapiceriaCategories: TAPICERIA_CATEGORIES,
 }
 
 const localHomeBundle = { homeContent, especialidades: ESPECIALIDADES }
@@ -58,6 +76,7 @@ let validatedHomeBundle
 let validatedServicesBundle
 let validatedWorkBundle
 let validatedContact
+let validatedAbout
 
 export function getValidatedLocalHomeBundle() {
   if (!validatedHomeBundle) {
@@ -117,6 +136,18 @@ export function getValidatedLocalContactContent() {
     )
   }
   return validatedContact
+}
+
+export function getValidatedLocalAboutContent() {
+  if (!validatedAbout) {
+    validatedAbout = validateContent(
+      AboutContentSchema,
+      aboutContent,
+      aboutContent,
+      'local:about',
+    )
+  }
+  return validatedAbout
 }
 
 /** Re-export schemas usados en adapters para validación puntual. */

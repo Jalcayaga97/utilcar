@@ -5,21 +5,17 @@ import { IMAGES } from '@/assets/images'
 
 export const homeContent = {
   hero: {
-    title: 'Conversiones automotrices profesionales',
-    subtitle:
-      'Especialistas en ventanas, banquetas, equipamiento escolar y talleres móviles.',
-    highlights: [
-      'Fabricación personalizada',
-      'Equipamiento certificado',
-      'Terminaciones profesionales',
-    ],
+    title: 'Conversiones, modificaciones, tapicería y equipamientos automotrices.',
+    subtitle: '',
+    highlights: [],
     secondaryLink: {
       label: 'Ver trabajos realizados',
       to: '/trabajos-realizados',
       ariaLabel: 'Ver trabajos realizados por Utilcar',
     },
-    imageAlt:
-      'Interior de van con banquetas y piso técnico instalado por Utilcar Conversiones',
+    imageAlt: 'Logotipo Utilcar Conversiones — conversiones automotrices Santiago',
+    primaryImageAlt: 'Logotipo Utilcar Conversiones — conversiones automotrices Santiago',
+    secondaryImageAlt: 'Utilcar — años en el mercado',
   },
   services: {
     eyebrow: 'Servicios',

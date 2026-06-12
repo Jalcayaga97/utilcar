@@ -9,9 +9,21 @@ export const SERVICE_SUB_PAGE_KEYS = [
   { value: 'banquetas', title: 'Banquetas' },
   { value: 'butacas', title: 'Butacas' },
   { value: 'accesorios', title: 'Accesorios' },
+  { value: 'proteccion-cabina', title: 'Protección de cabina' },
+  { value: 'cambio-pisos', title: 'Cambio de pisos' },
+  { value: 'reclinaciones', title: 'Reclinaciones' },
+  { value: 'fundas', title: 'Fundas' },
+  { value: 'literas', title: 'Literas' },
+  { value: 'tapiceria', title: 'Tapicería' },
 ]
 
-export const SERVICE_SUB_PAGE_TAB_KEYS = ['ventanas-lunetas', 'banquetas', 'accesorios']
+export const SERVICE_SUB_PAGE_TAB_KEYS = [
+  'equipamiento-escolar',
+  'banquetas',
+  'butacas',
+  'accesorios',
+  'tapiceria',
+]
 
 export function serviceSubPageDocumentId(pageKey) {
   return `serviceSubPage-${pageKey}`
@@ -52,7 +64,7 @@ export const serviceSubPage = {
       name: 'tabsSection',
       title: 'Sección pestañas (cabecera)',
       type: 'object',
-      description: 'Ventanas, Banquetas o Accesorios — títulos de la zona de tabs.',
+      description: 'Equipamiento escolar, Banquetas, Butacas, Accesorios o Tapicería — títulos de la zona de tabs.',
       hidden: ({ document }) => !pageKeyIs(document, ...SERVICE_SUB_PAGE_TAB_KEYS),
       fields: [
         { name: 'eyebrow', type: 'string', title: 'Eyebrow' },

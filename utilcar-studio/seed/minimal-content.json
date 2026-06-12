@@ -127,12 +127,18 @@
     "_type": "servicesPage",
     "schemaVersion": 1,
     "serviceLinks": [
-      { "label": "Talleres móviles", "path": "/talleres-moviles" },
-      { "label": "Ventanas y Lunetas", "path": "/ventanas-lunetas" },
-      { "label": "Equipamiento Escolar", "path": "/equipamiento-escolar" },
+      { "label": "Accesorios", "path": "/accesorios" },
       { "label": "Banquetas", "path": "/banquetas" },
       { "label": "Butacas", "path": "/butacas" },
-      { "label": "Accesorios", "path": "/accesorios" }
+      { "label": "Cambio de pisos", "path": "/cambio-pisos" },
+      { "label": "Equipamiento Escolar", "path": "/equipamiento-escolar" },
+      { "label": "Fundas", "path": "/fundas" },
+      { "label": "Literas", "path": "/literas" },
+      { "label": "Protección de cabina", "path": "/proteccion-cabina" },
+      { "label": "Reclinaciones", "path": "/reclinaciones" },
+      { "label": "Talleres móviles", "path": "/talleres-moviles" },
+      { "label": "Tapicería", "path": "/tapiceria" },
+      { "label": "Ventanas y Lunetas", "path": "/ventanas-lunetas" }
     ],
     "mainNavLinks": [
       { "label": "Inicio", "path": "/" },
@@ -227,7 +233,7 @@
       }
     ],
     "ui": {
-      "emptyMessage": "No hay proyectos en esta categoría.",
+      "emptyMessage": "Aún no hay proyectos registrados para este servicio.",
       "loadMoreLabel": "Cargar más",
       "pageSize": 6,
       "filterAriaLabel": "Filtrar trabajos por categoría"
@@ -254,15 +260,6 @@
         "question": "¿Trabajan con empresas?",
         "answer": "Atendemos empresas, flotas, talleres y fabricantes que requieren equipamiento escolar, ventanas, banquetas, butacas, accesorios o talleres móviles."
       }
-    ],
-    "servicios": [
-      "Talleres móviles",
-      "Ventanas y lunetas",
-      "Equipamiento escolar",
-      "Banquetas",
-      "Butacas",
-      "Accesorios",
-      "Proyecto personalizado"
     ]
   }
 }

@@ -44,6 +44,7 @@ export const USE_PAGE_RESOLVER = readEnv('VITE_USE_PAGE_RESOLVER', 'false') === 
 export const USE_SERVICES_V2 = readEnv('VITE_USE_SERVICES_V2', 'false') === 'true'
 export const USE_WORK_V2 = readEnv('VITE_USE_WORK_V2', 'false') === 'true'
 export const USE_CONTACT_V2 = readEnv('VITE_USE_CONTACT_V2', 'false') === 'true'
+export const USE_ABOUT_V2 = readEnv('VITE_USE_ABOUT_V2', 'false') === 'true'
 
 export function isSanityConfigured() {
   const { projectId } = SANITY_CONFIG
@@ -53,4 +54,29 @@ export function isSanityConfigured() {
 /** Sanity activo solo con flag + projectId válido. */
 export function isSanityEnabled() {
   return USE_SANITY && isSanityConfigured()
+}
+
+/** Home — blocks[] vía homeResolver. */
+export function isHomeCmsActive() {
+  return isSanityEnabled() && USE_BLOCK_RESOLVER
+}
+
+/** Sobre Nosotros — aboutPage.blocks[] vía pageResolver. */
+export function isAboutCmsActive() {
+  return isSanityEnabled() && USE_PAGE_RESOLVER && USE_ABOUT_V2
+}
+
+/** Contacto — contactPage.blocks[] vía pageResolver. */
+export function isContactCmsActive() {
+  return isSanityEnabled() && USE_PAGE_RESOLVER && USE_CONTACT_V2
+}
+
+/** Trabajos editorial — workPage.blocks[] vía pageResolver. */
+export function isWorkCmsActive() {
+  return isSanityEnabled() && USE_PAGE_RESOLVER && USE_WORK_V2
+}
+
+/** Sub-páginas de servicio — serviceSubPage.blocks[]. */
+export function isServicesCmsActive() {
+  return isSanityEnabled() && USE_PAGE_RESOLVER && USE_SERVICES_V2
 }

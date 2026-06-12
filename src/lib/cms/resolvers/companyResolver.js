@@ -50,6 +50,22 @@ function normalizeSocialLinks(raw) {
     .filter((item) => item.url)
 }
 
+function urlFromSocialLinks(links, platformName) {
+  const match = (links ?? []).find(
+    (item) => safeString(item?.platform).toLowerCase() === platformName.toLowerCase(),
+  )
+  return safeString(match?.url)
+}
+
+/**
+ * Correo destino del formulario de contacto — siteSettings.contactEmail.
+ */
+export function resolveContactFormEmail(raw) {
+  const cms = safeString(raw?.contactEmail)
+  if (cms) return cms
+  return safeString(raw?.company?.primaryEmail, ENV.contactEmail)
+}
+
 /**
  * Datos corporativos — siteSettings.company con fallback SITE/ENV.
  */
@@ -90,6 +106,12 @@ export function buildCompanyInfo(raw) {
 
   const mapsEmbedQuery = safeString(company.mapsEmbedQuery, SITE.mapsQuery)
 
+  const socialLinks = normalizeSocialLinks(company.socialLinks)
+  const instagramUrl =
+    safeString(company.instagramUrl) || urlFromSocialLinks(socialLinks, 'instagram')
+  const facebookUrl =
+    safeString(company.facebookUrl) || urlFromSocialLinks(socialLinks, 'facebook')
+
   return {
     legalName: safeString(company.legalName, SITE.legalName),
     phone: phoneDisplay,
@@ -114,7 +136,9 @@ export function buildCompanyInfo(raw) {
     openingHoursLines,
     openingHoursSpecification: SITE.openingHours,
     mapsEmbedQuery,
-    socialLinks: normalizeSocialLinks(company.socialLinks),
+    socialLinks,
+    instagramUrl,
+    facebookUrl,
     source: hasCmsCompany ? 'cms' : 'legacy',
   }
 }

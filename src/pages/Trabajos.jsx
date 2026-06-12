@@ -5,19 +5,27 @@ import { ServicePageHero } from '@/components/sections/ServicePageHero'
 import { ServiceCtaDark } from '@/components/sections/ServiceCtaDark'
 import { TrabajosPortfolio } from '@/components/sections/TrabajosPortfolio'
 import { Section, SectionHeader } from '@/components/ui/Section'
+import { CmsPageSkeleton } from '@/components/cms/CmsPageSkeleton'
 import { useWorkPageDisplay } from '@/hooks/useCms'
 import { logRuntime } from '@/lib/cms/runtimeLog'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
 export default function Trabajos() {
-  const { content, heroImage, seo, source } = useWorkPageDisplay()
-  const { hero, intro, projects, cta } = content
-  const { title, paragraphs } = intro
+  const { content, heroImage, seo, source, isLoading } = useWorkPageDisplay()
 
   useEffect(() => {
+    if (isLoading) return
     logRuntime('work-page', { source, hasHeroImage: Boolean(heroImage) })
-  }, [source, heroImage])
+  }, [source, heroImage, isLoading])
+
+  if (isLoading) return <CmsPageSkeleton />
+
+  const hero = content.hero ?? {}
+  const intro = content.intro ?? { paragraphs: [] }
+  const projects = content.projects ?? {}
+  const cta = content.cta ?? {}
+  const { title, paragraphs = [] } = intro
 
   return (
     <>
@@ -41,7 +49,7 @@ export default function Trabajos() {
         >
           <SectionHeader eyebrow={intro.eyebrow} title={title} className="mb-8" />
           <div className="space-y-5">
-            {paragraphs.map((paragraph) => (
+            {(paragraphs ?? []).map((paragraph) => (
               <p
                 key={paragraph}
                 className="text-base leading-relaxed text-ink-muted sm:text-lg"

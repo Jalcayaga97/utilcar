@@ -24,7 +24,22 @@ export function buildGlobalServiceCta(raw) {
   }
 }
 
-/** CTA inferior de servicios — siempre siteSettings (único origen de verdad). */
-export function resolveServicePageCta(_ctaSection, globalCta) {
-  return buildGlobalServiceCta(globalCta)
+/** CTA inferior de servicios — ctaBlock del servicio con fallback a siteSettings.serviceCta. */
+export function resolveServicePageCta(ctaSection, globalCta) {
+  const global = buildGlobalServiceCta(globalCta)
+  if (!ctaSection) {
+    return {
+      title: global.title,
+      description: global.description,
+      primaryLabel: global.primaryLabel,
+      primaryTo: global.primaryTo,
+    }
+  }
+  return {
+    title: ctaSection.title || global.title,
+    description: ctaSection.description || global.description,
+    primaryLabel:
+      ctaSection.primaryLabel || ctaSection.buttonLabel || global.primaryLabel,
+    primaryTo: ctaSection.primaryTo || ctaSection.buttonLink || global.primaryTo,
+  }
 }

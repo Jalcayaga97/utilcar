@@ -1,10 +1,10 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Check } from 'lucide-react'
-import { resolveHeroAssets } from '@/lib/cms/assets/resolveHeroAssets'
-import { SITE } from '@/constants/site'
-import { useGlobalServiceCta, useHomeContent } from '@/hooks/useCms'
+import { ArrowRight } from 'lucide-react'
+import { resolveHomeHeroImages } from '@/lib/cms/assets/resolveHeroAssets'
+import { useGlobalServiceCta } from '@/hooks/useCms'
+import { useHomeContent } from '@/contexts/HomeContentContext'
 import { Container } from '@/components/ui/Container'
 import { CtaButtonGroup } from '@/components/sections/CtaButtonGroup'
 import { cn } from '@/lib/cn'
@@ -17,6 +17,47 @@ const fadeUp = (delay = 0) => ({
   transition: { duration: 0.5, delay, ease },
 })
 
+const heroImageFitClass = {
+  primary:
+    'h-auto w-full max-w-full object-contain object-center max-h-[10rem] sm:max-h-[11.5rem] md:max-h-[13rem] lg:max-h-[15rem] xl:max-h-[17rem]',
+  secondary:
+    'h-auto w-full max-w-[90%] object-contain object-center max-h-40 sm:max-h-44 md:max-h-48 lg:max-h-52',
+}
+
+function HeroBrandLogo({ src, alt, label, variant = 'primary' }) {
+  const wrapClass =
+    variant === 'primary'
+      ? 'flex w-full items-center justify-center md:w-auto md:justify-end'
+      : 'flex w-full shrink-0 items-center justify-center md:w-auto md:justify-start'
+
+  if (!src) {
+    return (
+      <div
+        className={cn(
+          wrapClass,
+          'min-h-28 md:min-h-36 lg:min-h-44',
+        )}
+        aria-hidden={!label}
+      >
+        <span className="text-sm text-ink-muted">{label ?? 'Imagen pendiente'}</span>
+      </div>
+    )
+  }
+
+  return (
+    <div className={wrapClass}>
+      <img
+        src={src}
+        alt={alt}
+        className={heroImageFitClass[variant]}
+        loading="eager"
+        decoding="async"
+        fetchPriority={variant === 'primary' ? 'high' : 'auto'}
+      />
+    </div>
+  )
+}
+
 /**
  * @param {{ activeSection?: object | null }} props
  * activeSection — getActiveHeroSection(extensions) desde Home cuando resolver ON.
@@ -28,12 +69,14 @@ export function Hero({ activeSection = null }) {
   const hero = activeSection ?? legacyHero
   const textLink = activeSection?.textLink ?? legacyHero.secondaryLink
 
-  const heroAssets = useMemo(
+  const heroImages = useMemo(
     () =>
-      resolveHeroAssets(
-        activeSection ?? { image: { url: null, alt: legacyHero.imageAlt } },
+      resolveHomeHeroImages(
+        activeSection ?? {
+          primaryImage: { url: null, alt: legacyHero.imageAlt },
+          secondaryImage: { url: null, alt: legacyHero.secondaryImageAlt },
+        },
         legacyHero,
-        'home',
       ),
     [activeSection, legacyHero],
   )
@@ -58,101 +101,55 @@ export function Hero({ activeSection = null }) {
       />
 
       <Container className="relative">
-        <div className="grid items-center gap-12 py-14 sm:py-16 lg:grid-cols-2 lg:gap-16 lg:py-20 xl:gap-20 xl:py-24">
-          <div className="max-w-xl lg:max-w-none">
-            <motion.p
-              {...fadeUp(0)}
-              className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-subtle"
-            >
-              {SITE.tagline}
-            </motion.p>
-
-            <motion.h1
-              {...fadeUp(0.06)}
-              className="mt-4 text-3xl font-semibold leading-[1.12] tracking-tight text-ink sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1] xl:text-5xl"
-            >
-              {hero.title}
-            </motion.h1>
-
-            <motion.p
-              {...fadeUp(0.12)}
-              className="mt-5 max-w-lg text-base leading-relaxed text-ink-muted sm:text-lg"
-            >
-              {hero.subtitle}
-            </motion.p>
-
-            <motion.ul
-              {...fadeUp(0.18)}
-              className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-x-6 sm:gap-y-3"
-            >
-              {hero.highlights.map((item) => (
-                <li key={item} className="flex items-center gap-2.5 text-sm text-ink-muted">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-white">
-                    <Check className="h-3 w-3 text-ink" strokeWidth={2} />
-                  </span>
-                  {item}
-                </li>
-              ))}
-            </motion.ul>
-
-            <motion.div {...fadeUp(0.24)} className="mt-10">
-              <CtaButtonGroup
-                variant="hero"
-                align="start"
-                primaryLabel={globalCta.primaryLabel}
-                primaryTo={globalCta.primaryTo}
-              />
-              {textLink?.label && textLink?.to ? (
-                <Link
-                  to={textLink.to}
-                  aria-label={textLink.ariaLabel ?? textLink.label}
-                  className={cn(
-                    'mt-5 inline-flex items-center gap-1.5 text-sm text-ink-muted',
-                    'transition-colors duration-300 hover:text-ink',
-                    'underline-offset-4 hover:underline',
-                  )}
-                >
-                  {textLink.label}
-                  <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
-                </Link>
-              ) : null}
-            </motion.div>
-          </div>
+        <div className="flex flex-col items-center py-10 text-center sm:py-12 lg:py-14">
+          <motion.h1
+            {...fadeUp(0)}
+            className={cn(
+              'mt-4 max-w-6xl text-balance text-xl font-semibold leading-[1.15] tracking-tight text-ink',
+              'sm:text-2xl sm:leading-[1.12] lg:text-3xl xl:text-[2.125rem] xl:leading-[1.1]',
+            )}
+          >
+            {hero.title}
+          </motion.h1>
 
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15, ease }}
-            className="relative mx-auto w-full max-w-lg lg:max-w-none lg:justify-self-end"
+            {...fadeUp(0.12)}
+            className="mt-4 flex w-full flex-col items-center gap-6 sm:mt-5 md:flex-row md:items-center md:justify-center md:gap-4 lg:gap-5"
           >
-            <div className="relative overflow-hidden rounded-card border border-border bg-white shadow-card">
-              <div className="aspect-[16/10] sm:aspect-video lg:aspect-[16/10]">
-                <img
-                  src={heroAssets.src}
-                  alt={heroAssets.alt}
-                  className="h-full w-full object-cover object-center"
-                  loading="eager"
-                  decoding="async"
-                  fetchPriority="high"
-                />
-              </div>
-              <div
-                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/[0.06] via-transparent to-transparent"
-                aria-hidden
-              />
-            </div>
+            <HeroBrandLogo
+              variant="primary"
+              src={heroImages.primary.src}
+              alt={heroImages.primary.alt}
+            />
+            <HeroBrandLogo
+              variant="secondary"
+              src={heroImages.secondary.src}
+              alt={heroImages.secondary.alt}
+              label="Distintivo / aniversario"
+            />
+          </motion.div>
 
-            <div
-              className={cn(
-                'absolute -bottom-3 -left-3 hidden h-24 w-24 rounded-card border border-border bg-surface sm:block',
-                'lg:-bottom-4 lg:-left-4',
-              )}
-              aria-hidden
+          <motion.div {...fadeUp(0.18)} className="mt-8 flex w-full flex-col items-center sm:mt-10">
+            <CtaButtonGroup
+              variant="hero"
+              align="center"
+              primaryLabel={globalCta.primaryLabel}
+              primaryTo={globalCta.primaryTo}
             />
-            <div
-              className="absolute -right-2 -top-2 h-16 w-16 rounded-full border border-border bg-white/80 sm:-right-3 sm:-top-3"
-              aria-hidden
-            />
+            {textLink?.label && textLink?.to ? (
+              <Link
+                to={textLink.to}
+                aria-label={textLink.ariaLabel ?? textLink.label}
+                className={cn(
+                  'mt-5 inline-flex items-center gap-1.5 text-sm text-ink-muted',
+                  'transition-colors duration-300 hover:text-ink',
+                  'underline-offset-4 hover:underline',
+                )}
+              >
+                {textLink.label}
+                <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
+              </Link>
+            ) : null}
           </motion.div>
         </div>
       </Container>

@@ -48,9 +48,17 @@ async function loadServicesBundleFromSanity() {
     banquetas: local.banquetas,
     butacas: local.butacas,
     accesorios: local.accesorios,
-    ventanasBrands: local.ventanasBrands,
+    proteccionCabina: local.proteccionCabina,
+    cambioPisos: local.cambioPisos,
+    reclinaciones: local.reclinaciones,
+    fundas: local.fundas,
+    literas: local.literas,
+    tapiceria: local.tapiceria,
+    equipamientoMarcaTabs: local.equipamientoMarcaTabs,
     banquetasCategories: local.banquetasCategories,
+    butacasCategories: local.butacasCategories,
     accesoriosCategories: local.accesoriosCategories,
+    tapiceriaCategories: local.tapiceriaCategories,
   }
 
   return validateContent(ServicesBundleSchema, merged, local, 'sanity:services-bundle')
@@ -127,12 +135,16 @@ export async function getAccesoriosContent() {
   return fromBundle((b) => b.accesorios)
 }
 
-export async function getVentanasBrands() {
-  return fromBundle((b) => b.ventanasBrands)
+export async function getEquipamientoMarcaTabs() {
+  return fromBundle((b) => b.equipamientoMarcaTabs)
 }
 
 export async function getBanquetasCategories() {
   return fromBundle((b) => b.banquetasCategories)
+}
+
+export async function getButacasCategories() {
+  return fromBundle((b) => b.butacasCategories)
 }
 
 export async function getAccesoriosCategories() {
@@ -146,12 +158,20 @@ const SERVICE_PAGE_KEYS = {
   banquetas: 'banquetas',
   butacas: 'butacas',
   accesorios: 'accesorios',
+  'proteccion-cabina': 'proteccionCabina',
+  'cambio-pisos': 'cambioPisos',
+  reclinaciones: 'reclinaciones',
+  fundas: 'fundas',
+  literas: 'literas',
+  tapiceria: 'tapiceria',
 }
 
 function legacyTabsForPage(pageKey, bundle) {
-  if (pageKey === 'ventanas-lunetas') return bundle.ventanasBrands ?? []
+  if (pageKey === 'equipamiento-escolar') return bundle.equipamientoMarcaTabs ?? []
   if (pageKey === 'banquetas') return bundle.banquetasCategories ?? []
+  if (pageKey === 'butacas') return bundle.butacasCategories ?? []
   if (pageKey === 'accesorios') return bundle.accesoriosCategories ?? []
+  if (pageKey === 'tapiceria') return bundle.tapiceriaCategories ?? []
   return []
 }
 
@@ -173,6 +193,7 @@ export async function getServicePageDisplay(pageKey) {
     return {
       content: {},
       heroImage: null,
+      showcaseImages: [],
       portfolioProjects: [],
       portfolioSource: 'none',
       tabs: [],

@@ -35,7 +35,10 @@ export const BLOCK_TYPE_LABELS = {
   ctaBlock: 'Banner CTA',
   faqBlock: 'Preguntas frecuentes',
   featuresBlock: 'Características',
+  featureGridBlock: 'Grilla de características',
   richTextBlock: 'Texto enriquecido',
+  showcaseCarouselBlock: 'Carrusel destacado',
+  brandCarouselBlock: 'Marcas que confían',
   mapBlock: 'Mapa',
   seoBlock: 'SEO y metadatos',
 }

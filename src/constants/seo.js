@@ -61,6 +61,56 @@ export const PAGE_SEO = {
     keywords:
       'accesorios conversión vehicular, baliza amarilla 12V, distintivo escolar',
   },
+  'proteccion-cabina': {
+    path: '/proteccion-cabina',
+    title: 'Protección de cabina para vehículos',
+    description:
+      'Protección interior de cabina para furgones y utilitarios. Revestimientos resistentes y terminaciones profesionales en Santiago — Utilcar.',
+    keywords: 'protección cabina furgón, revestimiento cabina utilitario Santiago',
+  },
+  'cambio-pisos': {
+    path: '/cambio-pisos',
+    title: 'Cambio de pisos para vehículos comerciales',
+    description:
+      'Instalación y renovación de pisos técnicos en minibuses, furgones y vehículos especiales. Utilcar Conversiones, Santiago.',
+    keywords: 'cambio piso minibús, piso técnico furgón Santiago',
+  },
+  reclinaciones: {
+    path: '/reclinaciones',
+    title: 'Reclinaciones para butacas y banquetas',
+    description:
+      'Instalación de mecanismos reclinables en butacas y banquetas para transporte ejecutivo y turismo. Utilcar, Santiago.',
+    keywords: 'reclinación butacas, mecanismo reclinable transporte Santiago',
+  },
+  fundas: {
+    path: '/fundas',
+    title: 'Fundas para asientos de vehículos',
+    description:
+      'Fundas a medida para butacas y banquetas. Protección, uniformidad de flota y fácil mantenimiento — Utilcar Santiago.',
+    keywords: 'fundas asientos vehículo, fundas butacas Santiago',
+  },
+  literas: {
+    path: '/literas',
+    title: 'Literas para vehículos comerciales',
+    description:
+      'Fabricación e instalación de literas para furgones y vehículos especiales. Estructura reforzada y anclajes seguros — Utilcar.',
+    keywords: 'literas vehículo comercial, literas furgón Santiago',
+  },
+  tapiceria: {
+    path: '/tapiceria',
+    title: 'Tapicería vehicular',
+    description:
+      'Cambio de tapiz, reparación y personalización interior para vehículos comerciales. Tapicería profesional en Santiago — Utilcar.',
+    keywords: 'tapicería vehicular Santiago, cambio tapiz butacas furgón',
+  },
+  'sobre-nosotros': {
+    path: '/sobre-nosotros',
+    title: 'Sobre Nosotros — Utilcar Conversiones',
+    description:
+      'Conozca Utilcar Conversiones: más de dos décadas en conversiones automotrices, equipamiento escolar, talleres móviles y fabricación a medida en Santiago.',
+    keywords:
+      'Utilcar Conversiones, sobre nosotros, conversiones automotrices Santiago, taller Quinta Normal',
+  },
   'trabajos-realizados': {
     path: '/trabajos-realizados',
     title: 'Trabajos realizados y portfolio',

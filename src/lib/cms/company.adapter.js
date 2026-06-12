@@ -1,12 +1,22 @@
 import { isSanityEnabled } from '@/lib/cms/config'
 import { loadCached } from '@/lib/cms/adapterCache'
-import { buildCompanyInfo, buildCompanyInfoFromSite } from '@/lib/cms/resolvers/companyResolver'
+import {
+  buildCompanyInfo,
+  buildCompanyInfoFromSite,
+  resolveContactFormEmail,
+} from '@/lib/cms/resolvers/companyResolver'
+import { ENV } from '@/constants/env'
 import { fetchSiteSettings } from '@/lib/sanity/fetch'
 
 const CACHE_KEY = 'cms:company-info'
 
+let cachedLocalCompanyInfo
+
 export function getLocalCompanyInfo() {
-  return buildCompanyInfoFromSite()
+  if (!cachedLocalCompanyInfo) {
+    cachedLocalCompanyInfo = buildCompanyInfoFromSite()
+  }
+  return cachedLocalCompanyInfo
 }
 
 export async function getCompanyInfo() {
@@ -21,5 +31,18 @@ export async function getCompanyInfo() {
     })
   } catch {
     return getLocalCompanyInfo()
+  }
+}
+
+export async function getContactFormEmail() {
+  if (!isSanityEnabled()) {
+    return ENV.contactEmail
+  }
+
+  try {
+    const settings = await fetchSiteSettings().catch(() => null)
+    return resolveContactFormEmail(settings)
+  } catch {
+    return ENV.contactEmail
   }
 }

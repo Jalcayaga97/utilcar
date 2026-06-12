@@ -3,9 +3,10 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { fileURLToPath, URL } from 'node:url'
 import { webpAssetsPlugin } from './vite/plugins/webpAssets.js'
+import { contactApiPlugin } from './vite/plugins/contactApi.js'
 
 export default defineConfig({
-  plugins: [react(), tailwindcss(), webpAssetsPlugin()],
+  plugins: [react(), tailwindcss(), webpAssetsPlugin(), contactApiPlugin()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

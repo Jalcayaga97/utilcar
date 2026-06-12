@@ -1,0 +1,707 @@
+{
+  "generatedAt": "2026-06-10T22:36:32.777Z",
+  "summary": {
+    "total": 36,
+    "processedThisRun": 23,
+    "skippedThisRun": 13,
+    "at1920x1080": 36,
+    "pendingAfterRun": 0
+  },
+  "cmsUpload": {
+    "executedAt": "2026-06-10T22:38:02.324Z",
+    "homeShowcase": true,
+    "serviceShowcases": true,
+    "aboutHero": true,
+    "targets": [
+      "homePage.showcaseCarouselBlock (5 imgs)",
+      "serviceSubPage.showcaseCarouselBlock × 12 (5 imgs c/u)",
+      "aboutPage.heroBlock.image"
+    ]
+  },
+  "items": [
+    {
+      "archivo": "src/assets/images/talleres/tr143.jpg",
+      "status": "skipped",
+      "imagen": "Furgón comercial blanco — vista lateral",
+      "plataforma": "Unsplash",
+      "tema": "talleres-moviles",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "595.7 KB",
+      "pesoWebp": "420.9 KB",
+      "pesoRasterBytes": 609949,
+      "pesoWebpBytes": 431046,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\talleres\\tr143.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\talleres\\tr143.webp",
+      "ubicacionCms": [
+        "homePage.showcaseCarouselBlock[4]",
+        "serviceSubPage.talleres-moviles.showcase[0]",
+        "serviceSubPage.proteccion-cabina.showcase[2]",
+        "aboutPage.heroBlock (fallback local)"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/talleres/tr247.jpg",
+      "status": "skipped",
+      "imagen": "Taller mecánico — trabajo en vehículo",
+      "plataforma": "Pexels",
+      "tema": "talleres-moviles",
+      "credito": "Andrea Piacquadio / Pexels",
+      "resolucion": "1920x1080",
+      "pesoRaster": "156.1 KB",
+      "pesoWebp": "53.1 KB",
+      "pesoRasterBytes": 159824,
+      "pesoWebpBytes": 54388,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\talleres\\tr247.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\talleres\\tr247.webp",
+      "ubicacionCms": [
+        "serviceSubPage.talleres-moviles.showcase[1]",
+        "serviceSubPage.literas.showcase[3]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/talleres/tr11.jpg",
+      "status": "skipped",
+      "imagen": "Furgón utilitario — puerta corrediza",
+      "plataforma": "Unsplash",
+      "tema": "ventanas-lunetas",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "681.6 KB",
+      "pesoWebp": "494.8 KB",
+      "pesoRasterBytes": 697955,
+      "pesoWebpBytes": 506632,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\talleres\\tr11.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\talleres\\tr11.webp",
+      "ubicacionCms": [
+        "homePage.showcaseCarouselBlock[3]",
+        "serviceSubPage.talleres-moviles.showcase[2]",
+        "serviceSubPage.proteccion-cabina.showcase[3]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/talleres/tr12.jpg",
+      "status": "skipped",
+      "imagen": "Furgón eléctrico moderno",
+      "plataforma": "Unsplash",
+      "tema": "talleres-moviles",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "313.9 KB",
+      "pesoWebp": "131.7 KB",
+      "pesoRasterBytes": 321461,
+      "pesoWebpBytes": 134860,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\talleres\\tr12.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\talleres\\tr12.webp",
+      "ubicacionCms": [
+        "serviceSubPage.talleres-moviles.showcase[3]",
+        "serviceSubPage.cambio-pisos.showcase[3]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/talleres/tr9.jpg",
+      "status": "skipped",
+      "imagen": "Furgón blanco en entorno urbano",
+      "plataforma": "Unsplash",
+      "tema": "talleres-moviles",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "250.7 KB",
+      "pesoWebp": "89.2 KB",
+      "pesoRasterBytes": 256747,
+      "pesoWebpBytes": 91304,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\talleres\\tr9.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\talleres\\tr9.webp",
+      "ubicacionCms": [
+        "serviceSubPage.talleres-moviles.showcase[4]",
+        "serviceSubPage.literas.showcase[2]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/ventanas/vent1.jpg",
+      "status": "skipped",
+      "imagen": "Furgón comercial blanco — vista lateral",
+      "plataforma": "Unsplash",
+      "tema": "talleres-moviles",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "595.7 KB",
+      "pesoWebp": "420.9 KB",
+      "pesoRasterBytes": 609949,
+      "pesoWebpBytes": 431046,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\ventanas\\vent1.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\ventanas\\vent1.webp",
+      "ubicacionCms": [
+        "homePage.showcaseCarouselBlock[2]",
+        "serviceSubPage.ventanas-lunetas.showcase[0]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/ventanas/vent2.jpg",
+      "status": "skipped",
+      "imagen": "Furgón utilitario — puerta corrediza",
+      "plataforma": "Unsplash",
+      "tema": "ventanas-lunetas",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "681.6 KB",
+      "pesoWebp": "495.1 KB",
+      "pesoRasterBytes": 698008,
+      "pesoWebpBytes": 507000,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\ventanas\\vent2.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\ventanas\\vent2.webp",
+      "ubicacionCms": [
+        "serviceSubPage.ventanas-lunetas.showcase[1]",
+        "serviceSubPage.proteccion-cabina.showcase[4]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/ventanas/vent3.jpg",
+      "status": "skipped",
+      "imagen": "Furgón blanco en entorno urbano",
+      "plataforma": "Unsplash",
+      "tema": "talleres-moviles",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "250.7 KB",
+      "pesoWebp": "89.2 KB",
+      "pesoRasterBytes": 256747,
+      "pesoWebpBytes": 91304,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\ventanas\\vent3.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\ventanas\\vent3.webp",
+      "ubicacionCms": [
+        "serviceSubPage.ventanas-lunetas.showcase[2]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/ventanas/marcas/toyota/toyota.jpg",
+      "status": "skipped",
+      "imagen": "Furgón comercial blanco — vista lateral",
+      "plataforma": "Unsplash",
+      "tema": "talleres-moviles",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "596.1 KB",
+      "pesoWebp": "421.6 KB",
+      "pesoRasterBytes": 610457,
+      "pesoWebpBytes": 431740,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\ventanas\\marcas\\toyota\\toyota.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\ventanas\\marcas\\toyota\\toyota.webp",
+      "ubicacionCms": [
+        "serviceSubPage.ventanas-lunetas.showcase[3]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/ventanas/marcas/chevrolet/chev1.jpg",
+      "status": "skipped",
+      "imagen": "Furgón eléctrico moderno",
+      "plataforma": "Unsplash",
+      "tema": "talleres-moviles",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "338.6 KB",
+      "pesoWebp": "152.8 KB",
+      "pesoRasterBytes": 346694,
+      "pesoWebpBytes": 156482,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\ventanas\\marcas\\chevrolet\\chev1.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\ventanas\\marcas\\chevrolet\\chev1.webp",
+      "ubicacionCms": [
+        "serviceSubPage.ventanas-lunetas.showcase[4]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/escolar/ee350.jpg",
+      "status": "skipped",
+      "imagen": "Interior bus escolar — vista frontal",
+      "plataforma": "Unsplash",
+      "tema": "equipamiento-escolar",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "157.3 KB",
+      "pesoWebp": "49.1 KB",
+      "pesoRasterBytes": 161098,
+      "pesoWebpBytes": 50268,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\escolar\\ee350.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\escolar\\ee350.webp",
+      "ubicacionCms": [
+        "serviceSubPage.equipamiento-escolar.showcase[0]",
+        "serviceSubPage.cambio-pisos.showcase[2]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/escolar/ee351.jfif",
+      "status": "skipped",
+      "imagen": "Asientos vacíos — transporte pasajeros",
+      "plataforma": "Unsplash",
+      "tema": "banquetas",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "342.4 KB",
+      "pesoWebp": "144.7 KB",
+      "pesoRasterBytes": 350648,
+      "pesoWebpBytes": 148222,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\escolar\\ee351.jfif",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\escolar\\ee351.webp",
+      "ubicacionCms": [
+        "serviceSubPage.equipamiento-escolar.showcase[1]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/escolar/ee352.jpg",
+      "status": "skipped",
+      "imagen": "Interior bus moderno y luminoso",
+      "plataforma": "Pexels",
+      "tema": "transporte-pasajeros",
+      "credito": "Thanh Long Bùi / Pexels",
+      "resolucion": "1920x1080",
+      "pesoRaster": "237.0 KB",
+      "pesoWebp": "87.1 KB",
+      "pesoRasterBytes": 242699,
+      "pesoWebpBytes": 89152,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\escolar\\ee352.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\escolar\\ee352.webp",
+      "ubicacionCms": [
+        "serviceSubPage.equipamiento-escolar.showcase[2]"
+      ]
+    },
+    {
+      "archivo": "public/imagenes/conversiones buses ecolares/escolar01.jpg",
+      "status": "processed",
+      "imagen": "Bus escolar amarillo en ruta",
+      "plataforma": "Unsplash",
+      "tema": "conversiones",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "387.7 KB",
+      "pesoWebp": "198.9 KB",
+      "pesoRasterBytes": 396980,
+      "pesoWebpBytes": 203646,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\public\\imagenes\\conversiones buses ecolares\\escolar01.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\public\\imagenes\\conversiones buses ecolares\\escolar01.webp",
+      "ubicacionCms": [
+        "serviceSubPage.equipamiento-escolar.showcase[3]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/accesorios/distintivo-escolar/esc.jpg",
+      "status": "processed",
+      "imagen": "Bus escolar frente a edificio",
+      "plataforma": "Unsplash",
+      "tema": "equipamiento-escolar",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "444.8 KB",
+      "pesoWebp": "275.8 KB",
+      "pesoRasterBytes": 455494,
+      "pesoWebpBytes": 282426,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\accesorios\\distintivo-escolar\\esc.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\accesorios\\distintivo-escolar\\esc.webp",
+      "ubicacionCms": [
+        "serviceSubPage.equipamiento-escolar.showcase[4]",
+        "serviceSubPage.accesorios.showcase[3]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/banquetas/escolares/banq_esc.jpg",
+      "status": "processed",
+      "imagen": "Asientos vacíos — transporte pasajeros",
+      "plataforma": "Unsplash",
+      "tema": "banquetas",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "332.2 KB",
+      "pesoWebp": "139.3 KB",
+      "pesoRasterBytes": 340138,
+      "pesoWebpBytes": 142644,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\banquetas\\escolares\\banq_esc.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\banquetas\\escolares\\banq_esc.webp",
+      "ubicacionCms": [
+        "homePage.showcaseCarouselBlock[0]",
+        "serviceSubPage.banquetas.showcase[0]",
+        "serviceSubPage.fundas.showcase[0]",
+        "serviceSubPage.tapiceria.showcase[3]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/banquetas/escolares/banq_esc1.jpg",
+      "status": "processed",
+      "imagen": "Interior bus escolar — vista frontal",
+      "plataforma": "Unsplash",
+      "tema": "equipamiento-escolar",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "63.6 KB",
+      "pesoWebp": "14.1 KB",
+      "pesoRasterBytes": 65095,
+      "pesoWebpBytes": 14406,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\banquetas\\escolares\\banq_esc1.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\banquetas\\escolares\\banq_esc1.webp",
+      "ubicacionCms": [
+        "serviceSubPage.banquetas.showcase[1]",
+        "serviceSubPage.fundas.showcase[1]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/banquetas/escolares/banq_esc2.jpg",
+      "status": "processed",
+      "imagen": "Interior bus moderno y luminoso",
+      "plataforma": "Pexels",
+      "tema": "transporte-pasajeros",
+      "credito": "Thanh Long Bùi / Pexels",
+      "resolucion": "1920x1080",
+      "pesoRaster": "252.0 KB",
+      "pesoWebp": "94.1 KB",
+      "pesoRasterBytes": 258062,
+      "pesoWebpBytes": 96350,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\banquetas\\escolares\\banq_esc2.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\banquetas\\escolares\\banq_esc2.webp",
+      "ubicacionCms": [
+        "serviceSubPage.cambio-pisos.showcase[0]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/banquetas/traslado/banq_tras_pers.jpg",
+      "status": "processed",
+      "imagen": "Filas de asientos en bus",
+      "plataforma": "Unsplash",
+      "tema": "butacas",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "162.8 KB",
+      "pesoWebp": "46.3 KB",
+      "pesoRasterBytes": 166735,
+      "pesoWebpBytes": 47448,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\banquetas\\traslado\\banq_tras_pers.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\banquetas\\traslado\\banq_tras_pers.webp",
+      "ubicacionCms": [
+        "serviceSubPage.banquetas.showcase[2]",
+        "serviceSubPage.literas.showcase[0]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/banquetas/traslado/banq_tras_pers2.jpg",
+      "status": "processed",
+      "imagen": "Asientos vacíos — transporte pasajeros",
+      "plataforma": "Unsplash",
+      "tema": "banquetas",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "342.4 KB",
+      "pesoWebp": "144.7 KB",
+      "pesoRasterBytes": 350648,
+      "pesoWebpBytes": 148222,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\banquetas\\traslado\\banq_tras_pers2.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\banquetas\\traslado\\banq_tras_pers2.webp",
+      "ubicacionCms": [
+        "serviceSubPage.banquetas.showcase[3]",
+        "serviceSubPage.literas.showcase[1]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/banquetas/traslado/banq_tras_pers3.jpg",
+      "status": "processed",
+      "imagen": "Interior bus moderno y luminoso",
+      "plataforma": "Pexels",
+      "tema": "transporte-pasajeros",
+      "credito": "Thanh Long Bùi / Pexels",
+      "resolucion": "1920x1080",
+      "pesoRaster": "252.0 KB",
+      "pesoWebp": "94.1 KB",
+      "pesoRasterBytes": 258062,
+      "pesoWebpBytes": 96350,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\banquetas\\traslado\\banq_tras_pers3.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\banquetas\\traslado\\banq_tras_pers3.webp",
+      "ubicacionCms": [
+        "serviceSubPage.butacas.showcase[4]",
+        "serviceSubPage.cambio-pisos.showcase[1]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/banquetas/adultos/IMG_0118.jfif",
+      "status": "processed",
+      "imagen": "Asiento cuero negro — detalle tapicería",
+      "plataforma": "Unsplash",
+      "tema": "tapiceria",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "224.9 KB",
+      "pesoWebp": "92.8 KB",
+      "pesoRasterBytes": 230273,
+      "pesoWebpBytes": 95000,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\banquetas\\adultos\\IMG_0118.jfif",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\banquetas\\adultos\\IMG_0118.webp",
+      "ubicacionCms": [
+        "serviceSubPage.banquetas.showcase[4]",
+        "serviceSubPage.reclinaciones.showcase[3]",
+        "serviceSubPage.tapiceria.showcase[4]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/banquetas/adultos/IMG_0120.jfif",
+      "status": "processed",
+      "imagen": "Interior automotriz — cuero y costuras",
+      "plataforma": "Unsplash",
+      "tema": "tapiceria",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "268.5 KB",
+      "pesoWebp": "116.4 KB",
+      "pesoRasterBytes": 274908,
+      "pesoWebpBytes": 119218,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\banquetas\\adultos\\IMG_0120.jfif",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\banquetas\\adultos\\IMG_0120.webp",
+      "ubicacionCms": [
+        "serviceSubPage.butacas.showcase[3]",
+        "serviceSubPage.reclinaciones.showcase[4]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/butacas/IMG_0148.jfif",
+      "status": "processed",
+      "imagen": "Asiento cuero negro — detalle tapicería",
+      "plataforma": "Unsplash",
+      "tema": "tapiceria",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "228.0 KB",
+      "pesoWebp": "92.3 KB",
+      "pesoRasterBytes": 233450,
+      "pesoWebpBytes": 94466,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\butacas\\IMG_0148.jfif",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\butacas\\IMG_0148.webp",
+      "ubicacionCms": [
+        "homePage.showcaseCarouselBlock[1]",
+        "serviceSubPage.butacas.showcase[0]",
+        "serviceSubPage.proteccion-cabina.showcase[0]",
+        "serviceSubPage.reclinaciones.showcase[0]",
+        "serviceSubPage.fundas.showcase[2]",
+        "serviceSubPage.tapiceria.showcase[0]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/butacas/IMG_0149.jfif",
+      "status": "processed",
+      "imagen": "Interior automotriz — cuero y costuras",
+      "plataforma": "Unsplash",
+      "tema": "tapiceria",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "268.5 KB",
+      "pesoWebp": "116.4 KB",
+      "pesoRasterBytes": 274908,
+      "pesoWebpBytes": 119218,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\butacas\\IMG_0149.jfif",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\butacas\\IMG_0149.webp",
+      "ubicacionCms": [
+        "serviceSubPage.butacas.showcase[1]",
+        "serviceSubPage.proteccion-cabina.showcase[1]",
+        "serviceSubPage.reclinaciones.showcase[1]",
+        "serviceSubPage.fundas.showcase[3]",
+        "serviceSubPage.tapiceria.showcase[1]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/butacas/IMG_0150.jfif",
+      "status": "processed",
+      "imagen": "Filas de asientos en bus",
+      "plataforma": "Unsplash",
+      "tema": "butacas",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "168.4 KB",
+      "pesoWebp": "41.4 KB",
+      "pesoRasterBytes": 172457,
+      "pesoWebpBytes": 42408,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\butacas\\IMG_0150.jfif",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\butacas\\IMG_0150.webp",
+      "ubicacionCms": [
+        "serviceSubPage.butacas.showcase[2]",
+        "serviceSubPage.reclinaciones.showcase[2]",
+        "serviceSubPage.literas.showcase[4]",
+        "serviceSubPage.tapiceria.showcase[2]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/accesorios/cabeceras/cabeceras.jpg",
+      "status": "processed",
+      "imagen": "Asiento cuero negro — detalle tapicería",
+      "plataforma": "Unsplash",
+      "tema": "tapiceria",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "228.0 KB",
+      "pesoWebp": "92.3 KB",
+      "pesoRasterBytes": 233450,
+      "pesoWebpBytes": 94466,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\accesorios\\cabeceras\\cabeceras.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\accesorios\\cabeceras\\cabeceras.webp",
+      "ubicacionCms": [
+        "serviceSubPage.accesorios.showcase[0]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/accesorios/apoya-brazos/apoya_brazos.jpg",
+      "status": "processed",
+      "imagen": "Interior automotriz — cuero y costuras",
+      "plataforma": "Unsplash",
+      "tema": "tapiceria",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "268.5 KB",
+      "pesoWebp": "116.4 KB",
+      "pesoRasterBytes": 274908,
+      "pesoWebpBytes": 119218,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\accesorios\\apoya-brazos\\apoya_brazos.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\accesorios\\apoya-brazos\\apoya_brazos.webp",
+      "ubicacionCms": [
+        "serviceSubPage.accesorios.showcase[1]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/accesorios/balizas/baliza.jpg",
+      "status": "processed",
+      "imagen": "Bus escolar amarillo en ruta",
+      "plataforma": "Unsplash",
+      "tema": "conversiones",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "387.7 KB",
+      "pesoWebp": "198.9 KB",
+      "pesoRasterBytes": 396980,
+      "pesoWebpBytes": 203646,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\accesorios\\balizas\\baliza.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\accesorios\\balizas\\baliza.webp",
+      "ubicacionCms": [
+        "serviceSubPage.accesorios.showcase[2]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/services/accesorios.jpg",
+      "status": "processed",
+      "imagen": "Furgón blanco en entorno urbano",
+      "plataforma": "Unsplash",
+      "tema": "talleres-moviles",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "250.7 KB",
+      "pesoWebp": "89.2 KB",
+      "pesoRasterBytes": 256747,
+      "pesoWebpBytes": 91304,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\services\\accesorios.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\services\\accesorios.webp",
+      "ubicacionCms": [
+        "serviceSubPage.accesorios.showcase[4]",
+        "homePage.servicesBlock card"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/services/banquetas.jpg",
+      "status": "processed",
+      "imagen": "Asientos vacíos — transporte pasajeros",
+      "plataforma": "Unsplash",
+      "tema": "banquetas",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "342.4 KB",
+      "pesoWebp": "144.7 KB",
+      "pesoRasterBytes": 350648,
+      "pesoWebpBytes": 148222,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\services\\banquetas.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\services\\banquetas.webp",
+      "ubicacionCms": [
+        "serviceSubPage.cambio-pisos.showcase[4]",
+        "serviceSubPage.fundas.showcase[4]"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/hero.jpg",
+      "status": "processed",
+      "imagen": "Bus escolar en calle urbana",
+      "plataforma": "Unsplash",
+      "tema": "conversiones",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "368.3 KB",
+      "pesoWebp": "167.5 KB",
+      "pesoRasterBytes": 377113,
+      "pesoWebpBytes": 171500,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\hero.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\hero.webp",
+      "ubicacionCms": [
+        "homePage.heroBlock (fallback local)"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/services/talleres.jpg",
+      "status": "processed",
+      "imagen": "Furgón comercial blanco — vista lateral",
+      "plataforma": "Unsplash",
+      "tema": "talleres-moviles",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "595.7 KB",
+      "pesoWebp": "420.9 KB",
+      "pesoRasterBytes": 609949,
+      "pesoWebpBytes": 431046,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\services\\talleres.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\services\\talleres.webp",
+      "ubicacionCms": [
+        "homePage.servicesBlock card"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/services/ventanas.jpg",
+      "status": "processed",
+      "imagen": "Furgón utilitario — puerta corrediza",
+      "plataforma": "Unsplash",
+      "tema": "ventanas-lunetas",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "681.6 KB",
+      "pesoWebp": "494.8 KB",
+      "pesoRasterBytes": 697955,
+      "pesoWebpBytes": 506632,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\services\\ventanas.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\services\\ventanas.webp",
+      "ubicacionCms": [
+        "homePage.servicesBlock card"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/services/escolar.jpg",
+      "status": "processed",
+      "imagen": "Bus escolar amarillo en ruta",
+      "plataforma": "Unsplash",
+      "tema": "conversiones",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "387.7 KB",
+      "pesoWebp": "198.9 KB",
+      "pesoRasterBytes": 396980,
+      "pesoWebpBytes": 203646,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\services\\escolar.jpg",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\services\\escolar.webp",
+      "ubicacionCms": [
+        "homePage.servicesBlock card"
+      ]
+    },
+    {
+      "archivo": "src/assets/images/services/butacas.jfif",
+      "status": "processed",
+      "imagen": "Asiento cuero negro — detalle tapicería",
+      "plataforma": "Unsplash",
+      "tema": "tapiceria",
+      "credito": "Unsplash License",
+      "resolucion": "1920x1080",
+      "pesoRaster": "224.9 KB",
+      "pesoWebp": "92.8 KB",
+      "pesoRasterBytes": 230273,
+      "pesoWebpBytes": 95000,
+      "ubicacionLocal": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\services\\butacas.jfif",
+      "ubicacionWebp": "C:\\Users\\julio\\utilcarNew\\utilcar-web\\src\\assets\\images\\services\\butacas.webp",
+      "ubicacionCms": [
+        "homePage.servicesBlock card"
+      ]
+    }
+  ]
+}

@@ -13,7 +13,7 @@ function buildLocalBusinessSchema(company) {
 
   const sameAs = [
     company.whatsappUrl,
-    ...company.socialLinks.map((link) => link.url),
+    ...(company.socialLinks ?? []).map((link) => link?.url).filter(Boolean),
   ].filter(Boolean)
 
   return {
@@ -24,7 +24,7 @@ function buildLocalBusinessSchema(company) {
     description: SITE.description,
     url: SITE.url,
     image: SITE.ogImage,
-    telephone: company.phoneTel.replace(/^tel:/, ''),
+    telephone: (company.phoneTel ?? '').replace(/^tel:/, ''),
     email: company.primaryEmail,
     address: {
       '@type': 'PostalAddress',
@@ -35,8 +35,8 @@ function buildLocalBusinessSchema(company) {
     },
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: company.geo.latitude,
-      longitude: company.geo.longitude,
+      latitude: company.geo?.latitude,
+      longitude: company.geo?.longitude,
     },
     openingHoursSpecification,
     areaServed: {
@@ -51,7 +51,7 @@ function buildLocalBusinessSchema(company) {
     contactPoint: [
       {
         '@type': 'ContactPoint',
-        telephone: company.phoneTel.replace(/^tel:/, ''),
+        telephone: (company.phoneTel ?? '').replace(/^tel:/, ''),
         contactType: 'customer service',
         areaServed: 'CL',
         availableLanguage: ['Spanish'],

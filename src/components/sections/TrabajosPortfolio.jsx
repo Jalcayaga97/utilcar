@@ -106,7 +106,10 @@ const PortfolioCard = memo(function PortfolioCard({ item, index, onOpen }) {
 })
 
 export function TrabajosPortfolio() {
-  const { filters, portfolio, ui } = useWorkContent()
+  const workContent = useWorkContent() ?? {}
+  const filters = workContent.filters ?? []
+  const portfolio = workContent.portfolio ?? []
+  const ui = workContent.ui ?? {}
   const pageSize = ui.pageSize ?? 9
   const [searchParams] = useSearchParams()
 
@@ -159,7 +162,7 @@ export function TrabajosPortfolio() {
       <div
         className="hidden border-b border-border lg:flex lg:flex-wrap lg:gap-1"
         role="tablist"
-        aria-label={ui.filterAriaLabel}
+        aria-label={ui.filterAriaLabel ?? 'Filtrar trabajos'}
       >
         {filters.map((filter) => (
           <FilterTabDesktop
@@ -174,7 +177,7 @@ export function TrabajosPortfolio() {
       <div
         className="flex snap-x snap-mandatory gap-2 overflow-x-auto rounded-card border border-border bg-surface p-1.5 [-ms-overflow-style:none] [scrollbar-width:none] lg:hidden [&::-webkit-scrollbar]:hidden"
         role="tablist"
-        aria-label={ui.filterAriaLabel}
+        aria-label={ui.filterAriaLabel ?? 'Filtrar trabajos'}
       >
         {filters.map((filter) => (
           <FilterTabMobile
@@ -189,7 +192,7 @@ export function TrabajosPortfolio() {
       <div className="mt-10" role="tabpanel">
         {filtered.length === 0 ? (
           <p className="py-12 text-center text-sm text-ink-muted">
-            {ui.emptyMessage}
+            {ui.emptyMessage ?? 'No hay trabajos para este filtro.'}
           </p>
         ) : (
           <>
@@ -207,7 +210,7 @@ export function TrabajosPortfolio() {
             {hasMore && (
               <div className="mt-10 flex justify-center">
                 <Button type="button" variant="secondary" onClick={loadMore}>
-                  {ui.loadMoreLabel}
+                  {ui.loadMoreLabel ?? 'Ver más'}
                 </Button>
               </div>
             )}

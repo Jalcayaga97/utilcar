@@ -20,8 +20,8 @@ export function resolveHeroMirror(block) {
   const mirror = heroContractToLegacyMirror(hero)
   logResolverDomain('hero', {
     resolved: Boolean(mirror?.title),
-    hasHighlights: Boolean(mirror?.highlights?.length),
-    hasCmsImage: Boolean(hero?.image?.url),
+    hasPrimaryImage: Boolean(hero?.primaryImage?.url),
+    hasSecondaryImage: Boolean(hero?.secondaryImage?.url),
   })
   return mirror
 }
@@ -37,7 +37,8 @@ export function buildHeroSection(block) {
     extension: 'heroSection',
     valid,
     warningCount: warnings.length,
-    hasCmsImage: Boolean(hero.image?.url),
+    hasPrimaryImage: Boolean(hero.primaryImage?.url),
+    hasSecondaryImage: Boolean(hero.secondaryImage?.url),
   })
 
   if (warnings.length > 0) {
@@ -58,11 +59,11 @@ export function getActiveHeroSection(extensions) {
 
   return {
     title: section.title ?? '',
-    subtitle: section.subtitle ?? '',
     eyebrow: section.eyebrow ?? '',
-    highlights: section.highlights ?? [],
     textLink: section.textLink ?? { label: '', to: '/trabajos-realizados', ariaLabel: '' },
-    image: section.image ?? { url: null, alt: '' },
+    primaryImage: section.primaryImage ?? section.image ?? { url: null, alt: '' },
+    secondaryImage: section.secondaryImage ?? { url: null, alt: '' },
+    image: section.primaryImage ?? section.image ?? { url: null, alt: '' },
   }
 }
 

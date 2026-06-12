@@ -20,6 +20,18 @@ export const SERVICE_PORTFOLIO_PAGE_KEYS = [
 
   'accesorios',
 
+  'proteccion-cabina',
+
+  'cambio-pisos',
+
+  'reclinaciones',
+
+  'fundas',
+
+  'literas',
+
+  'tapiceria',
+
 ]
 
 

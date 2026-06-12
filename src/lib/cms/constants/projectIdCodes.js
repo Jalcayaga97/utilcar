@@ -6,10 +6,16 @@ export const PROJECT_ID_PREFIX_BY_CATEGORY = {
   banquetas: 'BQ',
   butacas: 'BT',
   accesorios: 'AC',
+  'proteccion-cabina': 'PC',
+  'cambio-pisos': 'CP',
+  reclinaciones: 'RL',
+  fundas: 'FD',
+  literas: 'LT',
+  tapiceria: 'TP',
 }
 
 /** Formato: TM-001, VL-010, etc. */
-export const PROJECT_ID_REGEX = /^(TM|VL|EE|BQ|BT|AC)-(\d{3})$/
+export const PROJECT_ID_REGEX = /^(TM|VL|EE|BQ|BT|AC|PC|CP|RL|FD|LT|TP)-(\d{3})$/
 
 export const PROJECT_ID_FORMAT_HINT =
   'Formato obligatorio: TM-001, VL-010, BQ-006 (prefijo en mayúsculas + guión + 3 dígitos).'

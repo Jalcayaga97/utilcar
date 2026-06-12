@@ -2,3 +2,4 @@ export { HomeContentSchema, EspecialidadesSchema, HomeBundleSchema } from './hom
 export { ServicesBundleSchema } from './services.schema'
 export { WorkContentSchema, WorkBundleSchema } from './work.schema'
 export { ContactContentSchema } from './contact.schema'
+export { AboutContentSchema } from './about.schema'

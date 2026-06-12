@@ -1,10 +1,15 @@
-import { findBlock } from './blockUtils'
+import { findBlock, orderedBlocks } from './blockUtils'
 import { logResolverDomain } from './resolverLog'
 
 export const BLOCK_TYPE = 'mapBlock'
 
 export function findMapBlock(blocks) {
   return findBlock(blocks, BLOCK_TYPE)
+}
+
+/** Incluye bloques con enabled=false (necesario para ocultar editorialmente sin fallback). */
+export function findMapBlockRaw(blocks) {
+  return orderedBlocks(blocks).find((b) => b?._type === BLOCK_TYPE) ?? null
 }
 
 export function buildMapSection(block) {

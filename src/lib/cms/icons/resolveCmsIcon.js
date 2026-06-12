@@ -1,10 +1,16 @@
 import {
   Award,
+  BedDouble,
   Bus,
   CheckCircle,
   GraduationCap,
+  Layers,
   LayoutGrid,
+  RotateCcw,
+  Scissors,
   Settings,
+  Shield,
+  Shirt,
   Sofa,
   Star,
   Truck,
@@ -32,6 +38,15 @@ const CMS_ICON_MAP = {
   banquetas: Sofa,
   layoutgrid: LayoutGrid,
   butacas: LayoutGrid,
+  shield: Shield,
+  layers: Layers,
+  'rotate-ccw': RotateCcw,
+  rotateccw: RotateCcw,
+  shirt: Shirt,
+  'bed-double': BedDouble,
+  beddouble: BedDouble,
+  scissors: Scissors,
+  tapiceria: Scissors,
 }
 
 /**

@@ -8,6 +8,9 @@ export { galleryBlock } from './galleryBlock.js'
 export { ctaBlock } from './ctaBlock.js'
 export { faqBlock } from './faqBlock.js'
 export { featuresBlock } from './featuresBlock.js'
+export { featureGridBlock } from './featureGridBlock.js'
+export { showcaseCarouselBlock } from './showcaseCarouselBlock.js'
+export { brandCarouselBlock } from './brandCarouselBlock.js'
 export { richTextBlock } from './richTextBlock.js'
 export { mapBlock } from './mapBlock.js'
 export { seoBlock } from './seoBlock.js'
@@ -16,6 +19,8 @@ export { pageBlockTypes, pageBlocksField, workPageBlockTypes, workPageBlocksFiel
 
 export const homePageBlockTypes = [
   'heroBlock',
+  'showcaseCarouselBlock',
+  'brandCarouselBlock',
   'specialtiesBlock',
   'servicesBlock',
   'whyUsBlock',

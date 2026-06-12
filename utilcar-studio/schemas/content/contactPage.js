@@ -10,6 +10,17 @@ const formFieldType = {
   ],
 }
 
+const contactDetailsCardFields = [
+  {
+    name: 'enabled',
+    title: 'Visible',
+    type: 'boolean',
+    initialValue: true,
+    description: 'Oculta esta card solo en la página Contacto.',
+  },
+  { name: 'title', title: 'Título de la card', type: 'string' },
+]
+
 export const contactPage = {
   name: 'contactPage',
   title: 'Página de contacto',
@@ -31,7 +42,6 @@ export const contactPage = {
             { name: 'empresa', ...formFieldType },
             { name: 'mail', ...formFieldType },
             { name: 'telefono', ...formFieldType },
-            { name: 'fax', ...formFieldType },
             { name: 'servicio', ...formFieldType },
             { name: 'consulta', ...formFieldType },
           ],
@@ -57,11 +67,46 @@ export const contactPage = {
       ],
     },
     {
-      name: 'servicios',
-      title: 'Opciones formulario — servicio',
-      type: 'array',
-      of: [{ type: 'string' }],
-      validation: (Rule) => Rule.min(1),
+      name: 'details',
+      title: 'Datos de contacto (sección lateral)',
+      type: 'object',
+      description:
+        'Títulos y visibilidad de las cards. Teléfono, correos, dirección y horarios se editan en Configuración del sitio.',
+      fields: [
+        { name: 'title', title: 'Título de sección', type: 'string' },
+        { name: 'description', title: 'Descripción', type: 'text', rows: 2 },
+        {
+          name: 'cards',
+          title: 'Cards',
+          type: 'object',
+          fields: [
+            {
+              name: 'phone',
+              title: 'Teléfono',
+              type: 'object',
+              fields: contactDetailsCardFields,
+            },
+            {
+              name: 'email',
+              title: 'Correos',
+              type: 'object',
+              fields: contactDetailsCardFields,
+            },
+            {
+              name: 'address',
+              title: 'Dirección',
+              type: 'object',
+              fields: contactDetailsCardFields,
+            },
+            {
+              name: 'hours',
+              title: 'Horario',
+              type: 'object',
+              fields: contactDetailsCardFields,
+            },
+          ],
+        },
+      ],
     },
   ],
 }

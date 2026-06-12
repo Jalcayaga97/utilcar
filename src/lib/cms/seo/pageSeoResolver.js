@@ -1,5 +1,8 @@
 import { getPageSeo } from '@/constants/seo'
-import { mergePageSeo } from '@/lib/cms/contracts/seoBlockContract'
+import {
+  enrichSeoSectionForRuntime,
+  mergePageSeo,
+} from '@/lib/cms/contracts/seoBlockContract'
 import { getActiveSeoSection } from '@/lib/cms/resolvers/seoBlockResolver'
 
 /**
@@ -7,7 +10,10 @@ import { getActiveSeoSection } from '@/lib/cms/resolvers/seoBlockResolver'
  */
 export function resolvePageSeoConfig(pageKey, extensions) {
   const base = getPageSeo(pageKey) ?? {}
-  const cmsSeo = getActiveSeoSection(extensions)
+  const cmsSeo = enrichSeoSectionForRuntime(
+    getActiveSeoSection(extensions),
+    extensions?.heroSection,
+  )
   if (!cmsSeo) return base
   return mergePageSeo(base, cmsSeo)
 }

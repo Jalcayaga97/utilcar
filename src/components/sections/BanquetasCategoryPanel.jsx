@@ -16,7 +16,7 @@ function SpecBlock({ title, items }) {
         {title}
       </h4>
       <ul className="mt-4 space-y-2.5">
-        {items.map((item) => (
+        {(items ?? []).map((item) => (
           <li key={item} className="flex gap-3 text-sm leading-relaxed text-ink-muted">
             <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-surface">
               <Check className="h-3 w-3 text-ink" strokeWidth={2} />
@@ -36,25 +36,36 @@ function ExtraBlock({ extra }) {
         {extra.title}
       </h4>
       <p className="mt-4 text-sm leading-relaxed text-ink-muted">{extra.lead}</p>
-      <p className="mt-3 text-sm font-medium text-ink">{extra.brands.join(' · ')}</p>
+      <p className="mt-3 text-sm font-medium text-ink">{(extra.brands ?? []).join(' · ')}</p>
       <p className="mt-3 text-sm leading-relaxed text-ink-muted">{extra.closing}</p>
     </div>
   )
 }
 
-function resolveTabGallery(category, useCmsGallery) {
+function resolveTabGallery(category, useCmsGallery, resolveCategoryGallery) {
   if (useCmsGallery) {
-    return (category.gallery ?? []).map((item, index) => ({
-      src: item.src,
-      alt: item.alt || category.name,
-      id: item.id || `${category.id}-${index}`,
-    }))
+    const fromCms = (category.gallery ?? [])
+      .map((item, index) => ({
+        src: item.src,
+        alt: item.alt || category.name,
+        id: item.id || `${category.id}-${index}`,
+      }))
+      .filter((item) => item.src)
+    if (fromCms.length) return fromCms
   }
-  return getBanquetasCategoryGallery(category.id)
+  return resolveCategoryGallery(category.id)
 }
 
-function CategoryContent({ category, useCmsGallery }) {
-  const gallery = resolveTabGallery(category, useCmsGallery)
+function resolveCategoryIntro(category) {
+  const intro = (category?.intro ?? []).map((p) => String(p).trim()).filter(Boolean)
+  if (intro.length) return intro
+  const description = String(category?.description ?? '').trim()
+  return description ? [description] : []
+}
+
+function CategoryContent({ category, useCmsGallery, resolveCategoryGallery }) {
+  const gallery = resolveTabGallery(category, useCmsGallery, resolveCategoryGallery)
+  const introParagraphs = resolveCategoryIntro(category)
 
   return (
     <motion.div
@@ -66,7 +77,7 @@ function CategoryContent({ category, useCmsGallery }) {
       className="space-y-8"
     >
       <div className="mx-auto max-w-3xl">
-        {category.intro.map((paragraph) => (
+        {introParagraphs.map((paragraph) => (
           <p
             key={paragraph}
             className="text-base leading-relaxed text-ink-muted sm:text-lg"
@@ -94,8 +105,8 @@ function CategoryContent({ category, useCmsGallery }) {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          {category.sections.map((block) => (
-            <SpecBlock key={block.title} title={block.title} items={block.items} />
+          {(category.sections ?? []).map((block) => (
+            <SpecBlock key={block.title} title={block.title} items={block.items ?? []} />
           ))}
         </div>
       </div>
@@ -107,7 +118,7 @@ function CategoryContent({ category, useCmsGallery }) {
   )
 }
 
-function CategoryTabDesktop({ category, isActive, onSelect }) {
+function CategoryTabDesktop({ category, isActive, onSelect, tabIndicatorId }) {
   return (
     <button
       type="button"
@@ -123,7 +134,7 @@ function CategoryTabDesktop({ category, isActive, onSelect }) {
       {category.name}
       {isActive && (
         <motion.span
-          layoutId="banquetas-tab-indicator"
+          layoutId={tabIndicatorId}
           className="absolute bottom-0 left-0 right-0 h-0.5 bg-ink"
           transition={{ duration: 0.25, ease }}
         />
@@ -152,17 +163,22 @@ function CategoryTabMobile({ category, isActive, onSelect }) {
   )
 }
 
-export function BanquetasCategoryPanel({ tabs: tabsProp, cmsFirst = false }) {
+export function BanquetasCategoryPanel({
+  tabs: tabsProp,
+  cmsFirst = false,
+  resolveCategoryGallery = getBanquetasCategoryGallery,
+  ariaLabel = 'Líneas de banquetas',
+  tabIndicatorId = 'banquetas-tab-indicator',
+}) {
   const legacyCategories = useBanquetasCategories()
   const useCmsGallery = cmsFirst || USE_SERVICES_V2
-  const banquetasCategories = useCmsGallery
+  const categories = useCmsGallery
     ? (tabsProp ?? [])
     : tabsProp?.length
       ? tabsProp
       : legacyCategories
-  const [activeId, setActiveId] = useState(() => banquetasCategories[0]?.id)
-  const active =
-    banquetasCategories.find((c) => c.id === activeId) ?? banquetasCategories[0]
+  const [activeId, setActiveId] = useState(() => categories[0]?.id)
+  const active = categories.find((c) => c.id === activeId) ?? categories[0]
 
   return (
     <div>
@@ -170,14 +186,15 @@ export function BanquetasCategoryPanel({ tabs: tabsProp, cmsFirst = false }) {
       <div
         className="hidden border-b border-border lg:flex lg:gap-1"
         role="tablist"
-        aria-label="Líneas de banquetas"
+        aria-label={ariaLabel}
       >
-        {banquetasCategories.map((category) => (
+        {categories.map((category) => (
           <CategoryTabDesktop
             key={category.id}
             category={category}
             isActive={activeId === category.id}
             onSelect={setActiveId}
+            tabIndicatorId={tabIndicatorId}
           />
         ))}
       </div>
@@ -186,9 +203,9 @@ export function BanquetasCategoryPanel({ tabs: tabsProp, cmsFirst = false }) {
       <div
         className="flex snap-x snap-mandatory gap-2 overflow-x-auto rounded-card border border-border bg-surface p-1.5 [-ms-overflow-style:none] [scrollbar-width:none] lg:hidden [&::-webkit-scrollbar]:hidden"
         role="tablist"
-        aria-label="Líneas de banquetas"
+        aria-label={ariaLabel}
       >
-        {banquetasCategories.map((category) => (
+        {categories.map((category) => (
           <CategoryTabMobile
             key={category.id}
             category={category}
@@ -200,7 +217,11 @@ export function BanquetasCategoryPanel({ tabs: tabsProp, cmsFirst = false }) {
 
       <div className="mt-10" role="tabpanel">
         <AnimatePresence mode="wait">
-          <CategoryContent category={active} useCmsGallery={useCmsGallery} />
+          <CategoryContent
+            category={active}
+            useCmsGallery={useCmsGallery}
+            resolveCategoryGallery={resolveCategoryGallery}
+          />
         </AnimatePresence>
       </div>
     </div>

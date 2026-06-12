@@ -4,7 +4,7 @@ import { ChevronDown, Check } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { getVentanasMarcaGallery } from '@/assets/images'
 import { BrandImageGallery } from '@/components/ui/BrandImageGallery'
-import { useVentanasBrands } from '@/hooks/useCms'
+import { useEquipamientoMarcaTabs } from '@/hooks/useCms'
 import { USE_SERVICES_V2 } from '@/lib/cms/config'
 import { tabGalleryToDisplayImages } from '@/lib/cms/contracts/serviceTabContract'
 
@@ -17,7 +17,7 @@ function SpecBlock({ title, items }) {
         {title}
       </h4>
       <ul className="mt-4 space-y-2.5">
-        {items.map((item) => (
+        {(items ?? []).map((item) => (
           <li key={item} className="flex gap-3 text-sm leading-relaxed text-ink-muted">
             <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-surface">
               <Check className="h-3 w-3 text-ink" strokeWidth={2} />
@@ -47,6 +47,8 @@ function resolveTabGallery(brand, useCmsGallery, cmsFirst) {
 }
 
 function BrandContent({ brand, useCmsGallery, cmsFirst }) {
+  if (!brand) return null
+
   const gallery = resolveTabGallery(brand, useCmsGallery, cmsFirst)
 
   return (
@@ -102,8 +104,8 @@ function BrandContent({ brand, useCmsGallery, cmsFirst }) {
             </p>
           </div>
         )}
-        {brand.sections.map((section) => (
-          <SpecBlock key={section.title} title={section.title} items={section.items} />
+        {(brand.sections ?? []).map((section) => (
+          <SpecBlock key={section.title} title={section.title} items={section.items ?? []} />
         ))}
       </div>
     </motion.div>
@@ -111,15 +113,15 @@ function BrandContent({ brand, useCmsGallery, cmsFirst }) {
 }
 
 export function BrandEquipmentPanel({ tabs: tabsProp, cmsFirst = false }) {
-  const legacyBrands = useVentanasBrands()
+  const legacyBrands = useEquipamientoMarcaTabs()
   const useCmsGallery = cmsFirst || USE_SERVICES_V2
-  const ventanasBrands = useCmsGallery
+  const brandTabs = useCmsGallery
     ? (tabsProp ?? [])
     : tabsProp?.length
       ? tabsProp
       : legacyBrands
-  const [activeId, setActiveId] = useState(() => ventanasBrands[0]?.id)
-  const active = ventanasBrands.find((b) => b.id === activeId) ?? ventanasBrands[0]
+  const [activeId, setActiveId] = useState(() => brandTabs[0]?.id)
+  const active = brandTabs.find((b) => b.id === activeId) ?? brandTabs[0]
 
   return (
     <div>
@@ -129,7 +131,7 @@ export function BrandEquipmentPanel({ tabs: tabsProp, cmsFirst = false }) {
         role="tablist"
         aria-label="Marcas de vehículos"
       >
-        {ventanasBrands.map((brand) => {
+        {brandTabs.map((brand) => {
           const isActive = activeId === brand.id
           return (
             <button
@@ -159,7 +161,7 @@ export function BrandEquipmentPanel({ tabs: tabsProp, cmsFirst = false }) {
 
       {/* Acordeón mobile */}
       <div className="space-y-2 lg:hidden" role="tablist" aria-label="Marcas de vehículos">
-        {ventanasBrands.map((brand) => {
+        {brandTabs.map((brand) => {
           const isOpen = activeId === brand.id
           return (
             <div

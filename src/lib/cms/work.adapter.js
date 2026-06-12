@@ -1,4 +1,4 @@
-import { isSanityEnabled } from '@/lib/cms/config'
+import { isSanityEnabled, isWorkCmsActive } from '@/lib/cms/config'
 import { loadCached } from '@/lib/cms/adapterCache'
 import { getValidatedLocalWorkBundle } from '@/lib/cms/localContent'
 import { normalizeWorkProjectList } from '@/lib/cms/contracts/workProjectContract'
@@ -76,17 +76,17 @@ function localWorkPageDisplay() {
     heroImage: bundle.trabajosPageHero,
     seo: null,
     source: 'legacy',
+    isLoading: false,
   }
 }
 
 export async function getWorkPageDisplay() {
-  const local = getValidatedLocalWorkBundle()
-
-  if (!isSanityEnabled()) {
+  if (!isWorkCmsActive()) {
     return localWorkPageDisplay()
   }
 
   try {
+    const local = getValidatedLocalWorkBundle()
     const [remote, globalCtaRaw, workProjectsRaw] = await Promise.all([
       fetchWorkPage(),
       fetchSiteSettings().catch(() => null),
@@ -95,20 +95,11 @@ export async function getWorkPageDisplay() {
 
     const workProjects = normalizeWorkProjectList(workProjectsRaw ?? [])
     const globalCta = buildGlobalServiceCta(globalCtaRaw)
-    const legacyBundle = local
 
-    const resolved = remote
-      ? {
-          extensions: remote.extensions ?? {},
-          ui: remote.ui,
-          _pageSource: remote._pageSource,
-        }
-      : { extensions: {} }
-
-    const mapped = mapWorkPageRuntime(legacyBundle, resolved, { workProjects, globalCta })
+    const mapped = mapWorkPageRuntime(local, remote ?? {}, { workProjects, globalCta })
 
     if (mapped._workSource !== 'cms') {
-      return localWorkPageDisplay()
+      return null
     }
 
     return {
@@ -116,8 +107,9 @@ export async function getWorkPageDisplay() {
       heroImage: mapped.trabajosPageHero,
       seo: mapped.seo ?? null,
       source: 'cms',
+      isLoading: false,
     }
   } catch {
-    return localWorkPageDisplay()
+    return null
   }
 }

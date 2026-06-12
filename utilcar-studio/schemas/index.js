@@ -18,7 +18,6 @@ import {
 } from './content/blocks/items/index.js'
 import { brand } from './content/brand.js'
 import {
-  homePage,
   heroBlock,
   specialtiesBlock,
   servicesBlock,
@@ -32,12 +31,19 @@ import {
   richTextBlock,
   mapBlock,
   seoBlock,
-} from './content/homePage.js'
+} from './content/blocks/index.js'
+import { homePage } from './content/homePage.js'
 import { pageBlock } from './legacy/objects/pageBlock.js'
 import { especialidadItem } from './legacy/objects/especialidadItem.js'
 import { servicesPage } from './legacy/pages/servicesPage.js'
 import { workPage } from './legacy/pages/workPage.js'
 import { contactPage } from './content/contactPage.js'
+import { aboutPage } from './content/aboutPage.js'
+import { featureGridBlock } from './content/blocks/featureGridBlock.js'
+import { showcaseCarouselBlock } from './content/blocks/showcaseCarouselBlock.js'
+import { showcaseCarouselBlockItem } from './content/blocks/items/showcaseCarouselBlockItem.js'
+import { brandCarouselBlockItem } from './content/blocks/items/brandCarouselBlockItem.js'
+import { brandCarouselBlock } from './content/blocks/brandCarouselBlock.js'
 import { serviceSubPage, serviceTab } from './content/serviceSubPage.js'
 import { workProject } from './content/workProject.js'
 import { siteSettings, serviceCtaObject, companyObject } from './content/siteSettings.js'
@@ -59,6 +65,8 @@ export const schemaTypes = [
   whyUsBlockItem,
   portfolioBlockItem,
   featuredProjectRef,
+  showcaseCarouselBlockItem,
+  brandCarouselBlockItem,
   heroBlock,
   specialtiesBlock,
   servicesBlock,
@@ -69,6 +77,9 @@ export const schemaTypes = [
   ctaBlock,
   faqBlock,
   featuresBlock,
+  featureGridBlock,
+  showcaseCarouselBlock,
+  brandCarouselBlock,
   richTextBlock,
   mapBlock,
   seoBlock,
@@ -84,4 +95,5 @@ export const schemaTypes = [
   servicesPage,
   workPage,
   contactPage,
+  aboutPage,
 ]

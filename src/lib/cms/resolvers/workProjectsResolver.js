@@ -1,8 +1,6 @@
 import { isSanityEnabled } from '@/lib/cms/config'
-import {
-  SERVICE_CATEGORY_KEYS,
-  labelForServiceCategory,
-} from '@/lib/cms/constants/serviceCategories'
+import { SERVICE_CATEGORY_KEYS } from '@/lib/cms/constants/serviceCategories'
+import { buildWorkCategoryFilters } from '@/lib/services/serviceCatalog'
 import {
   normalizeWorkProject,
   normalizeWorkProjectList,
@@ -13,27 +11,12 @@ import { logServicePortfolioAudit } from '@/lib/cms/servicePageAuditLog'
 import { SERVICE_PORTFOLIO_DEFAULT_TITLE } from '@/constants/servicePortfolio'
 
 /**
- * Filtros dinámicos para Trabajos — solo categorías con al menos un proyecto visible.
- * @param {object[]} projects
+ * Filtros Trabajos — siempre las 12 categorías (orden Navbar); tabs vacíos muestran empty state.
+ * @param {object[]} _projects
  * @param {object[]} [legacyFilters]
  */
-export function buildWorkFiltersFromProjects(projects, legacyFilters = []) {
-  const visible = normalizeWorkProjectList(projects)
-  const legacyAll = legacyFilters.find((f) => f.id === 'all') ?? { id: 'all', label: 'Todos' }
-  const filters = [legacyAll]
-
-  for (const key of SERVICE_CATEGORY_KEYS) {
-    const count = visible.filter((p) => p.categoryId === key).length
-    if (!count) continue
-    const legacy = legacyFilters.find((f) => f.id === key)
-    filters.push({
-      id: key,
-      label: legacy?.label ?? labelForServiceCategory(key),
-      order: filters.length,
-    })
-  }
-
-  return filters
+export function buildWorkFiltersFromProjects(_projects, legacyFilters = []) {
+  return buildWorkCategoryFilters(legacyFilters)
 }
 
 /**

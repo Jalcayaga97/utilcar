@@ -77,6 +77,9 @@ function extensionKeyForBlock(blockType) {
     mapBlock: 'mapSection',
     seoBlock: 'seoSection',
     richTextBlock: 'richTextSection',
+    featureGridBlock: 'featureGridSection',
+    showcaseCarouselBlock: 'showcaseCarouselSection',
+    brandCarouselBlock: 'brandCarouselSection',
   }
   return map[blockType] ?? null
 }

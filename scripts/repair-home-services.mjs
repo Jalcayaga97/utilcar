@@ -12,6 +12,7 @@ import {
   homeContent,
   publishHomePage,
 } from './lib/homeRepairShared.mjs'
+import { EXPECTED_SERVICE_COUNT } from './lib/serviceCatalogManifest.mjs'
 
 const dryRun = process.argv.includes('--dry') || process.argv.includes('--verify')
 
@@ -40,12 +41,12 @@ if (idx < 0) {
 const current = blocks[idx].items ?? []
 const validCount = current.filter((i) => i?.title && i?.description).length
 
-if (validCount >= 6) {
+if (validCount >= EXPECTED_SERVICE_COUNT) {
   console.info(`✓ servicesBlock.items ya tiene ${validCount} servicios — sin cambios`)
   process.exit(0)
 }
 
-console.info(`  Estado actual: ${validCount}/6 servicios`)
+console.info(`  Estado actual: ${validCount}/${EXPECTED_SERVICE_COUNT} servicios`)
 const cardLinkLabel = blocks[idx].cardLinkLabel ?? homeContent.services?.cardLinkLabel
 const items = await buildServiceItems(uploadImage, cardLinkLabel)
 blocks[idx] = { ...blocks[idx], items }

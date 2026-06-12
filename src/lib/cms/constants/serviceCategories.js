@@ -6,6 +6,12 @@ export const SERVICE_CATEGORY_KEYS = [
   'banquetas',
   'butacas',
   'accesorios',
+  'proteccion-cabina',
+  'cambio-pisos',
+  'reclinaciones',
+  'fundas',
+  'literas',
+  'tapiceria',
 ]
 
 export const SERVICE_CATEGORY_LABELS = {
@@ -15,6 +21,12 @@ export const SERVICE_CATEGORY_LABELS = {
   banquetas: 'Banquetas',
   butacas: 'Butacas',
   accesorios: 'Accesorios',
+  'proteccion-cabina': 'Protección de cabina',
+  'cambio-pisos': 'Cambio de pisos',
+  reclinaciones: 'Reclinaciones',
+  fundas: 'Fundas',
+  literas: 'Literas',
+  tapiceria: 'Tapicería',
 }
 
 export function isValidServiceCategory(value) {

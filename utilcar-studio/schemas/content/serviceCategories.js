@@ -6,4 +6,10 @@ export const SERVICE_CATEGORY_OPTIONS = [
   { title: 'Banquetas', value: 'banquetas' },
   { title: 'Butacas', value: 'butacas' },
   { title: 'Accesorios', value: 'accesorios' },
+  { title: 'Protección de cabina', value: 'proteccion-cabina' },
+  { title: 'Cambio de pisos', value: 'cambio-pisos' },
+  { title: 'Reclinaciones', value: 'reclinaciones' },
+  { title: 'Fundas', value: 'fundas' },
+  { title: 'Literas', value: 'literas' },
+  { title: 'Tapicería', value: 'tapiceria' },
 ]

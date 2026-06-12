@@ -20,14 +20,22 @@ export {
   TALLERES_SOLUCIONES,
   TALLERES_CARACTERISTICAS,
   VENTANAS_INTRO,
-  VENTANAS_BRANDS,
+  EQUIPAMIENTO_MARCA_TABS,
   ESCOLAR_INTRO,
   ESCOLAR_SECTIONS,
   BANQUETAS_CATEGORIES,
+  BUTACAS_CATEGORIES,
   BUTACAS_INTRO,
   BUTACAS_SECTIONS,
   ACCESORIOS_PAGE_INTRO,
   ACCESORIOS_CATEGORIES,
+  TAPICERIA_CATEGORIES,
+  proteccionCabinaContent,
+  cambioPisosContent,
+  reclinacionesContent,
+  fundasContent,
+  literasContent,
+  tapiceriaContent,
 } from './services'
 export {
   workContent,
@@ -37,4 +45,5 @@ export {
   TRABAJOS_FILTERS,
   TRABAJOS_PORTFOLIO,
 } from './work'
-export { contactContent, CONTACTO_SERVICIOS, CONTACTO_FAQ } from './contact'
+export { contactContent, CONTACTO_FAQ } from './contact'
+export { buildContactFormServiceOptions as CONTACTO_SERVICIOS } from '@/lib/services/serviceCatalog'

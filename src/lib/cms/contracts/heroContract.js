@@ -19,6 +19,8 @@ export function createEmptyHero(overrides = {}) {
     highlights: [],
     textLink: { ...DEFAULT_TEXT_LINK },
     image: { ...DEFAULT_IMAGE },
+    primaryImage: { ...DEFAULT_IMAGE },
+    secondaryImage: { ...DEFAULT_IMAGE },
     ...overrides,
   }
 }
@@ -73,13 +75,21 @@ function normalizeHeroImage(imageField, imageAltFallback) {
 export function normalizeHero(block) {
   if (!block) return createEmptyHero()
 
+  const primaryImage = normalizeHeroImage(
+    block.primaryImage ?? block.image,
+    block.primaryImageAlt ?? block.imageAlt,
+  )
+  const secondaryImage = normalizeHeroImage(block.secondaryImage, block.secondaryImageAlt)
+
   return createEmptyHero({
     eyebrow: sanitizeString(block.eyebrow),
     title: sanitizeString(block.title),
     subtitle: sanitizeString(block.subtitle),
     highlights: normalizeHighlights(block.highlights),
     textLink: normalizeTextLink(pickTextLinkRaw(block), '/trabajos-realizados'),
-    image: normalizeHeroImage(block.image, block.imageAlt),
+    image: primaryImage,
+    primaryImage,
+    secondaryImage,
   })
 }
 
@@ -109,12 +119,12 @@ export function validateHero(hero) {
     })
   }
 
-  if (!hero?.image?.url) {
+  if (!hero?.primaryImage?.url && !hero?.image?.url) {
     warnings.push({
       type: 'missing-image',
       block: 'heroBlock',
-      field: 'image',
-      message: 'missing image',
+      field: 'primaryImage',
+      message: 'missing primary image',
     })
   }
 
@@ -159,13 +169,15 @@ export function heroContractToLegacyMirror(hero) {
   if (!hero) return undefined
   return {
     title: hero.title,
-    subtitle: hero.subtitle,
-    highlights: hero.highlights,
+    subtitle: '',
+    highlights: [],
     secondaryLink: {
       label: hero.textLink.label,
       to: hero.textLink.to,
       ariaLabel: hero.textLink.ariaLabel,
     },
-    imageAlt: hero.image.alt,
+    imageAlt: hero.primaryImage?.alt || hero.image?.alt,
+    primaryImageAlt: hero.primaryImage?.alt,
+    secondaryImageAlt: hero.secondaryImage?.alt,
   }
 }

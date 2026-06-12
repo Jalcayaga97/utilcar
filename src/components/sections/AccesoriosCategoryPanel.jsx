@@ -16,7 +16,7 @@ function SpecBlock({ title, items }) {
         {title}
       </h4>
       <ul className="mt-4 space-y-2.5">
-        {items.map((item) => (
+        {(items ?? []).map((item) => (
           <li key={item} className="flex gap-3 text-sm leading-relaxed text-ink-muted">
             <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-border bg-surface">
               <Check className="h-3 w-3 text-ink" strokeWidth={2} />
@@ -41,6 +41,8 @@ function resolveTabGallery(category, useCmsGallery) {
 }
 
 function CategoryContent({ category, useCmsGallery }) {
+  if (!category) return null
+
   const gallery = resolveTabGallery(category, useCmsGallery)
 
   return (
@@ -53,7 +55,7 @@ function CategoryContent({ category, useCmsGallery }) {
       className="space-y-8"
     >
       <div className="mx-auto max-w-3xl space-y-4">
-        {category.intro.map((paragraph) => (
+        {(category.intro ?? []).map((paragraph) => (
           <p
             key={paragraph}
             className="text-base leading-relaxed text-ink-muted sm:text-lg"
@@ -81,8 +83,8 @@ function CategoryContent({ category, useCmsGallery }) {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          {category.sections.map((block) => (
-            <SpecBlock key={block.title} title={block.title} items={block.items} />
+          {(category.sections ?? []).map((block) => (
+            <SpecBlock key={block.title} title={block.title} items={block.items ?? []} />
           ))}
         </div>
       </div>

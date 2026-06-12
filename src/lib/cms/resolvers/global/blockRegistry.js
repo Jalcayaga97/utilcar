@@ -12,6 +12,9 @@ import * as featuresBlockResolver from '@/lib/cms/resolvers/featuresBlockResolve
 import * as mapBlockResolver from '@/lib/cms/resolvers/mapBlockResolver'
 import * as seoBlockResolver from '@/lib/cms/resolvers/seoBlockResolver'
 import * as richTextBlockResolver from '@/lib/cms/resolvers/richTextBlockResolver'
+import * as featureGridBlockResolver from '@/lib/cms/resolvers/featureGridBlockResolver'
+import * as showcaseCarouselBlockResolver from '@/lib/cms/resolvers/showcaseCarouselBlockResolver'
+import * as brandCarouselBlockResolver from '@/lib/cms/resolvers/brandCarouselBlockResolver'
 
 /** @typedef {{ type: string, find: (blocks: object[]) => object | undefined, build: (block: object) => object | null, collectWarnings?: (blocks: object[]) => string[] }} BlockHandler */
 
@@ -87,6 +90,24 @@ export const BLOCK_HANDLERS = {
     find: richTextBlockResolver.findRichTextBlock,
     build: richTextBlockResolver.buildRichTextSection,
     collectWarnings: richTextBlockResolver.collectRichTextWarnings,
+  },
+  featureGridBlock: {
+    type: 'featureGridBlock',
+    find: featureGridBlockResolver.findFeatureGridBlock,
+    build: featureGridBlockResolver.buildFeatureGridSection,
+    collectWarnings: featureGridBlockResolver.collectFeatureGridWarnings,
+  },
+  showcaseCarouselBlock: {
+    type: 'showcaseCarouselBlock',
+    find: showcaseCarouselBlockResolver.findShowcaseCarouselBlock,
+    build: showcaseCarouselBlockResolver.buildShowcaseCarouselSection,
+    collectWarnings: showcaseCarouselBlockResolver.collectShowcaseCarouselWarnings,
+  },
+  brandCarouselBlock: {
+    type: 'brandCarouselBlock',
+    find: brandCarouselBlockResolver.findBrandCarouselBlock,
+    build: brandCarouselBlockResolver.buildBrandCarouselSection,
+    collectWarnings: brandCarouselBlockResolver.collectBrandCarouselWarnings,
   },
 }
 

@@ -1,5 +1,5 @@
 /**
- * Migra contenido local → Sanity serviceSubPage (6 páginas).
+ * Migra contenido local → Sanity serviceSubPage (12 páginas).
  *
  * Uso (desde utilcar-web):
  *   npm run migrate:services:verify   # checklist previo (sin escribir)
@@ -14,6 +14,10 @@ import { createReadStream, existsSync, mkdirSync, statSync } from 'node:fs'
 import { basename, dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { loadSanityEnv } from '../src/lib/sanity/runtime/loadSanityEnv.js'
+import {
+  GALLERY_COVERAGE_CATALOG,
+  galleryFilesForTab,
+} from './lib/galleryCoverageCatalog.mjs'
 import { runSanityDatasetExport } from '../src/lib/sanity/runtime/runSanityDatasetExport.js'
 import {
   talleresMovilesContent,
@@ -22,9 +26,17 @@ import {
   banquetasContent,
   butacasContent,
   accesoriosContent,
-  VENTANAS_BRANDS,
+  EQUIPAMIENTO_MARCA_TABS,
+  BUTACAS_CATEGORIES,
   BANQUETAS_CATEGORIES,
   ACCESORIOS_CATEGORIES,
+  TAPICERIA_CATEGORIES,
+  proteccionCabinaContent,
+  cambioPisosContent,
+  reclinacionesContent,
+  fundasContent,
+  literasContent,
+  tapiceriaContent,
   serviceCtaDefaults,
 } from '../src/content/services.js'
 import { SCHEMA_VERSION_VALUE } from '../utilcar-studio/schemas/content/fields/schemaVersion.js'
@@ -48,8 +60,11 @@ const EXPECTED_DOC_IDS = EXPECTED_PAGE_KEYS.map(serviceSubPageDocumentId)
 /** tabs.length esperado tras migrar */
 const EXPECTED_TAB_COUNTS = {
   'ventanas-lunetas': 7,
+  'equipamiento-escolar': 14,
   banquetas: 3,
+  butacas: 2,
   accesorios: 4,
+  tapiceria: 3,
 }
 
 const PAGE_SEO = {
@@ -89,6 +104,42 @@ const PAGE_SEO = {
     description:
       'Cabeceras, apoya brazos, balizas y distintivo escolar para vans y buses. Accesorios de confort, seguridad y señalización — Utilcar Santiago.',
   },
+  'proteccion-cabina': {
+    canonicalPath: '/proteccion-cabina',
+    title: 'Protección de cabina para vehículos',
+    description:
+      'Protección interior de cabina para furgones y utilitarios. Revestimientos resistentes y terminaciones profesionales en Santiago — Utilcar.',
+  },
+  'cambio-pisos': {
+    canonicalPath: '/cambio-pisos',
+    title: 'Cambio de pisos para vehículos comerciales',
+    description:
+      'Instalación y renovación de pisos técnicos en minibuses, furgones y vehículos especiales. Utilcar Conversiones, Santiago.',
+  },
+  reclinaciones: {
+    canonicalPath: '/reclinaciones',
+    title: 'Reclinaciones para butacas y banquetas',
+    description:
+      'Instalación de mecanismos reclinables en butacas y banquetas para transporte ejecutivo y turismo. Utilcar, Santiago.',
+  },
+  fundas: {
+    canonicalPath: '/fundas',
+    title: 'Fundas para asientos de vehículos',
+    description:
+      'Fundas a medida para butacas y banquetas. Protección, uniformidad de flota y fácil mantenimiento — Utilcar Santiago.',
+  },
+  literas: {
+    canonicalPath: '/literas',
+    title: 'Literas para vehículos comerciales',
+    description:
+      'Fabricación e instalación de literas para furgones y vehículos especiales. Estructura reforzada y anclajes seguros — Utilcar.',
+  },
+  tapiceria: {
+    canonicalPath: '/tapiceria',
+    title: 'Tapicería vehicular',
+    description:
+      'Cambio de tapiz, reparación y personalización interior para vehículos comerciales. Tapicería profesional en Santiago — Utilcar.',
+  },
 }
 
 const HERO_IMAGE_FILES = {
@@ -98,6 +149,12 @@ const HERO_IMAGE_FILES = {
   banquetas: 'src/assets/images/services/banquetas.jpg',
   butacas: 'src/assets/images/butacas/IMG_0148.jfif',
   accesorios: 'src/assets/images/accesorios/cabeceras/cabeceras.jpg',
+  'proteccion-cabina': 'src/assets/images/butacas/IMG_0148.jfif',
+  'cambio-pisos': 'src/assets/images/services/banquetas.jpg',
+  reclinaciones: 'src/assets/images/butacas/IMG_0149.jfif',
+  fundas: 'src/assets/images/services/banquetas.jpg',
+  literas: 'src/assets/images/services/banquetas.jpg',
+  tapiceria: 'src/assets/images/butacas/IMG_0150.jfif',
 }
 
 const PORTFOLIO_PLACEHOLDERS = {
@@ -159,6 +216,12 @@ const PAGE_GALLERY_FILES = {
 }
 
 const TAB_GALLERY_FILES = {
+  'equipamiento-escolar': Object.fromEntries(
+    Object.keys(GALLERY_COVERAGE_CATALOG['equipamiento-escolar'] ?? {}).map((tabId) => [
+      tabId,
+      galleryFilesForTab('equipamiento-escolar', tabId),
+    ]),
+  ),
   ventanas: {
     toyota: [{ file: 'src/assets/images/ventanas/marcas/toyota/toyota.jpg', alt: 'Ventanas Toyota' }],
     peugeot: [{ file: 'src/assets/images/ventanas/marcas/peugeot/peugeot.jfif', alt: 'Ventanas Peugeot' }],
@@ -176,19 +239,46 @@ const TAB_GALLERY_FILES = {
     ],
   },
   banquetas: {
-    adultos: [
-      { file: 'src/assets/images/banquetas/adultos/IMG_0118.jfif', alt: 'Banquetas adultos' },
-      { file: 'src/assets/images/banquetas/adultos/IMG_0120.jfif', alt: 'Banquetas adultos terminación' },
-    ],
-    traslado: [
-      { file: 'src/assets/images/banquetas/traslado/banq_tras_pers.jpg', alt: 'Banquetas traslado personal' },
-      { file: 'src/assets/images/banquetas/traslado/banq_tras_pers2.jpg', alt: 'Banquetas traslado personal interior' },
-      { file: 'src/assets/images/banquetas/traslado/banq_tras_pers3.jpg', alt: 'Banquetas traslado personal detalle' },
-    ],
     escolares: [
       { file: 'src/assets/images/banquetas/escolares/banq_esc.jpg', alt: 'Banquetas escolares' },
       { file: 'src/assets/images/banquetas/escolares/banq_esc1.jpg', alt: 'Banquetas escolares instalación' },
       { file: 'src/assets/images/banquetas/escolares/banq_esc2.jpg', alt: 'Banquetas escolares detalle' },
+    ],
+    furgones: [
+      { file: 'src/assets/images/banquetas/traslado/banq_tras_pers.jpg', alt: 'Banquetas para furgones' },
+      { file: 'src/assets/images/banquetas/traslado/banq_tras_pers2.jpg', alt: 'Banquetas para furgones interior' },
+      { file: 'src/assets/images/banquetas/traslado/banq_tras_pers3.jpg', alt: 'Banquetas para furgones detalle' },
+    ],
+    camiones: [
+      { file: 'src/assets/images/banquetas/adultos/IMG_0118.jfif', alt: 'Banquetas para camiones' },
+      { file: 'src/assets/images/banquetas/adultos/IMG_0120.jfif', alt: 'Banquetas para camiones terminación' },
+    ],
+  },
+  butacas: {
+    camiones: [
+      { file: 'src/assets/images/butacas/IMG_0148.jfif', alt: 'Butacas para camiones — tapizado Utilcar' },
+      { file: 'src/assets/images/butacas/IMG_0149.jfif', alt: 'Butacas para camiones — detalle costuras' },
+    ],
+    furgones: [
+      { file: 'src/assets/images/butacas/IMG_0150.jfif', alt: 'Butacas para furgones — estructura y confort' },
+      { file: 'src/assets/images/butacas/IMG_0148.jfif', alt: 'Butacas para furgones — fabricación a medida' },
+    ],
+  },
+  tapiceria: {
+    'cambio-tapiz': [
+      { file: 'src/assets/images/butacas/IMG_0148.jfif', alt: 'Cambio de tapiz — butaca renovada Utilcar' },
+      { file: 'src/assets/images/butacas/IMG_0149.jfif', alt: 'Cambio de tapiz — detalle costuras reforzadas' },
+      { file: 'src/assets/images/butacas/IMG_0150.jfif', alt: 'Cambio de tapiz — terminación profesional' },
+    ],
+    'reparacion-tapiceria': [
+      { file: 'src/assets/images/banquetas/escolares/banq_esc.jpg', alt: 'Reparación de tapicería — banquetas escolares' },
+      { file: 'src/assets/images/banquetas/escolares/banq_esc1.jpg', alt: 'Reparación de tapicería — costuras restauradas' },
+      { file: 'src/assets/images/banquetas/traslado/banq_tras_pers.jpg', alt: 'Reparación de tapicería — asientos de traslado' },
+    ],
+    'personalizacion-interior': [
+      { file: 'src/assets/images/banquetas/adultos/IMG_0118.jfif', alt: 'Personalización interior — tapizado premium' },
+      { file: 'src/assets/images/banquetas/adultos/IMG_0120.jfif', alt: 'Personalización interior — detalle de confort' },
+      { file: 'src/assets/images/accesorios/cabeceras/cabeceras.jpg', alt: 'Personalización interior — coordinación equipamiento' },
     ],
   },
   accesorios: {
@@ -204,9 +294,7 @@ const PAGE_SOURCES = [
     pageKey: 'ventanas-lunetas',
     title: 'Ventanas y lunetas',
     content: ventanasLunetasContent,
-    tabs: VENTANAS_BRANDS,
-    tabsSection: ventanasLunetasContent.brands,
-    tabGalleryKey: 'ventanas',
+    tabs: [],
     introExtras: {
       procesoTemplado: ventanasLunetasContent.intro?.procesoTemplado,
       especificaciones: ventanasLunetasContent.intro?.especificaciones ?? [],
@@ -216,7 +304,9 @@ const PAGE_SOURCES = [
     pageKey: 'equipamiento-escolar',
     title: 'Equipamiento escolar',
     content: equipamientoEscolarContent,
-    tabs: [],
+    tabs: EQUIPAMIENTO_MARCA_TABS,
+    tabsSection: equipamientoEscolarContent.brands,
+    tabGalleryKey: 'equipamiento-escolar',
     featuresFrom: 'specs',
   },
   {
@@ -231,7 +321,9 @@ const PAGE_SOURCES = [
     pageKey: 'butacas',
     title: 'Butacas',
     content: butacasContent,
-    tabs: [],
+    tabs: butacasContent.categories?.items ?? BUTACAS_CATEGORIES,
+    tabsSection: butacasContent.categories,
+    tabGalleryKey: 'butacas',
     featuresFrom: 'specs',
   },
   {
@@ -248,6 +340,49 @@ const PAGE_SOURCES = [
     content: talleresMovilesContent,
     tabs: [],
     featuresFrom: 'scope',
+  },
+  {
+    pageKey: 'proteccion-cabina',
+    title: 'Protección de cabina',
+    content: proteccionCabinaContent,
+    tabs: [],
+    featuresFrom: 'specs',
+  },
+  {
+    pageKey: 'cambio-pisos',
+    title: 'Cambio de pisos',
+    content: cambioPisosContent,
+    tabs: [],
+    featuresFrom: 'specs',
+  },
+  {
+    pageKey: 'reclinaciones',
+    title: 'Reclinaciones',
+    content: reclinacionesContent,
+    tabs: [],
+    featuresFrom: 'specs',
+  },
+  {
+    pageKey: 'fundas',
+    title: 'Fundas',
+    content: fundasContent,
+    tabs: [],
+    featuresFrom: 'specs',
+  },
+  {
+    pageKey: 'literas',
+    title: 'Literas',
+    content: literasContent,
+    tabs: [],
+    featuresFrom: 'specs',
+  },
+  {
+    pageKey: 'tapiceria',
+    title: 'Tapicería',
+    content: tapiceriaContent,
+    tabs: tapiceriaContent.categories?.items ?? TAPICERIA_CATEGORIES,
+    tabsSection: tapiceriaContent.categories,
+    tabGalleryKey: 'tapiceria',
   },
 ]
 

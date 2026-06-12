@@ -2,6 +2,7 @@ import { getTrabajoImage } from '@/assets/images'
 import {
   normalizeImageAsset,
   normalizeGalleryImages,
+  resolveImageAsset,
   warnMissingAsset,
 } from '@/lib/cms/assets/resolveImage'
 import { logAssetsDomain } from '@/lib/cms/assets/assetsLog'

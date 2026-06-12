@@ -9,8 +9,15 @@ import {
   Banquetas,
   Butacas,
   Accesorios,
+  ProteccionCabina,
+  CambioPisos,
+  Reclinaciones,
+  Fundas,
+  Literas,
+  Tapiceria,
   Trabajos,
   Contacto,
+  SobreNosotros,
   NotFound,
 } from '@/app/lazyPages'
 
@@ -75,10 +82,66 @@ export const router = createBrowserRouter([
         ),
       },
       {
+        path: 'proteccion-cabina',
+        element: (
+          <LazyRoute>
+            <ProteccionCabina />
+          </LazyRoute>
+        ),
+      },
+      {
+        path: 'cambio-pisos',
+        element: (
+          <LazyRoute>
+            <CambioPisos />
+          </LazyRoute>
+        ),
+      },
+      {
+        path: 'reclinaciones',
+        element: (
+          <LazyRoute>
+            <Reclinaciones />
+          </LazyRoute>
+        ),
+      },
+      {
+        path: 'fundas',
+        element: (
+          <LazyRoute>
+            <Fundas />
+          </LazyRoute>
+        ),
+      },
+      {
+        path: 'literas',
+        element: (
+          <LazyRoute>
+            <Literas />
+          </LazyRoute>
+        ),
+      },
+      {
+        path: 'tapiceria',
+        element: (
+          <LazyRoute>
+            <Tapiceria />
+          </LazyRoute>
+        ),
+      },
+      {
         path: 'trabajos-realizados',
         element: (
           <LazyRoute>
             <Trabajos />
+          </LazyRoute>
+        ),
+      },
+      {
+        path: 'sobre-nosotros',
+        element: (
+          <LazyRoute>
+            <SobreNosotros />
           </LazyRoute>
         ),
       },

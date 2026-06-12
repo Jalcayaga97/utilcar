@@ -19,9 +19,30 @@ sanityEnv.applyToProcessEnv()
 
 const TAB_PAGE_KEYS = SERVICE_SUB_PAGE_TAB_KEYS
 const VENTANAS_KEY = 'ventanas-lunetas'
-const FEATURES_PAGE_KEYS = ['talleres-moviles', 'equipamiento-escolar', 'butacas']
+const FEATURES_PAGE_KEYS = [
+  'talleres-moviles',
+  'equipamiento-escolar',
+  'butacas',
+  'proteccion-cabina',
+  'cambio-pisos',
+  'reclinaciones',
+  'fundas',
+  'literas',
+]
 const PORTFOLIO_PAGE_KEYS = SERVICE_PORTFOLIO_PAGE_KEYS
-const INTRO_EXTRAS_KEYS = ['talleres-moviles', 'equipamiento-escolar', 'butacas', 'banquetas', 'accesorios']
+const INTRO_EXTRAS_KEYS = [
+  'talleres-moviles',
+  'equipamiento-escolar',
+  'butacas',
+  'banquetas',
+  'accesorios',
+  'proteccion-cabina',
+  'cambio-pisos',
+  'reclinaciones',
+  'fundas',
+  'literas',
+  'tapiceria',
+]
 
 const client = createClient({
   projectId: sanityEnv.projectId,

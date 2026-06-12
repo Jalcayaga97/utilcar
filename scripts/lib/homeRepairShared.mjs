@@ -18,68 +18,13 @@ export const homeContent = seed.homePage
 
 export const TRABAJOS_PREVIEW_IDS = ['1', '2', '3']
 
-export const SERVICE_ENTRIES = [
-  {
-    id: 'talleres',
-    title: 'Talleres móviles',
-    description:
-      'Unidades equipadas para servicio técnico en ruta, con mobiliario, electricidad y seguridad certificada.',
-    path: '/talleres-moviles',
-    imageAlt: 'Taller móvil en furgón',
-    icon: 'wrench',
-    file: 'src/assets/images/services/talleres.jpg',
-  },
-  {
-    id: 'ventanas',
-    title: 'Ventanas y Lunetas',
-    description:
-      'Ventiletes y lunetas a medida por marca y modelo, con terminaciones industriales y sellado profesional.',
-    path: '/ventanas-lunetas',
-    imageAlt: 'Ventanas laterales corredizas',
-    icon: 'settings',
-    file: 'src/assets/images/services/ventanas.jpg',
-  },
-  {
-    id: 'escolar',
-    title: 'Equipamiento Escolar',
-    description:
-      'Conversiones para transporte escolar con normativas de seguridad, asientos y accesorios homologados.',
-    path: '/equipamiento-escolar',
-    imageAlt: 'Equipamiento escolar en bus',
-    icon: 'bus',
-    file: 'src/assets/images/services/escolar.jpg',
-  },
-  {
-    id: 'banquetas',
-    title: 'Banquetas',
-    description:
-      'Banquetas modulares para vans y minibuses, tapizados técnicos y anclajes reforzados.',
-    path: '/banquetas',
-    imageAlt: 'Banquetas para minibús',
-    icon: 'star',
-    file: 'src/assets/images/services/banquetas.jpg',
-  },
-  {
-    id: 'butacas',
-    title: 'Butacas',
-    description:
-      'Butacas ergonómicas para flotas corporativas y turismo, con opciones reclinables y cinturones.',
-    path: '/butacas',
-    imageAlt: 'Butacas ergonómicas a medida',
-    icon: 'users',
-    file: 'src/assets/images/services/butacas.jfif',
-  },
-  {
-    id: 'accesorios',
-    title: 'Accesorios',
-    description:
-      'Portaequipaje, divisores, pisos, iluminación LED y complementos para conversiones integrales.',
-    path: '/accesorios',
-    imageAlt: 'Accesorios para conversión vehicular',
-    icon: 'truck',
-    file: 'src/assets/images/services/accesorios.jpg',
-  },
-]
+import {
+  SERVICE_ENTRIES,
+  SERVICE_LINKS_MANIFEST,
+  EXPECTED_SERVICE_COUNT,
+} from './serviceCatalogManifest.mjs'
+
+export { SERVICE_ENTRIES, SERVICE_LINKS_MANIFEST, EXPECTED_SERVICE_COUNT }
 
 const ESPECIALIDADES = homeContent.especialidades?.items ?? []
 const SPECIALTY_IMAGES = {

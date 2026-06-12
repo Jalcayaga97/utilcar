@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom'
 import { Mail, MapPin, Phone } from 'lucide-react'
 import { SITE } from '@/constants/site'
-import { useCompanyInfo, useMainNavLinks, useServiceLinks } from '@/hooks/useCms'
+import { EMPRESA_NAV_LINKS } from '@/content/services'
+import { useCompanyInfo, useServiceLinks } from '@/hooks/useCms'
 import { Container } from '@/components/ui/Container'
 
 export function Footer() {
-  const mainNavLinks = useMainNavLinks()
   const serviceLinks = useServiceLinks()
   const company = useCompanyInfo()
   const year = new Date().getFullYear()
@@ -46,7 +46,7 @@ export function Footer() {
               Empresa
             </h3>
             <ul className="mt-4 space-y-2.5">
-              {mainNavLinks.map((link) => (
+              {EMPRESA_NAV_LINKS.map((link) => (
                 <li key={link.path}>
                   <Link
                     to={link.path}

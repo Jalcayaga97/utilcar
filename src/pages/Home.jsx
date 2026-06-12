@@ -6,19 +6,24 @@ import { Card, CardIcon } from '@/components/ui/Card'
 import { WorkCardImage } from '@/components/ui/WorkCardImage'
 import { Section, SectionHeader } from '@/components/ui/Section'
 import { Grid } from '@/components/ui/Grid'
+import { CmsPageSkeleton } from '@/components/cms/CmsPageSkeleton'
 import { Hero } from '@/components/sections/Hero'
+import { HomeShowcaseSection } from '@/components/sections/HomeShowcaseSection'
 import { MainServices } from '@/components/sections/MainServices'
 import { EspecialidadesUtilcar } from '@/components/sections/EspecialidadesUtilcar'
+import { BrandCarouselSection } from '@/components/sections/BrandCarouselSection'
 import { CtaBanner } from '@/components/sections/CtaBanner'
 import { USE_BLOCK_RESOLVER, USE_SPECIALTIES_V2, isSanityEnabled } from '@/lib/cms/config'
 import { logHomeRuntime } from '@/lib/cms/homeRuntimeLog'
 import { buildHomeSourceMap } from '@/lib/cms/homeSourceMap'
 import {
   getActiveHeroSection,
+  getActiveShowcaseCarouselSection,
   getActivePortfolioSection,
   getActiveServicesSection,
   getActiveSpecialtiesSection,
   getActiveWhyUsSection,
+  getActiveBrandCarouselSection,
 } from '@/lib/cms/homeResolver'
 import {
   logHeroBlockFullSection,
@@ -41,9 +46,18 @@ import {
   logSpecialtiesBlockFullSection,
   warnSpecialtiesBlockLegacyFallback,
 } from '@/lib/cms/specialtiesBlockLog'
-import { useHighlights, useHomeContent, useHomePortfolioCards } from '@/hooks/useCms'
+import { EMPTY_ARRAY, useHighlights, useHomePortfolioCards } from '@/hooks/useCms'
+import { HomeContentProvider, useHomeContent } from '@/contexts/HomeContentContext'
 
 export default function Home() {
+  return (
+    <HomeContentProvider>
+      <HomePage />
+    </HomeContentProvider>
+  )
+}
+
+function HomePage() {
   const homeContent = useHomeContent()
   const highlights = useHighlights()
   const trabajosCatalog = useHomePortfolioCards()
@@ -51,9 +65,15 @@ export default function Home() {
 
   const heroSection = useMemo(() => getActiveHeroSection(extensions), [extensions])
 
+  const showcaseSection = useMemo(
+    () => getActiveShowcaseCarouselSection(extensions),
+    [extensions],
+  )
+  const showcaseImages = showcaseSection?.images ?? EMPTY_ARRAY
+
   const whyUsSection = useMemo(() => getActiveWhyUsSection(extensions), [extensions])
-  const whyUsMeta = whyUsSection ?? highlightsSection
-  const whyUsItems = whyUsSection?.items?.length ? whyUsSection.items : highlights
+  const whyUsMeta = whyUsSection ?? highlightsSection ?? {}
+  const whyUsItems = whyUsSection?.items?.length ? whyUsSection.items : (highlights ?? [])
   const whyUsSource = whyUsSection?.items?.length ? 'cms' : 'legacy'
 
   const servicesSection = useMemo(() => getActiveServicesSection(extensions), [extensions])
@@ -63,12 +83,17 @@ export default function Home() {
     [extensions],
   )
 
+  const brandCarouselSection = useMemo(
+    () => getActiveBrandCarouselSection(extensions),
+    [extensions],
+  )
+
   const specialtiesSection = useMemo(
     () => getActiveSpecialtiesSection(extensions),
     [extensions],
   )
 
-  const portfolioMeta = portfolioSection ?? portfolioPreview
+  const portfolioMeta = portfolioSection ?? portfolioPreview ?? {}
   const previewCount = portfolioMeta.previewCount ?? 3
   const trabajos = useMemo(
     () => trabajosCatalog.slice(0, previewCount),
@@ -88,7 +113,7 @@ export default function Home() {
   const specialtiesSourceRef = useRef(null)
 
   useEffect(() => {
-    if (!USE_BLOCK_RESOLVER) return
+    if (!import.meta.env.DEV || !USE_BLOCK_RESOLVER) return
 
     const source = heroSection ? 'heroBlock-full' : 'legacy-fallback'
     if (heroSourceRef.current === source) return
@@ -98,7 +123,8 @@ export default function Home() {
       logHeroBlockFullSection({
         title: heroSection.title,
         imageSource: heroSection.image?.url ? 'cms' : 'legacy-fallback',
-        highlightCount: heroSection.highlights.length,
+        hasPrimaryImage: Boolean(heroSection.primaryImage?.url ?? heroSection.image?.url),
+        hasSecondaryImage: Boolean(heroSection.secondaryImage?.url),
       })
       return
     }
@@ -137,7 +163,7 @@ export default function Home() {
   }, [servicesSection, extensions?.servicesSection?.items?.length])
 
   useEffect(() => {
-    if (!USE_BLOCK_RESOLVER) return
+    if (!import.meta.env.DEV || !USE_BLOCK_RESOLVER) return
 
     const source = whyUsSection ? 'whyUsBlock-full' : 'legacy-fallback'
     if (whyUsSourceRef.current === source) return
@@ -157,7 +183,7 @@ export default function Home() {
   }, [whyUsSection, extensions?.whyUsSection?.items?.length])
 
   useEffect(() => {
-    if (!USE_BLOCK_RESOLVER) return
+    if (!import.meta.env.DEV || !USE_BLOCK_RESOLVER) return
 
     const source = portfolioSection ? 'portfolioBlock-full' : 'legacy-fallback'
     if (portfolioSourceRef.current === source) return
@@ -178,7 +204,7 @@ export default function Home() {
   }, [portfolioSection, previewCount, extensions?.portfolioSection?.items?.length])
 
   useEffect(() => {
-    if (!USE_BLOCK_RESOLVER || !USE_SPECIALTIES_V2) return
+    if (!import.meta.env.DEV || !USE_BLOCK_RESOLVER || !USE_SPECIALTIES_V2) return
 
     const source = specialtiesSection ? 'specialtiesBlock-full' : 'legacy-fallback'
     if (specialtiesSourceRef.current === source) return
@@ -201,11 +227,21 @@ export default function Home() {
     })
   }, [specialtiesSection, extensions?.specialtiesSection?.categories?.length])
 
+  const runtimeLoggedRef = useRef(false)
+
   useEffect(() => {
-    if (!USE_BLOCK_RESOLVER) return
+    if (!import.meta.env.DEV || !USE_BLOCK_RESOLVER || homeContent.isLoading) return
+    if (runtimeLoggedRef.current) return
+    runtimeLoggedRef.current = true
+
     logHomeRuntime('hero', {
       blockFound: Boolean(extensions?.heroSection),
       source: heroSection ? 'cms' : 'legacy',
+    })
+    logHomeRuntime('showcase', {
+      blockFound: Boolean(extensions?.showcaseCarouselSection),
+      imageCount: showcaseImages.length,
+      source: showcaseSection ? 'cms' : 'empty',
     })
     logHomeRuntime('services', {
       blockFound: Boolean(extensions?.servicesSection),
@@ -228,33 +264,29 @@ export default function Home() {
       featuredProjectsCount: portfolioSection?.featuredProjectIds?.length ?? 0,
       source: portfolioSource,
     })
+    logHomeRuntime('brand-carousel', {
+      blockFound: Boolean(extensions?.brandCarouselSection),
+      brandCount: brandCarouselSection?.brands?.length ?? 0,
+      source: brandCarouselSection ? 'cms' : 'empty',
+    })
     logHomeRuntime('cta', {
       blockFound: Boolean(extensions),
       source: 'cms-mirror',
     })
 
-    if (import.meta.env.DEV) {
-      const map = buildHomeSourceMap({
-        extensions,
-        heroSection,
-        servicesSection,
-        specialtiesSection,
-        whyUsSection,
-        portfolioSection,
-        sanityEnabled: isSanityEnabled(),
-      })
-      console.info('[home-source-map]', map)
-    }
-  }, [
-    extensions,
-    heroSection,
-    servicesSection,
-    specialtiesSection,
-    whyUsSection,
-    portfolioSection,
-    whyUsSource,
-    portfolioSource,
-  ])
+    const map = buildHomeSourceMap({
+      extensions,
+      heroSection,
+      servicesSection,
+      specialtiesSection,
+      whyUsSection,
+      portfolioSection,
+      sanityEnabled: isSanityEnabled(),
+    })
+    console.info('[home-source-map]', map)
+  }, [homeContent.isLoading, extensions, heroSection, showcaseImages.length, servicesSection, specialtiesSection, whyUsSection, portfolioSection, brandCarouselSection, whyUsSource, portfolioSource])
+
+  if (homeContent.isLoading) return <CmsPageSkeleton variant="home" />
 
   return (
     <>
@@ -262,15 +294,17 @@ export default function Home() {
 
       <Hero activeSection={heroSection} />
 
+      <HomeShowcaseSection images={showcaseImages} />
+
       <MainServices activeSection={servicesSection} />
 
       <EspecialidadesUtilcar activeSection={specialtiesSection} />
 
       <Section>
         <SectionHeader
-          eyebrow={whyUsMeta.eyebrow}
-          title={whyUsMeta.title}
-          description={whyUsMeta.description}
+          eyebrow={whyUsMeta.eyebrow ?? ''}
+          title={whyUsMeta.title ?? ''}
+          description={whyUsMeta.description ?? ''}
           align="center"
         />
         <Grid cols={3}>
@@ -295,13 +329,13 @@ export default function Home() {
       <Section>
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <SectionHeader
-            eyebrow={portfolioMeta.eyebrow}
-            title={portfolioMeta.title}
-            description={portfolioMeta.description}
+            eyebrow={portfolioMeta.eyebrow ?? ''}
+            title={portfolioMeta.title ?? ''}
+            description={portfolioMeta.description ?? ''}
             className="mb-0"
           />
-          <Button to={portfolioMeta.ctaTo} variant="outline" className="shrink-0">
-            {portfolioMeta.ctaLabel}
+          <Button to={portfolioMeta.ctaTo ?? '/trabajos-realizados'} variant="outline" className="shrink-0">
+            {portfolioMeta.ctaLabel ?? 'Ver trabajos'}
           </Button>
         </div>
         <Grid cols={3} className="mt-10">
@@ -322,6 +356,8 @@ export default function Home() {
           ))}
         </Grid>
       </Section>
+
+      <BrandCarouselSection section={brandCarouselSection} />
 
       <CtaBanner />
     </>
