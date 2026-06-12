@@ -12,6 +12,10 @@ const FIELD_LIMITS = {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+/** Activo solo si RESEND_SANDBOX_MODE=true en Vercel / .env.local (nunca hardcodear). */
+const RESEND_FORCE_TEST_RECIPIENT = process.env.RESEND_SANDBOX_MODE === 'true'
+const TEST_EMAIL = String(process.env.RESEND_TEST_RECIPIENT ?? '').trim()
+
 function stripHtml(value) {
   return String(value ?? '')
     .replace(/<[^>]*>/g, '')
@@ -168,14 +172,27 @@ export async function sendContactEmail(data) {
   if (!config.ok) return config
 
   const from = config.from
-  const to = inputCheck.to
+  const cmsTo = inputCheck.to // destino real desde CMS — se sigue validando
   const subject = 'Nuevo contacto'
   const html = buildEmailHtml(data)
 
-  if (!isNonEmptyString(from) || !isValidEmail(to) || !isValidEmail(data.mail) || !isNonEmptyString(subject) || !isNonEmptyString(html)) {
+  if (!isNonEmptyString(from) || !isValidEmail(cmsTo) || !isValidEmail(data.mail) || !isNonEmptyString(subject) || !isNonEmptyString(html)) {
     console.error('CONTACT VALIDATION: payload Resend incompleto o inválido')
     return { ok: false, status: 400, body: responseBody('invalid_input') }
   }
+
+  if (RESEND_FORCE_TEST_RECIPIENT) {
+    if (process.env.NODE_ENV === 'production') {
+      console.warn('⚠️ WARNING: RESEND SANDBOX MODE ACTIVE IN PRODUCTION')
+    }
+    if (!isValidEmail(TEST_EMAIL)) {
+      console.error('CONTACT CONFIG: RESEND_TEST_RECIPIENT inválido con RESEND_SANDBOX_MODE=true')
+      return { ok: false, status: 503, body: responseBody('missing_email_config') }
+    }
+    console.log('📬 RESEND SANDBOX MODE ACTIVE:', { cmsTo, forcedTo: TEST_EMAIL })
+  }
+
+  const to = RESEND_FORCE_TEST_RECIPIENT ? TEST_EMAIL : cmsTo
 
   const resendPayload = {
     from,
