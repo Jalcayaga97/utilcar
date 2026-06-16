@@ -1,7 +1,7 @@
 # Auditoría de editabilidad CMS — Sitio completo Utilcar
 
 **Fecha:** 2026-05-29  
-**Alcance:** Frontend `utilcar-web` + Studio `utilcar-studio` / `utilcar-web/utilcar-studio`  
+**Alcance:** Frontend `utilcar-web` + Studio `utilcar-web/utilcar-studio`  
 **Modo:** Solo lectura — sin cambios de código ni migraciones.
 
 ---

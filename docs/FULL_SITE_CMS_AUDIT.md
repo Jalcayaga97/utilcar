@@ -157,7 +157,7 @@ Sin CMS. Baja prioridad.
 | 3 | SEO hardcoded | No editable | `seoBlock` / campo `seo` por página |
 | 4 | Dual path flat + blocks | Deuda sync | Flags + fallback completo; cleanup Fase 14 |
 | 5 | Ventanas marcas vs catálogo `brand` | Duplicidad conceptual | Marcas embebidas en categoría (Specialties V2 pattern) |
-| 6 | Dos copias studio (monorepo) | Drift | Editar `utilcar-studio/` y sync a `utilcar-web/utilcar-studio/` |
+| 6 | ~~Dos copias studio~~ | Resuelto | Única copia: `utilcar-web/utilcar-studio/` |
 
 ---
 

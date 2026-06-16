@@ -33,14 +33,6 @@ function SpecBlock({ title, items }) {
 function resolveTabGallery(brand, useCmsGallery, cmsFirst) {
   const fromCms = tabGalleryToDisplayImages(brand)
 
-  if (import.meta.env.DEV && useCmsGallery && brand?.id === 'toyota') {
-    console.log('TAB GALLERY SAMPLE', {
-      brandId: brand.id,
-      rawGallery: brand.gallery,
-      resolved: fromCms,
-    })
-  }
-
   if (fromCms.length) return fromCms
   if (cmsFirst) return fromCms
   return getVentanasMarcaGallery(brand.id)

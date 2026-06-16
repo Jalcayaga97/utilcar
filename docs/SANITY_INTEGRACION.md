@@ -24,8 +24,9 @@ Las imágenes de servicios/portfolio **siguen en el frontend** (`/content` + mer
 ### 1. Instalar Studio
 
 ```bash
-cd utilcar-studio
-npm install
+cd utilcar-web
+npm run install:studio
+# o: cd utilcar-web/utilcar-studio && npm install
 ```
 
 ### 2. Configurar proyecto
@@ -33,7 +34,7 @@ npm install
 Crea un proyecto en [sanity.io/manage](https://www.sanity.io/manage) y define:
 
 ```bash
-# utilcar-studio/.env (local, no commitear)
+# utilcar-web/utilcar-studio/.env (local, no commitear)
 SANITY_STUDIO_PROJECT_ID=tu_project_id
 SANITY_STUDIO_DATASET=production
 ```
