@@ -27,6 +27,7 @@ export const companyObject = {
     },
     { name: 'primaryEmail', title: 'Email principal', type: 'string' },
     { name: 'secondaryEmail', title: 'Email secundario', type: 'string' },
+    { name: 'tertiaryEmail', title: 'Email adicional', type: 'string' },
     { name: 'addressStreet', title: 'Calle y número', type: 'string' },
     { name: 'addressCity', title: 'Comuna / ciudad', type: 'string' },
     {

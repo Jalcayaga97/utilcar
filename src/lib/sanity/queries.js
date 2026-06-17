@@ -291,6 +291,7 @@ export const SITE_SETTINGS_QUERY = `*[_type == "siteSettings" && _id == "siteSet
     whatsappNumber,
     primaryEmail,
     secondaryEmail,
+    tertiaryEmail,
     addressStreet,
     addressCity,
     openingHours,

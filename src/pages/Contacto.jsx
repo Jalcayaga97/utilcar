@@ -15,6 +15,55 @@ import { cn } from '@/lib/cn'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
+const emailLinkClass = 'font-medium text-ink underline-offset-2 hover:underline'
+
+function renderIntroContactEmails(emails) {
+  const list = (emails ?? []).filter(Boolean)
+  if (!list.length) return null
+
+  if (list.length === 1) {
+    return (
+      <a href={`mailto:${list[0]}`} className={emailLinkClass}>
+        {list[0]}
+      </a>
+    )
+  }
+
+  if (list.length === 2) {
+    return (
+      <>
+        <a href={`mailto:${list[0]}`} className={emailLinkClass}>
+          {list[0]}
+        </a>
+        {' o '}
+        <a href={`mailto:${list[1]}`} className={emailLinkClass}>
+          {list[1]}
+        </a>
+      </>
+    )
+  }
+
+  const last = list[list.length - 1]
+  const rest = list.slice(0, -1)
+
+  return (
+    <>
+      {rest.map((email, index) => (
+        <span key={email}>
+          <a href={`mailto:${email}`} className={emailLinkClass}>
+            {email}
+          </a>
+          {index < rest.length - 1 ? ', ' : ' '}
+        </span>
+      ))}
+      o{' '}
+      <a href={`mailto:${last}`} className={emailLinkClass}>
+        {last}
+      </a>
+    </>
+  )
+}
+
 function ContactCard({ icon: Icon, title, children }) {
   return (
     <div
@@ -90,24 +139,7 @@ export default function Contacto() {
           ) : (
             <p className="text-base leading-relaxed text-ink-muted sm:text-lg">
               Para mayor información puede contactarnos al correo{' '}
-              <a
-                href={`mailto:${company.primaryEmail}`}
-                className="font-medium text-ink underline-offset-2 hover:underline"
-              >
-                {company.primaryEmail}
-              </a>
-              {company.secondaryEmail ? (
-                <>
-                  {' '}
-                  o{' '}
-                  <a
-                    href={`mailto:${company.secondaryEmail}`}
-                    className="font-medium text-ink underline-offset-2 hover:underline"
-                  >
-                    {company.secondaryEmail}
-                  </a>
-                </>
-              ) : null}{' '}
+              {renderIntroContactEmails(company.emails)}{' '}
               al teléfono{' '}
               <a
                 href={company.phoneTel}

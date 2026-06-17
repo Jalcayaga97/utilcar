@@ -80,7 +80,10 @@ export function buildCompanyInfo(raw) {
 
   const primaryEmail = safeString(company.primaryEmail, SITE.email || ENV.contactEmail)
   const secondaryEmail = safeString(company.secondaryEmail, SITE.emails?.[1] ?? '')
-  const emails = [primaryEmail, secondaryEmail].filter(Boolean)
+  const tertiaryEmail = safeString(company.tertiaryEmail, '')
+  const emails = [primaryEmail, secondaryEmail, tertiaryEmail]
+    .filter(Boolean)
+    .filter((email, index, arr) => arr.indexOf(email) === index)
 
   const phoneDisplay = normalizePhoneDisplay(company.phone) || SITE.phoneDisplay
   const phoneTel = company.phone ? toTelHref(company.phone) : SITE.phoneTel

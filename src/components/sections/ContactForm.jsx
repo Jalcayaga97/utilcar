@@ -155,11 +155,16 @@ export function ContactForm({ form: rawForm, servicios: rawServicios }) {
                 disabled={status === 'loading'}
               />
             </Field>
-            <Field label={fields.telefono?.label ?? ''} htmlFor="telefono">
+            <Field
+              label={fields.telefono?.label ?? ''}
+              htmlFor="telefono"
+              required={fields.telefono?.required}
+            >
               <input
                 id="telefono"
                 name="telefono"
                 type="tel"
+                required={fields.telefono?.required || undefined}
                 value={formState.telefono}
                 onChange={update('telefono')}
                 className={inputClass}
@@ -169,10 +174,15 @@ export function ContactForm({ form: rawForm, servicios: rawServicios }) {
             </Field>
           </div>
 
-          <Field label={fields.servicio?.label ?? ''} htmlFor="servicio">
+          <Field
+            label={fields.servicio?.label ?? ''}
+            htmlFor="servicio"
+            required={fields.servicio?.required}
+          >
             <select
               id="servicio"
               name="servicio"
+              required={fields.servicio?.required || undefined}
               value={formState.servicio}
               onChange={update('servicio')}
               className={cn(inputClass, 'cursor-pointer')}
