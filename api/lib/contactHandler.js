@@ -1,4 +1,5 @@
 import { Resend } from 'resend'
+import { generateContactEmailTemplate } from './generateContactEmailTemplate.js'
 
 const FIELD_LIMITS = {
   nombre: 120,
@@ -36,15 +37,6 @@ function isValidEmail(value) {
 
 function isNonEmptyString(value) {
   return typeof value === 'string' && value.trim().length > 0
-}
-
-function escapeHtml(value) {
-  return String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
 }
 
 /** string | array → primer valor no vacío con trim; null/undefined → '' */
@@ -104,27 +96,6 @@ export function parseContactPayload(raw) {
   }
 }
 
-function buildEmailHtml(data) {
-  const rows = [
-    ['Nombre', data.nombre],
-    ['Empresa', data.empresa || '—'],
-    ['Correo', data.mail],
-    ['Teléfono', data.telefono || '—'],
-    ['Servicio', data.servicio],
-    ['Consulta', data.consulta],
-    ['Fecha', data.submittedAt],
-  ]
-
-  const body = rows
-    .map(
-      ([label, value]) =>
-        `<p><strong>${escapeHtml(label)}:</strong><br>${escapeHtml(value).replace(/\n/g, '<br>')}</p>`,
-    )
-    .join('\n')
-
-  return `<!DOCTYPE html><html><body style="font-family:sans-serif;line-height:1.5;color:#111">${body}</body></html>`
-}
-
 function validateBeforeResend(data) {
   if (!isNonEmptyString(data.consulta)) {
     console.error('CONTACT VALIDATION: data.consulta vacío')
@@ -174,7 +145,7 @@ export async function sendContactEmail(data) {
   const from = config.from
   const cmsTo = inputCheck.to // destino real desde CMS — se sigue validando
   const subject = 'Nuevo contacto'
-  const html = buildEmailHtml(data)
+  const html = generateContactEmailTemplate(data)
 
   if (!isNonEmptyString(from) || !isValidEmail(cmsTo) || !isValidEmail(data.mail) || !isNonEmptyString(subject) || !isNonEmptyString(html)) {
     console.error('CONTACT VALIDATION: payload Resend incompleto o inválido')
