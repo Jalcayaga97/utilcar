@@ -1,18 +1,12 @@
-import { useEffect, useMemo, useRef } from 'react'
-import { motion } from 'framer-motion'
+import { lazy, Suspense, useEffect, useMemo, useRef } from 'react'
 import { PageMeta } from '@/components/seo/PageMeta'
 import { Button } from '@/components/ui/Button'
 import { Card, CardIcon } from '@/components/ui/Card'
 import { WorkCardImage } from '@/components/ui/WorkCardImage'
 import { Section, SectionHeader } from '@/components/ui/Section'
 import { Grid } from '@/components/ui/Grid'
-import { CmsPageSkeleton } from '@/components/cms/CmsPageSkeleton'
+import { SectionPlaceholder } from '@/components/ui/SectionPlaceholder'
 import { Hero } from '@/components/sections/Hero'
-import { HomeShowcaseSection } from '@/components/sections/HomeShowcaseSection'
-import { MainServices } from '@/components/sections/MainServices'
-import { EspecialidadesUtilcar } from '@/components/sections/EspecialidadesUtilcar'
-import { BrandCarouselSection } from '@/components/sections/BrandCarouselSection'
-import { CtaBanner } from '@/components/sections/CtaBanner'
 import { USE_BLOCK_RESOLVER, USE_SPECIALTIES_V2, isSanityEnabled } from '@/lib/cms/config'
 import { logHomeRuntime } from '@/lib/cms/homeRuntimeLog'
 import { buildHomeSourceMap } from '@/lib/cms/homeSourceMap'
@@ -50,6 +44,39 @@ import { EMPTY_ARRAY, useHighlights, useHomePortfolioCards } from '@/hooks/useCm
 import { HomeContentProvider, useHomeContent } from '@/contexts/HomeContentContext'
 import { HomeIsrProvider } from '@/contexts/HomeIsrContext'
 import homeIsrSnapshot from '@/generated/home-isr.snapshot.json'
+
+const HomeShowcaseSection = lazy(() =>
+  import('@/components/sections/HomeShowcaseSection').then((m) => ({
+    default: m.HomeShowcaseSection,
+  })),
+)
+const MainServices = lazy(() =>
+  import('@/components/sections/MainServices').then((m) => ({ default: m.MainServices })),
+)
+const EspecialidadesUtilcar = lazy(() =>
+  import('@/components/sections/EspecialidadesUtilcar').then((m) => ({
+    default: m.EspecialidadesUtilcar,
+  })),
+)
+const BrandCarouselSection = lazy(() =>
+  import('@/components/sections/BrandCarouselSection').then((m) => ({
+    default: m.BrandCarouselSection,
+  })),
+)
+const CtaBanner = lazy(() =>
+  import('@/components/sections/CtaBanner').then((m) => ({ default: m.CtaBanner })),
+)
+
+function PortfolioCardSkeleton() {
+  return (
+    <Card className="flex h-full min-h-[18rem] flex-col">
+      <div className="mb-4 aspect-[16/10] w-full animate-pulse rounded-lg bg-ink/[0.04]" aria-hidden />
+      <div className="h-3 w-24 animate-pulse rounded bg-ink/[0.04]" aria-hidden />
+      <div className="mt-3 h-5 w-3/4 animate-pulse rounded bg-ink/[0.04]" aria-hidden />
+      <div className="mt-2 h-4 w-full animate-pulse rounded bg-ink/[0.04]" aria-hidden />
+    </Card>
+  )
+}
 
 export default function Home() {
   return (
@@ -290,7 +317,8 @@ function HomePage() {
     console.info('[home-source-map]', map)
   }, [homeContent.isLoading, extensions, heroSection, showcaseImages.length, servicesSection, specialtiesSection, whyUsSection, portfolioSection, brandCarouselSection, whyUsSource, portfolioSource])
 
-  if (homeContent.isLoading) return <CmsPageSkeleton variant="home" />
+  const portfolioItems = trabajos.slice(0, previewCount)
+  const showPortfolioSkeleton = portfolioItems.length === 0 && previewCount > 0
 
   return (
     <>
@@ -298,11 +326,17 @@ function HomePage() {
 
       <Hero activeSection={heroSection} />
 
-      <HomeShowcaseSection images={showcaseImages} />
+      <Suspense fallback={<SectionPlaceholder className="mx-auto my-6 max-w-6xl" minHeight="270px" />}>
+        <HomeShowcaseSection images={showcaseImages} />
+      </Suspense>
 
-      <MainServices activeSection={servicesSection} />
+      <Suspense fallback={<SectionPlaceholder className="mx-auto my-10 max-w-6xl" minHeight="420px" />}>
+        <MainServices activeSection={servicesSection} />
+      </Suspense>
 
-      <EspecialidadesUtilcar activeSection={specialtiesSection} />
+      <Suspense fallback={<SectionPlaceholder className="mx-auto my-10 max-w-6xl" minHeight="360px" />}>
+        <EspecialidadesUtilcar activeSection={specialtiesSection} />
+      </Suspense>
 
       <Section>
         <SectionHeader
@@ -312,20 +346,14 @@ function HomePage() {
           align="center"
         />
         <Grid cols={3}>
-          {whyUsItems.map((item, i) => (
-            <motion.div
-              key={item._key ?? item.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-            >
-              <Card className="text-center">
+          {whyUsItems.map((item) => (
+            <div key={item._key ?? item.title}>
+              <Card className="min-h-[11.5rem] text-center">
                 {item.icon ? <CardIcon icon={item.icon} className="mx-auto" /> : null}
                 <h3 className="text-lg font-semibold text-ink">{item.title}</h3>
                 <p className="mt-2 text-sm text-ink-muted">{item.description}</p>
               </Card>
-            </motion.div>
+            </div>
           ))}
         </Grid>
       </Section>
@@ -343,27 +371,35 @@ function HomePage() {
           </Button>
         </div>
         <Grid cols={3} className="mt-10">
-          {trabajos.slice(0, previewCount).map((trabajo) => (
-            <Card key={trabajo.id} hover className="flex h-full flex-col">
-              <WorkCardImage
-                imageKey={trabajo.imageKey}
-                src={trabajo.imageUrl ?? trabajo.image}
-                alt={trabajo.imageAlt}
-                className="mb-4"
-              />
-              <p className="text-xs font-medium uppercase tracking-wider text-ink-subtle">
-                {trabajo.category}
-              </p>
-              <h3 className="mt-2 text-lg font-semibold text-ink">{trabajo.title}</h3>
-              <p className="mt-2 text-sm text-ink-muted">{trabajo.description}</p>
-            </Card>
-          ))}
+          {showPortfolioSkeleton
+            ? Array.from({ length: previewCount }, (_, index) => (
+                <PortfolioCardSkeleton key={`portfolio-skeleton-${index}`} />
+              ))
+            : portfolioItems.map((trabajo) => (
+                <Card key={trabajo.id} hover className="flex min-h-[18rem] flex-col">
+                  <WorkCardImage
+                    imageKey={trabajo.imageKey}
+                    src={trabajo.imageUrl ?? trabajo.image}
+                    alt={trabajo.imageAlt}
+                    className="mb-4"
+                  />
+                  <p className="text-xs font-medium uppercase tracking-wider text-ink-subtle">
+                    {trabajo.category}
+                  </p>
+                  <h3 className="mt-2 text-lg font-semibold text-ink">{trabajo.title}</h3>
+                  <p className="mt-2 text-sm text-ink-muted">{trabajo.description}</p>
+                </Card>
+              ))}
         </Grid>
       </Section>
 
-      <BrandCarouselSection section={brandCarouselSection} />
+      <Suspense fallback={<SectionPlaceholder className="mx-auto my-10 max-w-6xl" minHeight="160px" />}>
+        <BrandCarouselSection section={brandCarouselSection} />
+      </Suspense>
 
-      <CtaBanner />
+      <Suspense fallback={<SectionPlaceholder className="mx-auto my-10 max-w-6xl" minHeight="120px" />}>
+        <CtaBanner />
+      </Suspense>
     </>
   )
 }

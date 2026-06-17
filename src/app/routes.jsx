@@ -1,8 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { MainLayout } from '@/components/layout/MainLayout'
 import { LazyRoute } from '@/app/LazyRoute'
+import Home from '@/pages/Home'
 import {
-  Home,
   TalleresMoviles,
   VentanasLunetas,
   EquipamientoEscolar,
@@ -27,11 +27,7 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: (
-          <LazyRoute>
-            <Home />
-          </LazyRoute>
-        ),
+        element: <Home />,
       },
       {
         path: 'talleres-moviles',

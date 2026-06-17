@@ -1,5 +1,5 @@
 /**const SITE_URL = String(process.env.VITE_SITE_URL || 'https://www.utilcar.cl').replace(/\/$/, '')**/
-const SITE_URL = 'https://utilcar.vercel.app'
+const SITE_URL = 'https://www.utilcar.cl'
 const LOGO_URL = `${SITE_URL}/logo.jpg`
 const LOGO_ALT = 'Utilcar Conversiones'
 

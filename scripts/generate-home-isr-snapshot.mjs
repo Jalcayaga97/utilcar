@@ -20,6 +20,20 @@ function writeSnapshot(payload) {
   writeFileSync(join(genDir, 'home-isr.snapshot.json'), json, 'utf8')
 }
 
+function writeHeroPreload(payload, buildHeroPreloadHref) {
+  const genDir = join(root, 'src/generated')
+  const primaryUrl =
+    payload.homeContent?.extensions?.heroSection?.primaryImage?.url ??
+    payload.homeContent?.extensions?.heroSection?.image?.url ??
+    null
+  const href = buildHeroPreloadHref(primaryUrl)
+  writeFileSync(
+    join(genDir, 'home-hero-preload.json'),
+    `${JSON.stringify({ href })}\n`,
+    'utf8',
+  )
+}
+
 function stripIconFields(payload, cmsIconToKey) {
   const normalizeItems = (items) => {
     if (!Array.isArray(items)) return
@@ -68,7 +82,9 @@ async function main() {
 
   try {
     const payload = await loadPayload(server)
+    const { buildHeroPreloadHref } = await server.ssrLoadModule('/src/lib/images/responsiveImage.js')
     writeSnapshot(payload)
+    writeHeroPreload(payload, buildHeroPreloadHref)
     console.info(`[generate:home-isr] OK — ${payload.portfolioCards?.length ?? 0} trabajos, revalidate=${payload.revalidate}s`)
   } catch (error) {
     console.error('[generate:home-isr] Falló:', error?.message ?? error)

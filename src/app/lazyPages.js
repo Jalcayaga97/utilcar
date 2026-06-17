@@ -1,6 +1,6 @@
 import { lazy } from 'react'
 
-export const Home = lazy(() => import('@/pages/Home'))
+/** Home se importa de forma eager en routes.jsx (LCP crítico). */
 export const TalleresMoviles = lazy(() => import('@/pages/TalleresMoviles'))
 export const VentanasLunetas = lazy(() => import('@/pages/VentanasLunetas'))
 export const EquipamientoEscolar = lazy(() => import('@/pages/EquipamientoEscolar'))

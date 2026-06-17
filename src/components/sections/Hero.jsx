@@ -1,30 +1,43 @@
 import { useMemo } from 'react'
-import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { resolveHomeHeroImages } from '@/lib/cms/assets/resolveHeroAssets'
+import {
+  buildResponsiveSrcSet,
+  HOME_HERO_PRIMARY_SIZES,
+  HOME_HERO_SECONDARY_SIZES,
+  optimizeImageUrl,
+} from '@/lib/images/responsiveImage'
 import { useGlobalServiceCta } from '@/hooks/useCms'
 import { useHomeContent } from '@/contexts/HomeContentContext'
 import { Container } from '@/components/ui/Container'
 import { CtaButtonGroup } from '@/components/sections/CtaButtonGroup'
+import { SmartImage } from '@/components/ui/SmartImage'
 import { cn } from '@/lib/cn'
 
-const ease = [0.25, 0.1, 0.25, 1]
-
-const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5, delay, ease },
-})
-
 const heroImageFitClass = {
-  primary:
-    'h-auto w-full max-w-full object-contain object-center max-h-[10rem] sm:max-h-[11.5rem] md:max-h-[13rem] lg:max-h-[15rem] xl:max-h-[17rem]',
-  secondary:
-    'h-auto w-full max-w-[90%] object-contain object-center max-h-40 sm:max-h-44 md:max-h-48 lg:max-h-52',
+  primary: 'h-full w-full object-contain object-center',
+  secondary: 'h-full w-full object-contain object-center',
 }
 
-function HeroBrandLogo({ src, alt, label, variant = 'primary' }) {
+const heroImageBoxClass = {
+  primary:
+    'aspect-[1280/669] w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px] lg:max-w-[400px]',
+  secondary:
+    'aspect-[1342/1172] w-full max-w-[180px] sm:max-w-[200px] md:max-w-[240px]',
+}
+
+function HeroBrandLogo({
+  src,
+  alt,
+  label,
+  variant = 'primary',
+  width,
+  height,
+  srcSet,
+  sizes,
+  priority = false,
+}) {
   const wrapClass =
     variant === 'primary'
       ? 'flex w-full items-center justify-center md:w-auto md:justify-end'
@@ -33,10 +46,7 @@ function HeroBrandLogo({ src, alt, label, variant = 'primary' }) {
   if (!src) {
     return (
       <div
-        className={cn(
-          wrapClass,
-          'min-h-28 md:min-h-36 lg:min-h-44',
-        )}
+        className={cn(wrapClass, heroImageBoxClass[variant], 'min-h-28')}
         aria-hidden={!label}
       >
         <span className="text-sm text-ink-muted">{label ?? 'Imagen pendiente'}</span>
@@ -44,16 +54,26 @@ function HeroBrandLogo({ src, alt, label, variant = 'primary' }) {
     )
   }
 
+  const optimizedSrc = optimizeImageUrl(src, {
+    width: variant === 'primary' ? 640 : 480,
+  })
+
   return (
     <div className={wrapClass}>
-      <img
-        src={src}
-        alt={alt}
-        className={heroImageFitClass[variant]}
-        loading="eager"
-        decoding="async"
-        fetchPriority={variant === 'primary' ? 'high' : 'auto'}
-      />
+      <div className={heroImageBoxClass[variant]}>
+        <SmartImage
+          src={optimizedSrc}
+          srcSet={srcSet}
+          sizes={sizes}
+          alt={alt}
+          width={width}
+          height={height}
+          className={heroImageFitClass[variant]}
+          loading={priority ? 'eager' : 'lazy'}
+          decoding="async"
+          fetchPriority={priority ? 'high' : 'auto'}
+        />
+      </div>
     </div>
   )
 }
@@ -81,6 +101,15 @@ export function Hero({ activeSection = null }) {
     [activeSection, legacyHero],
   )
 
+  const primarySrcSet = useMemo(
+    () => buildResponsiveSrcSet(heroImages.primary.src, [280, 480, 640, 960]),
+    [heroImages.primary.src],
+  )
+  const secondarySrcSet = useMemo(
+    () => buildResponsiveSrcSet(heroImages.secondary.src, [180, 280, 480]),
+    [heroImages.secondary.src],
+  )
+
   return (
     <section className="relative overflow-hidden border-b border-border bg-surface">
       <div
@@ -102,34 +131,39 @@ export function Hero({ activeSection = null }) {
 
       <Container className="relative">
         <div className="flex flex-col items-center py-10 text-center sm:py-12 lg:py-14">
-          <motion.h1
-            {...fadeUp(0)}
+          <h1
             className={cn(
               'mt-4 max-w-6xl text-balance text-xl font-semibold leading-[1.15] tracking-tight text-ink',
               'sm:text-2xl sm:leading-[1.12] lg:text-3xl xl:text-[2.125rem] xl:leading-[1.1]',
             )}
           >
             {hero.title}
-          </motion.h1>
+          </h1>
 
-          <motion.div
-            {...fadeUp(0.12)}
-            className="mt-4 flex w-full flex-col items-center gap-6 sm:mt-5 md:flex-row md:items-center md:justify-center md:gap-4 lg:gap-5"
-          >
+          <div className="mt-4 flex w-full flex-col items-center gap-6 sm:mt-5 md:flex-row md:items-center md:justify-center md:gap-4 lg:gap-5">
             <HeroBrandLogo
               variant="primary"
               src={heroImages.primary.src}
               alt={heroImages.primary.alt}
+              width={400}
+              height={209}
+              srcSet={primarySrcSet}
+              sizes={HOME_HERO_PRIMARY_SIZES}
+              priority
             />
             <HeroBrandLogo
               variant="secondary"
               src={heroImages.secondary.src}
               alt={heroImages.secondary.alt}
               label="Distintivo / aniversario"
+              width={240}
+              height={210}
+              srcSet={secondarySrcSet}
+              sizes={HOME_HERO_SECONDARY_SIZES}
             />
-          </motion.div>
+          </div>
 
-          <motion.div {...fadeUp(0.18)} className="mt-8 flex w-full flex-col items-center sm:mt-10">
+          <div className="mt-8 flex w-full flex-col items-center sm:mt-10">
             <CtaButtonGroup
               variant="hero"
               align="center"
@@ -150,7 +184,7 @@ export function Hero({ activeSection = null }) {
                 <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
               </Link>
             ) : null}
-          </motion.div>
+          </div>
         </div>
       </Container>
     </section>

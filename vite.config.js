@@ -4,9 +4,10 @@ import tailwindcss from '@tailwindcss/vite'
 import { fileURLToPath, URL } from 'node:url'
 import { webpAssetsPlugin } from './vite/plugins/webpAssets.js'
 import { contactApiPlugin } from './vite/plugins/contactApi.js'
+import { heroPreloadPlugin } from './vite/plugins/heroPreload.js'
 
 export default defineConfig({
-  plugins: [react(), tailwindcss(), webpAssetsPlugin(), contactApiPlugin()],
+  plugins: [react(), tailwindcss(), webpAssetsPlugin(), contactApiPlugin(), heroPreloadPlugin()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

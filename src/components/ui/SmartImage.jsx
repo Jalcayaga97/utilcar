@@ -12,6 +12,10 @@ export function SmartImage({
   loading = 'lazy',
   decoding = 'async',
   fetchPriority,
+  srcSet,
+  sizes,
+  width,
+  height,
   ...rest
 }) {
   const resolvedWebp = webpSrc ?? getWebpSrc(src)
@@ -21,6 +25,10 @@ export function SmartImage({
       {resolvedWebp && <source srcSet={resolvedWebp} type="image/webp" />}
       <img
         src={src}
+        srcSet={srcSet}
+        sizes={sizes}
+        width={width}
+        height={height}
         alt={alt}
         className={className}
         loading={loading}
