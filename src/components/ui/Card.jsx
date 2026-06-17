@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/cn'
+import { resolveCmsIcon } from '@/lib/cms/icons/resolveCmsIcon'
 
 export function Card({
   className,
@@ -31,7 +32,10 @@ export function Card({
   )
 }
 
-export function CardIcon({ icon: Icon, className }) {
+export function CardIcon({ icon, className }) {
+  const Icon = resolveCmsIcon(icon)
+  if (!Icon) return null
+
   return (
     <div
       className={cn(

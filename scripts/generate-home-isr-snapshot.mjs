@@ -20,9 +20,25 @@ function writeSnapshot(payload) {
   writeFileSync(join(genDir, 'home-isr.snapshot.json'), json, 'utf8')
 }
 
+function stripIconFields(payload, cmsIconToKey) {
+  const normalizeItems = (items) => {
+    if (!Array.isArray(items)) return
+    for (const item of items) {
+      if (!item || !('icon' in item)) continue
+      item.icon = cmsIconToKey(item.icon) ?? (typeof item.icon === 'string' ? item.icon : null)
+    }
+  }
+
+  normalizeItems(payload.highlights)
+  normalizeItems(payload.homeContent?.extensions?.whyUsSection?.items)
+  normalizeItems(payload.homeContent?.extensions?.servicesSection?.items)
+  normalizeItems(payload.homeContent?.extensions?.highlightsItems)
+}
+
 async function loadPayload(server) {
   const homeAdapter = await server.ssrLoadModule('/src/lib/cms/home.adapter.js')
   const servicesAdapter = await server.ssrLoadModule('/src/lib/cms/services.adapter.js')
+  const { cmsIconToKey } = await server.ssrLoadModule('/src/lib/cms/icons/resolveCmsIcon.js')
 
   const [homeContent, portfolioCards, highlights] = await Promise.all([
     homeAdapter.getHomeContent(),
@@ -30,13 +46,16 @@ async function loadPayload(server) {
     servicesAdapter.getHighlights(),
   ])
 
-  return {
+  const payload = {
     generatedAt: new Date().toISOString(),
     revalidate: 60,
     homeContent,
     portfolioCards,
     highlights,
   }
+
+  stripIconFields(payload, cmsIconToKey)
+  return payload
 }
 
 async function main() {

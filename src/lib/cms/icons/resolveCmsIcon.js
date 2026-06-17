@@ -49,13 +49,33 @@ const CMS_ICON_MAP = {
   tapiceria: Scissors,
 }
 
+function isRenderableIcon(value) {
+  if (!value) return false
+  if (typeof value === 'function') return true
+  if (typeof value === 'object' && typeof value.render === 'function') return true
+  return false
+}
+
 /**
  * @param {string | import('react').ComponentType | null | undefined} name
  * @returns {import('react').ComponentType | null}
  */
 export function resolveCmsIcon(name) {
   if (!name) return null
-  if (typeof name !== 'string') return name
-  const key = name.toLowerCase().trim().replace(/\s+/g, '-')
-  return CMS_ICON_MAP[key] ?? CMS_ICON_MAP[key.replace(/-/g, '')] ?? null
+  if (typeof name === 'string') {
+    const key = name.toLowerCase().trim().replace(/\s+/g, '-')
+    return CMS_ICON_MAP[key] ?? CMS_ICON_MAP[key.replace(/-/g, '')] ?? null
+  }
+  if (isRenderableIcon(name)) return name
+  return null
+}
+
+/** Componente Lucide → clave string (para snapshots JSON). */
+export function cmsIconToKey(icon) {
+  if (typeof icon === 'string') return icon
+  if (!isRenderableIcon(icon)) return null
+  for (const [key, comp] of Object.entries(CMS_ICON_MAP)) {
+    if (comp === icon) return key
+  }
+  return null
 }
