@@ -1,5 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { useCmsData } from '@/hooks/useCmsData'
+import { isSanityEnabled } from '@/lib/cms/config'
+import { useHomeIsrSnapshot } from '@/contexts/HomeIsrContext'
 import {
   getEspecialidades,
   getHomePortfolioCards,
@@ -52,8 +54,8 @@ const LOCAL_WORK_BUNDLE = getValidatedLocalWorkBundle()
 const LOCAL_CONTACT = getValidatedLocalContactContent()
 const LOCAL_COMPANY = getLocalCompanyInfo()
 
-function useCmsPrimitive(localValue, fetcher, resetKey = null) {
-  const { data, isLoading, isError } = useCmsData(localValue, fetcher, resetKey)
+function useCmsPrimitive(localValue, fetcher, resetKey = null, isrOptions = null) {
+  const { data, isLoading, isError } = useCmsData(localValue, fetcher, resetKey, isrOptions)
   return useMemo(
     () => ({
       value: isLoading ? null : (data ?? localValue),
@@ -62,6 +64,17 @@ function useCmsPrimitive(localValue, fetcher, resetKey = null) {
     }),
     [data, isLoading, isError, localValue],
   )
+}
+
+function useHomeIsrOptions(field) {
+  const isrSnapshot = useHomeIsrSnapshot()
+  return useMemo(() => {
+    if (!isSanityEnabled() || !isrSnapshot?.[field]) return null
+    return {
+      initialData: isrSnapshot[field],
+      revalidate: true,
+    }
+  }, [field, isrSnapshot])
 }
 
 export function useEspecialidades() {
@@ -74,7 +87,8 @@ export function useEspecialidades() {
 export function useHomePortfolioCards() {
   const local = useMemo(() => getLocalHomePortfolioCards(), [])
   const fetcher = useCallback(() => getHomePortfolioCards(), [])
-  const { value, isLoading } = useCmsPrimitive(local, fetcher)
+  const isrOptions = useHomeIsrOptions('portfolioCards')
+  const { value, isLoading } = useCmsPrimitive(local, fetcher, null, isrOptions)
   return isLoading ? EMPTY_ARRAY : value
 }
 
@@ -84,7 +98,13 @@ export function useServices() {
 }
 
 export function useHighlights() {
-  const { value, isLoading } = useCmsPrimitive(LOCAL_SERVICES_BUNDLE.highlights, getHighlights)
+  const isrOptions = useHomeIsrOptions('highlights')
+  const { value, isLoading } = useCmsPrimitive(
+    LOCAL_SERVICES_BUNDLE.highlights,
+    getHighlights,
+    null,
+    isrOptions,
+  )
   return isLoading ? EMPTY_ARRAY : value
 }
 

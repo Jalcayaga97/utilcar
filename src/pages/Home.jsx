@@ -48,12 +48,16 @@ import {
 } from '@/lib/cms/specialtiesBlockLog'
 import { EMPTY_ARRAY, useHighlights, useHomePortfolioCards } from '@/hooks/useCms'
 import { HomeContentProvider, useHomeContent } from '@/contexts/HomeContentContext'
+import { HomeIsrProvider } from '@/contexts/HomeIsrContext'
+import homeIsrSnapshot from '@/generated/home-isr.snapshot.json'
 
 export default function Home() {
   return (
-    <HomeContentProvider>
-      <HomePage />
-    </HomeContentProvider>
+    <HomeIsrProvider snapshot={homeIsrSnapshot}>
+      <HomeContentProvider>
+        <HomePage />
+      </HomeContentProvider>
+    </HomeIsrProvider>
   )
 }
 
