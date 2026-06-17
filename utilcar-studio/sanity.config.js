@@ -4,8 +4,14 @@ import { schemaTypes } from './schemas/index.js'
 import { structure } from './structure.js'
 import { formComponents } from './formComponents.jsx'
 
-const projectId = process.env.SANITY_STUDIO_PROJECT_ID || process.env.VITE_SANITY_PROJECT_ID
-const dataset = process.env.SANITY_STUDIO_DATASET || process.env.VITE_SANITY_DATASET || 'production'
+const projectId =
+  process.env.SANITY_STUDIO_PROJECT_ID ||
+  process.env.VITE_SANITY_PROJECT_ID ||
+  '1k8yld2r'
+  const dataset =
+  process.env.SANITY_STUDIO_DATASET ||
+  process.env.VITE_SANITY_DATASET ||
+  'production'
 
 if (!projectId?.trim()) {
   throw new Error(
