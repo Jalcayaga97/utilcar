@@ -1,3 +1,8 @@
+/**const SITE_URL = String(process.env.VITE_SITE_URL || 'https://www.utilcar.cl').replace(/\/$/, '')**/
+const SITE_URL = 'https://utilcar.vercel.app'
+const LOGO_URL = `${SITE_URL}/logo.jpg`
+const LOGO_ALT = 'Utilcar Conversiones'
+
 function escapeHtml(value) {
   return String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -5,6 +10,10 @@ function escapeHtml(value) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;')
+}
+
+function escapeAttr(value) {
+  return escapeHtml(value).replace(/`/g, '&#96;')
 }
 
 function formatMultilineHtml(value) {
@@ -31,18 +40,15 @@ export function formatContactSubmittedAt(isoString) {
 }
 
 function renderField(label, value, { isLast = false } = {}) {
-  const border = isLast ? '' : 'border-bottom:1px solid #ececea;'
+  const divider = isLast ? '' : 'border-bottom:1px solid #eef1f6;'
+
   return `
     <tr>
-      <td style="padding:16px 28px 6px 28px;${border}">
-        <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:bold;color:#6b6b68;text-transform:uppercase;letter-spacing:0.06em;line-height:1.4;">
+      <td style="padding:20px 32px;${divider}">
+        <p style="margin:0 0 6px 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:bold;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;line-height:1.4;">
           ${escapeHtml(label)}
         </p>
-      </td>
-    </tr>
-    <tr>
-      <td style="padding:0 28px 16px 28px;${border}">
-        <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#1a1a18;line-height:1.55;">
+        <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:16px;color:#1e293b;line-height:1.6;">
           ${value}
         </p>
       </td>
@@ -60,7 +66,7 @@ export function generateContactEmailTemplate(data) {
     { label: 'Empresa', value: formatMultilineHtml(data.empresa || '—') },
     {
       label: 'Correo',
-      value: `<a href="mailto:${escapeHtml(data.mail)}" style="color:#1a1a18;text-decoration:underline;">${escapeHtml(data.mail)}</a>`,
+      value: `<a href="mailto:${escapeHtml(data.mail)}" style="color:#1e293b;text-decoration:underline;">${escapeHtml(data.mail)}</a>`,
     },
     { label: 'Teléfono', value: formatMultilineHtml(data.telefono || '—') },
     { label: 'Servicio', value: formatMultilineHtml(data.servicio) },
@@ -84,28 +90,44 @@ export function generateContactEmailTemplate(data) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Nuevo contacto recibido</title>
+  <title>Nueva consulta recibida</title>
 </head>
-<body style="margin:0;padding:0;background-color:#f4f4f3;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
-  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#f4f4f3;margin:0;padding:0;">
+<body style="margin:0;padding:0;background-color:#f8f9fb;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#f8f9fb;margin:0;padding:0;">
     <tr>
-      <td align="center" style="padding:32px 16px;">
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:560px;width:100%;background-color:#ffffff;border:1px solid #e0e0dc;border-radius:8px;">
+      <td align="center" style="padding:40px 20px 48px 20px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:600px;width:100%;">
           <tr>
-            <td style="padding:28px 28px 8px 28px;border-bottom:1px solid #ececea;">
-              <p style="margin:0 0 6px 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;font-weight:bold;color:#6b6b68;text-transform:uppercase;letter-spacing:0.08em;">
-                Utilcar Conversiones
-              </p>
-              <h1 style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:22px;font-weight:bold;color:#1a1a18;line-height:1.3;">
-                Nuevo contacto recibido
-              </h1>
+            <td align="center" style="padding:0 0 28px 0;">
+              <img
+                src="${escapeAttr(LOGO_URL)}"
+                alt="${escapeAttr(LOGO_ALT)}"
+                width="140"
+                style="display:block;width:140px;max-width:140px;height:auto;border:0;outline:none;text-decoration:none;margin:0 auto;"
+              />
             </td>
           </tr>
-          ${fieldRows}
           <tr>
-            <td style="padding:20px 28px 28px 28px;">
-              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#8a8a86;line-height:1.5;">
-                Mensaje enviado desde el formulario de contacto de utilcar.cl
+            <td align="center" style="padding:0 0 32px 0;">
+              <h1 style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:24px;font-weight:bold;color:#1e293b;line-height:1.35;letter-spacing:-0.02em;">
+                Nueva consulta recibida
+              </h1>
+              <p style="margin:10px 0 0 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#64748b;line-height:1.5;">
+                Un visitante completó el formulario de contacto en su sitio web.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#ffffff;border:1px solid #e8ecf2;border-radius:12px;overflow:hidden;">
+                ${fieldRows}
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="padding:28px 16px 0 16px;">
+              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#94a3b8;line-height:1.5;">
+                <a href="${escapeAttr(SITE_URL)}" style="color:#64748b;text-decoration:none;font-weight:bold;">utilcar.cl</a>
               </p>
             </td>
           </tr>
