@@ -1,4 +1,21 @@
 {
+  "redirects": [
+    {
+      "source": "/cpanel",
+      "destination": "https://cpanel.utilcar.cl:2083",
+      "statusCode": 307
+    },
+    {
+      "source": "/webmail",
+      "destination": "https://webmail.utilcar.cl",
+      "statusCode": 307
+    },
+    {
+      "source": "/whm",
+      "destination": "https://whm.utilcar.cl:2087",
+      "statusCode": 307
+    }
+  ],
   "rewrites": [
     {
       "source": "/((?!api/).*)",
