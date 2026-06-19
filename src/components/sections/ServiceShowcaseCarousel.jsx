@@ -117,7 +117,7 @@ export function ServiceShowcaseCarousel({
         >
           <div
             className={cn(
-              'relative w-full overflow-hidden bg-surface',
+              'relative flex w-full items-center justify-center overflow-hidden bg-surface',
               SLIDE_HEIGHT[size] ?? SLIDE_HEIGHT.service,
             )}
           >
@@ -134,7 +134,6 @@ export function ServiceShowcaseCarousel({
                   src={current.src}
                   webpSrc={current.webpSrc}
                   alt={current.alt}
-                  className="h-full w-full object-cover object-center"
                   loading="lazy"
                   decoding="async"
                 />

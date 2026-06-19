@@ -72,11 +72,11 @@ const PortfolioCard = memo(function PortfolioCard({ item, index, onOpen }) {
           'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
         )}
       >
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface">
+        <div className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-surface">
           <SmartImage
             src={item.image}
             alt={item.imageAlt || ''}
-            className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.02]"
+            className="transition-transform duration-500 group-hover:scale-[1.02]"
             loading="lazy"
             decoding="async"
           />

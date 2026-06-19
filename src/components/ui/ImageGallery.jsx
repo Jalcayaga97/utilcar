@@ -59,7 +59,7 @@ export function ImageGallery({ images, className }) {
           className="group relative block w-full text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           aria-label="Ampliar imagen"
         >
-          <div className="aspect-[16/10] w-full overflow-hidden bg-surface sm:aspect-video">
+          <div className="flex aspect-[16/10] w-full items-center justify-center overflow-hidden bg-surface sm:aspect-video">
             <AnimatePresence mode="wait">
               <motion.div
                 key={current.src}
@@ -73,7 +73,7 @@ export function ImageGallery({ images, className }) {
                   src={current.src}
                   webpSrc={current.webpSrc}
                   alt={current.alt || ''}
-                  className="h-full w-full object-cover object-center"
+                  className="h-full w-full object-contain object-center"
                   loading="lazy"
                   decoding="async"
                 />
@@ -109,7 +109,7 @@ export function ImageGallery({ images, className }) {
                 aria-label={img.alt || `Imagen ${index + 1}`}
                 onClick={() => setSelected(index)}
                 className={cn(
-                  'relative h-16 w-24 shrink-0 overflow-hidden rounded-md border-2 transition-all duration-300',
+                  'relative flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded-md border-2 bg-surface transition-all duration-300',
                   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
                   isActive
                     ? 'border-ink opacity-100 ring-1 ring-ink/15'
@@ -120,7 +120,7 @@ export function ImageGallery({ images, className }) {
                   src={img.src}
                   webpSrc={img.webpSrc}
                   alt=""
-                  className="h-full w-full object-cover object-center"
+                  className="h-full w-full object-contain object-center"
                   loading="lazy"
                   decoding="async"
                 />

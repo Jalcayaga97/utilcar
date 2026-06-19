@@ -16,11 +16,11 @@ export function WorkCardImage({ imageKey, src: srcOverride, alt, className }) {
   }
 
   return (
-    <div className={cn('relative aspect-[16/10] overflow-hidden rounded-lg bg-surface', className)}>
+    <div className={cn('relative flex aspect-[16/10] items-center justify-center overflow-hidden rounded-lg bg-surface', className)}>
       <img
         src={src}
         alt={alt || ''}
-        className="h-full w-full object-cover object-center"
+        className="h-full w-full max-h-full max-w-full object-contain object-center"
         loading="lazy"
         decoding="async"
       />

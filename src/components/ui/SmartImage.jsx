@@ -1,4 +1,5 @@
 import { getWebpSrc } from '@/lib/images/webpRegistry'
+import { cn } from '@/lib/cn'
 
 /**
  * Imagen con fallback nativo y WebP opcional vía <picture>.
@@ -21,7 +22,7 @@ export function SmartImage({
   const resolvedWebp = webpSrc ?? getWebpSrc(src)
 
   return (
-    <picture className="block h-full w-full">
+    <picture className="flex h-full w-full items-center justify-center">
       {resolvedWebp && <source srcSet={resolvedWebp} type="image/webp" />}
       <img
         src={src}
@@ -30,7 +31,7 @@ export function SmartImage({
         width={width}
         height={height}
         alt={alt}
-        className={className}
+        className={cn('h-full w-full max-h-full max-w-full object-contain object-center', className)}
         loading={loading}
         decoding={decoding}
         fetchPriority={fetchPriority}

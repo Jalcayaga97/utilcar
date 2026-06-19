@@ -57,12 +57,12 @@ function GalleryThumbnails({ gallery }) {
       {gallery.slice(0, 5).map((entry) => (
         <div
           key={entry.id}
-          className="aspect-square overflow-hidden rounded-md border border-border bg-surface"
+          className="flex aspect-square items-center justify-center overflow-hidden rounded-md border border-border bg-surface"
         >
           <img
             src={entry.url}
             alt={entry.alt || ''}
-            className="h-full w-full object-cover"
+            className="h-full w-full max-h-full max-w-full object-contain object-center"
             loading="lazy"
             decoding="async"
           />
@@ -155,12 +155,12 @@ function EspecialidadBlock({ item, reverse, index, itemEyebrowPrefix }) {
     >
       <div className={cn('relative lg:sticky lg:top-24', reverse ? 'lg:order-1' : 'lg:order-2')}>
         <div className="relative overflow-hidden rounded-card border border-border bg-white shadow-card">
-          <div className="aspect-[4/3] sm:aspect-[5/4] lg:aspect-[4/3]">
+          <div className="flex aspect-[4/3] items-center justify-center overflow-hidden bg-surface sm:aspect-[5/4] lg:aspect-[4/3]">
             {slice.image ? (
               <img
                 src={slice.image}
                 alt={slice.imageAlt || ''}
-                className="h-full w-full object-cover object-center"
+                className="h-full w-full max-h-full max-w-full object-contain object-center"
                 loading="lazy"
                 decoding="async"
               />

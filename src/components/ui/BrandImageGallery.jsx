@@ -85,7 +85,7 @@ export function BrandImageGallery({ images, brandName, className }) {
           className="group relative block w-full text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           aria-label={`Ampliar registro visual ${brandName}`}
         >
-          <div className="aspect-[4/3] w-full overflow-hidden bg-surface">
+          <div className="flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-surface">
             <AnimatePresence mode="wait">
               <motion.div
                 key={current.src}
@@ -99,7 +99,7 @@ export function BrandImageGallery({ images, brandName, className }) {
                   src={current.src}
                   webpSrc={current.webpSrc}
                   alt={current.alt || ''}
-                  className="h-full w-full object-cover object-center"
+                  className="h-full w-full object-contain object-center"
                   loading="lazy"
                   decoding="async"
                 />
@@ -129,7 +129,7 @@ export function BrandImageGallery({ images, brandName, className }) {
                 aria-label={img.alt || `Vista ${index + 1}`}
                 onClick={() => setSelected(index)}
                 className={cn(
-                  'relative h-14 w-[4.5rem] shrink-0 snap-start overflow-hidden rounded-md border-2 transition-all duration-300 sm:h-16 sm:w-24',
+                  'relative flex h-14 w-[4.5rem] shrink-0 snap-start items-center justify-center overflow-hidden rounded-md border-2 bg-surface transition-all duration-300 sm:h-16 sm:w-24',
                   'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
                   isActive
                     ? 'border-ink opacity-100 ring-1 ring-ink/15'
@@ -140,7 +140,7 @@ export function BrandImageGallery({ images, brandName, className }) {
                   src={img.src}
                   webpSrc={img.webpSrc}
                   alt=""
-                  className="h-full w-full object-cover object-center"
+                  className="h-full w-full object-contain object-center"
                   loading="lazy"
                   decoding="async"
                 />
