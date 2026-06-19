@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/cn'
@@ -15,7 +15,6 @@ import {
   resolveCategoryHeroImage,
   resolveSpecialtyCta,
 } from '@/lib/cms/assets/resolveSpecialtyAssets'
-import { logSpecialtiesV2 } from '@/lib/cms/specialtiesBlockLog'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
@@ -222,7 +221,6 @@ function EspecialidadBlock({ item, reverse, index, itemEyebrowPrefix }) {
 export function EspecialidadesUtilcar({ activeSection: activeSectionProp }) {
   const { especialidades: especialidadesSection, extensions } = useHomeContent()
   const legacyList = useEspecialidades()
-  const sourceRef = useRef(null)
 
   const activeSection =
     activeSectionProp ?? getActiveSpecialtiesSection(extensions)
@@ -233,26 +231,6 @@ export function EspecialidadesUtilcar({ activeSection: activeSectionProp }) {
     }
     return legacyList
   }, [activeSection, legacyList])
-
-  useEffect(() => {
-    const source = activeSection ? 'cms' : 'legacy'
-    if (sourceRef.current === source) return
-    sourceRef.current = source
-
-    if (activeSection) {
-      logSpecialtiesV2({
-        source: 'cms',
-        categories: activeSection.categories?.length ?? 0,
-        brands: activeSection.categories?.reduce(
-          (n, cat) => n + (cat.brands?.length ?? 0),
-          0,
-        ),
-        warnings: activeSection.warnings?.length ?? 0,
-      })
-    } else {
-      logSpecialtiesV2({ source: 'legacy', categories: legacyList.length })
-    }
-  }, [activeSection, legacyList.length])
 
   return (
     <Section className="bg-surface">

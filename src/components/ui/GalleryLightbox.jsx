@@ -2,7 +2,11 @@ import { useCallback, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { useAdjacentImagePreload } from '@/hooks/useAdjacentImagePreload'
-import { SmartImage } from '@/components/ui/SmartImage'
+import {
+  LIGHTBOX_CAPTION_STACK_CLASS,
+  LIGHTBOX_FRAME_CLASS,
+  LIGHTBOX_IMAGE_CLASS,
+} from '@/components/ui/lightboxLayout'
 
 const ease = [0.25, 0.1, 0.25, 1]
 
@@ -96,17 +100,17 @@ export function GalleryLightbox({ items, index, onClose, onChangeIndex }) {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.25, ease }}
-            className="relative max-h-[85vh] max-w-5xl overflow-hidden rounded-card"
+            className={LIGHTBOX_FRAME_CLASS}
             onClick={(e) => e.stopPropagation()}
           >
-            <SmartImage
+            <img
               src={current.image}
               alt={current.imageAlt ?? current.title ?? ''}
-              className="max-h-[85vh] w-full object-contain"
+              className={LIGHTBOX_IMAGE_CLASS}
               loading="lazy"
               decoding="async"
             />
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-ink/85 to-transparent px-4 py-4 sm:px-6">
+            <div className={LIGHTBOX_CAPTION_STACK_CLASS}>
               <p className="text-xs font-medium uppercase tracking-[0.14em] text-white/70">
                 {current.category}
               </p>

@@ -3,6 +3,11 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { SmartImage } from '@/components/ui/SmartImage'
+import {
+  LIGHTBOX_CAPTION_CLASS,
+  LIGHTBOX_FRAME_CLASS,
+  LIGHTBOX_IMAGE_CLASS,
+} from '@/components/ui/lightboxLayout'
 import { useAdjacentImagePreload } from '@/hooks/useAdjacentImagePreload'
 
 const ease = [0.25, 0.1, 0.25, 1]
@@ -105,7 +110,7 @@ export function ServiceShowcaseCarousel({
       onBlurCapture={() => setPaused(false)}
     >
       <div
-        className="relative overflow-hidden rounded-card border border-border bg-white shadow-card"
+        className="relative"
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
@@ -117,7 +122,7 @@ export function ServiceShowcaseCarousel({
         >
           <div
             className={cn(
-              'relative flex w-full items-center justify-center overflow-hidden bg-surface',
+              'relative flex w-full items-center justify-center',
               SLIDE_HEIGHT[size] ?? SLIDE_HEIGHT.service,
             )}
           >
@@ -146,7 +151,7 @@ export function ServiceShowcaseCarousel({
         </button>
 
         {showCaption && caption ? (
-          <p className="border-t border-border px-4 py-3 text-sm text-ink-muted">{caption}</p>
+          <p className="mt-3 text-center text-sm text-ink-muted">{caption}</p>
         ) : null}
 
         {count > 1 ? (
@@ -249,21 +254,20 @@ export function ServiceShowcaseCarousel({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.25, ease }}
-              className="relative max-h-[85vh] max-w-5xl overflow-hidden rounded-card"
+              className={LIGHTBOX_FRAME_CLASS}
               onClick={(e) => e.stopPropagation()}
             >
-              <SmartImage
+              <img
                 src={images[lightboxIndex].src}
-                webpSrc={images[lightboxIndex].webpSrc}
                 alt={images[lightboxIndex].alt}
-                className="max-h-[85vh] w-full object-contain"
+                className={LIGHTBOX_IMAGE_CLASS}
                 loading="lazy"
                 decoding="async"
               />
               {(images[lightboxIndex].caption ||
                 images[lightboxIndex].title ||
                 images[lightboxIndex].alt) && (
-                <p className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-ink/80 to-transparent px-4 py-3 text-sm text-white">
+                <p className={LIGHTBOX_CAPTION_CLASS}>
                   {images[lightboxIndex].caption ||
                     images[lightboxIndex].title ||
                     images[lightboxIndex].alt}

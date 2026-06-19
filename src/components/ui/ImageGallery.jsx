@@ -3,9 +3,15 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { SmartImage } from '@/components/ui/SmartImage'
+import {
+  LIGHTBOX_CAPTION_CLASS,
+  LIGHTBOX_FRAME_CLASS,
+  LIGHTBOX_IMAGE_CLASS,
+} from '@/components/ui/lightboxLayout'
 import { useAdjacentImagePreload } from '@/hooks/useAdjacentImagePreload'
 
 const ease = [0.25, 0.1, 0.25, 1]
+const GALLERY_HEIGHT = 'h-[240px] sm:h-[360px] lg:h-[480px]'
 const getGallerySrc = (img) => img?.src
 
 export function ImageGallery({ images, className }) {
@@ -51,15 +57,14 @@ export function ImageGallery({ images, className }) {
 
   return (
     <div className={cn('mx-auto max-w-5xl', className)}>
-      {/* Imagen principal */}
-      <div className="relative overflow-hidden rounded-card border border-border bg-white shadow-card">
+      <div className="relative">
         <button
           type="button"
           onClick={openLightbox}
           className="group relative block w-full text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           aria-label="Ampliar imagen"
         >
-          <div className="flex aspect-[16/10] w-full items-center justify-center overflow-hidden bg-surface sm:aspect-video">
+          <div className={cn('flex w-full items-center justify-center', GALLERY_HEIGHT)}>
             <AnimatePresence mode="wait">
               <motion.div
                 key={current.src}
@@ -73,7 +78,6 @@ export function ImageGallery({ images, className }) {
                   src={current.src}
                   webpSrc={current.webpSrc}
                   alt={current.alt || ''}
-                  className="h-full w-full object-contain object-center"
                   loading="lazy"
                   decoding="async"
                 />
@@ -85,13 +89,12 @@ export function ImageGallery({ images, className }) {
           </span>
         </button>
         {current.alt && (
-          <p className="border-t border-border px-4 py-3 text-sm text-ink-muted">
+          <p className="mt-3 text-center text-sm text-ink-muted">
             {current.alt}
           </p>
         )}
       </div>
 
-      {/* Thumbnails */}
       {images.length > 1 && (
         <div
           className="mt-4 flex gap-2 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -130,7 +133,6 @@ export function ImageGallery({ images, className }) {
         </div>
       )}
 
-      {/* Lightbox */}
       <AnimatePresence>
         {lightboxOpen && lightboxIndex !== null && (
           <motion.div
@@ -186,19 +188,18 @@ export function ImageGallery({ images, className }) {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.25, ease }}
-              className="relative max-h-[85vh] max-w-5xl overflow-hidden rounded-card"
+              className={LIGHTBOX_FRAME_CLASS}
               onClick={(e) => e.stopPropagation()}
             >
-              <SmartImage
+              <img
                 src={images[lightboxIndex].src}
-                webpSrc={images[lightboxIndex].webpSrc}
                 alt={images[lightboxIndex].alt || ''}
-                className="max-h-[85vh] w-full object-contain"
+                className={LIGHTBOX_IMAGE_CLASS}
                 loading="lazy"
                 decoding="async"
               />
               {images[lightboxIndex].alt && (
-                <p className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-ink/80 to-transparent px-4 py-3 text-sm text-white">
+                <p className={LIGHTBOX_CAPTION_CLASS}>
                   {images[lightboxIndex].alt}
                 </p>
               )}
